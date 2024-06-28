@@ -1,4 +1,5 @@
 // Project 3 CMSC 433: Created By: Darrian Corkadel, <List names here>
+var loading_done = false;
 //menu handling
 $(document).ready(function() {
 	var MenuMusic = document.getElementById('MenuMusic');
@@ -6,9 +7,11 @@ $(document).ready(function() {
     var volumeControl = $('#volumeControl');
 
     $('#PlayButton').click(function() {
-        $('#menu').remove(); 
-        $('#screen').show();
-        startGame();         
+		if(loading_done == true) {
+			 $('#menu').remove(); 
+			$('#screen').show();
+			startGame();   
+		}
     });
 
 	$('#SoundSettingsButton').click(function() {
@@ -50,8 +53,7 @@ function waitForLoad() {
 		image_list[image_load_list[i]].onload = (function() {
 			complete_images = complete_images + 1;
 			if(complete_images == image_load_list.length) {
-				// Run the main loop function
-				running_interval = setInterval(mainLoop, 7); // Note: 7ms ~= 144fps
+				loading_done = true; // Loading is indicated to be done
 			}
 		});
 	}
@@ -61,6 +63,18 @@ function waitForLoad() {
 }
 // First load the resources
 waitForLoad();
+function startGame() {
+	if(loading_done == true) {
+		// Run the main loop function
+		running_interval = setInterval(mainLoop, 7); // Note: 7ms ~= 144fps
+	}
+}
+function exitGame() {
+	if(loading_done == true) {
+		exitLoop();
+		// Clean up non-game related resources
+	}
+}
 // Drawing functions / Classes
 class CollisionSolver {
 	static addRect(rect) {
@@ -336,6 +350,8 @@ function clearScreen() {
 	var draw_context = canvas.getContext("2d");
 	draw_context.clearRect(0, 0, canvas.width, canvas.height);
 }
+var sq1 = new Rect(0, 0, 50, 50);
+sq1.setColor("rgba(255,0,0,1)");
 // Runs the main game and handles scene switching
 function mainLoop() {
 	// Handle any collisions from the last frame
@@ -345,6 +361,7 @@ function mainLoop() {
 	// Render the current scene
 	switch(current_scene) {
 		case "TEST": {
+			sq1.draw();
 			break;
 		}
 		default: {
