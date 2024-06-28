@@ -1,18 +1,18 @@
 // Project 3 CMSC 433: Created By: Darrian Corkadel, <List names here>
+//menu handling
 $(document).ready(function() {
-    // Function to handle Play button click
+
     $('#playButton').click(function() {
-        $('#menu').remove(); // Remove the menu from the DOM
-        $('#screen').show(); // Show the canvas
-        startGame();         // Start the game
+        $('#menu').remove(); 
+        $('#screen').show();
+        startGame();         
     });
 
-    // Function to handle Sound Settings button click
     $('#soundSettingsButton').click(function() {
         alert('Sound settings will be here!');
     });
 
-    // Function to handle Quit button click
+
 
 });	
 // Image variables
