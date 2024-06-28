@@ -268,10 +268,8 @@ function clearScreen() {
 }
 var square1 = new Rect(0, 0, 50, 50);
 square1.setImg("4");
-square1.setCollisions(true, "Dynamic");
 var square2 = new Rect(500, 500, 50, 50);
 square2.setColor("green");
-square2.setCollisions(true, "Static");
 // Runs the main game and handles scene switching
 function mainLoop() {
 	// Handle any collisions from the last frame
