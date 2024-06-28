@@ -1,25 +1,35 @@
 // Project 3 CMSC 433: Created By: Darrian Corkadel, <List names here>
 //menu handling
 $(document).ready(function() {
-	var backgroundMusic = document.getElementById('backgroundMusic');
+	var MenuMusic = document.getElementById('MenuMusic');
+	var SoundSettings = $('#SoundSettings');
+    var volumeControl = $('#volumeControl');
 
-    $('#playButton').click(function() {
+    $('#PlayButton').click(function() {
         $('#menu').remove(); 
         $('#screen').show();
         startGame();         
     });
 
-    $('#soundSettingsButton').click(function() {
-        alert('Sound settings will be here!');
+	$('#SoundSettingsButton').click(function() {
+        SoundSettings.show();
     });
 
-	$('#quitButton').click(function() {
+    $('#CloseSound').click(function() {
+        SoundSettings.hide();
+    });
+
+	$('#QuitButton').click(function() {
         $('#menu').remove(); 
 		$('#screen').show();//just having it do this for now until i figure where to send quit to
         startGame(); //just having it do this for now until i figure where to send quit to
         alert('Quitting the game.'); 
-		backgroundMusic.pause();
+		MenuMusic.pause();
         //window.location.href = //idk where to send it >:|
+    });
+	
+    volumeControl.on('input', function() {
+        MenuMusic.volume = this.value / 100;
     });
 
 });	
