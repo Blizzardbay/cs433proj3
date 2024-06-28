@@ -1,4 +1,5 @@
 // Project 3 CMSC 433: Created By: Darrian Corkadel, <List names here>
+var loading_done = false;
 //menu handling
 $(document).ready(function() {
 	var MenuMusic = document.getElementById('MenuMusic');
@@ -10,7 +11,6 @@ $(document).ready(function() {
     $('#PlayButton').click(function() {
         $('#menu').remove(); 
         $('#screen').show();
-		MenuOptionButton.show();
         startGame();         
     });
 
@@ -53,8 +53,7 @@ function waitForLoad() {
 		image_list[image_load_list[i]].onload = (function() {
 			complete_images = complete_images + 1;
 			if(complete_images == image_load_list.length) {
-				// Run the main loop function
-				running_interval = setInterval(mainLoop, 7); // Note: 7ms ~= 144fps
+				loading_done = true; // Loading is indicated to be done
 			}
 		});
 	}
@@ -64,6 +63,20 @@ function waitForLoad() {
 }
 // First load the resources
 waitForLoad();
+function startGame() {
+	if(loading_done == true) {
+		var canvas = document.getElementById("screen");
+		canvas.oncontextmenu = function(menu) { menu.preventDefault(); menu.stopPropagation(); }
+		// Run the main loop function
+		running_interval = setInterval(mainLoop, 7); // Note: 7ms ~= 144fps
+	}
+}
+function exitGame() {
+	if(loading_done == true) {
+		exitLoop();
+		// Clean up non-game related resources
+	}
+}
 // Drawing functions / Classes
 class CollisionSolver {
 	static addRect(rect) {
@@ -105,39 +118,75 @@ class CollisionSolver {
 					var posx_dyn = value_dyn.xpos();
 					var posy_dyn = value_dyn.ypos();
 					
+					var points_dyn = [[posx_dyn, posy_dyn],[posx_dyn + width_dyn, posy_dyn],[posx_dyn + width_dyn, posy_dyn + height_dyn],[posx_dyn, posy_dyn + height_dyn]];
+					var center_dyn = [posx_dyn + (width_dyn / 2), posy_dyn + (height_dyn / 2)];
+					
 					var width_stat = value_stat.width();
 					var height_stat = value_stat.height();
 					var posx_stat = value_stat.xpos();
 					var posy_stat = value_stat.ypos();
+					
+					var points_stat = [[posx_stat, posy_stat],[posx_stat + width_stat, posy_stat],[posx_stat + width_stat, posy_stat + height_stat],[posx_stat, posy_stat + height_stat]];
 					// Note: we are breaking after b/c the next conflict will
 					// be solved in the next frame
-					// Left
-					var left = posx_dyn + width_dyn > posx_stat && posx_dyn < posx_stat;
-					var right = posx_dyn < posx_stat + width_stat && posx_dyn > posx_stat;
-					var height1 = posy_dyn + height_dyn > posy_stat && posy_dyn < posy_stat + height_stat;
-					if(left && height1) {
-						value_dyn.setXPos(posx_stat - width_dyn);
-						break;
-					}
-					// Right
-					if(right && height1) {
-						value_dyn.setXPos(posx_stat + width_stat);
-						break;
-					}
-					// Top
-					if(posy_dyn + height_dyn > posy_stat && posy_dyn < posy_stat && (left || right)) {
-						value_dyn.setYPos(posy_stat - height_dyn);
-						console.log("runs1");
-						break;
-					}
-					// Bottom
-					if(posy_dyn > posy_stat + height_stat && posy_dyn > posy_stat  && (left || right)) {
-						value_dyn.setYPos(posy_stat + height_stat);
-						console.log("runs4");
-						break;
+					for(var i = 0; i < points_dyn.length;i++) {
+						var line_dyn = [center_dyn, points_dyn[i]];
+						for(var j = 0; j < points_stat.length;j++) {
+							var edge_stat = [points_stat[j], points_stat[(j + 1) % points_stat.length]];
+							
+							var d = ((line_dyn[0][0] - line_dyn[1][0])*(edge_stat[0][1] - edge_stat[1][1])) - ((line_dyn[0][1] - line_dyn[1][1])*(edge_stat[0][0] - edge_stat[1][0]));
+							
+							var t = (((line_dyn[0][0] - edge_stat[0][0])*(edge_stat[0][1] - edge_stat[1][1])) - ((line_dyn[0][1] - edge_stat[0][1])*(edge_stat[0][0] - edge_stat[1][0])))/d;
+							
+							var u = -(((line_dyn[0][0] - line_dyn[1][0])*(line_dyn[0][1] - edge_stat[0][1])) - ((line_dyn[0][1] - line_dyn[1][1])*(line_dyn[0][0] - edge_stat[0][0])))/d;
+							
+							if(u >= 0 && u <= 1.0 && t >= 0 && t <= 1.0) {
+								if(value_dyn.xpos() < value_stat.xpos()) {
+									value_dyn.setXPos(posx_dyn + ((1.0 - t) * (line_dyn[0][0] - line_dyn[1][0])));
+								}
+								if(value_dyn.xpos() > value_stat.xpos()) {
+									value_dyn.setXPos(posx_dyn + ((1.0 - t) * (line_dyn[0][0] - line_dyn[1][0])));
+									if(value_dyn.ypos() > value_stat.ypos()) {
+										value_dyn.setYPos(posy_dyn + ((1.0 - t) * (line_dyn[0][1] - line_dyn[1][1])));
+									}
+									if(value_dyn.ypos() < value_stat.ypos()) {
+										value_dyn.setYPos(posy_dyn + ((1.0 - t) * (line_dyn[0][1] - line_dyn[1][1])));
+									}
+									break;
+								}
+								if(value_dyn.ypos() > value_stat.ypos()) {
+									value_dyn.setYPos(posy_dyn + ((1.0 - t) * (line_dyn[0][1] - line_dyn[1][1])));
+								}
+								if(value_dyn.ypos() < value_stat.ypos()) {
+									value_dyn.setYPos(posy_dyn + ((1.0 - t) * (line_dyn[0][1] - line_dyn[1][1])));
+									break;
+								}
+							}
+							
+						}	
 					}
 				}
 			}
+		}
+	}
+	static testCollisions(rect1, rect2) {
+		// AABB - Axis Aligned Bounding Box
+		if(rect1.xpos() + rect1.width() >= rect2.xpos() && rect1.xpos() <= rect2.xpos() + rect2.width() &&
+				rect1.ypos() + rect1.height() >= rect2.ypos() && rect1.ypos() <= rect2.ypos() + rect2.height()) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	static testInside(rect1, rect2) {
+		// AABB - Axis Aligned Bounding Box
+		if(rect1.xpos() + rect1.width() > rect2.xpos() && rect1.xpos() < rect2.xpos() + rect2.width() &&
+				rect1.ypos() + rect1.height() > rect2.ypos() && rect1.ypos() < rect2.ypos() + rect2.height()) {
+			return true;
+		}
+		else {
+			return false;
 		}
 	}
 	static #dynamic_objects = {};
@@ -145,6 +194,286 @@ class CollisionSolver {
 	static #static_objects = {};
 	static #static_count = 0;
 }
+class EventHandler {
+	static handleKeyDown(event) {
+		 if(current_scene in EventHandler.#event_keydown) {
+			 if(EventHandler.#event_keydown[current_scene] !== undefined) {
+				 for(var i = 0; i < EventHandler.#event_keydown[current_scene].length;i++) {
+					 if(event.keyCode == EventHandler.#event_keydown[current_scene][i][0]) {
+						 EventHandler.#event_keydown[current_scene][i][1](event);
+					 }
+				 }
+			 }
+		}
+	}
+	static handleKeyUp(event) {
+		if(current_scene in EventHandler.#event_keyup) {
+			 if(EventHandler.#event_keyup[current_scene] !== undefined) {
+				 for(var i = 0; i < EventHandler.#event_keyup[current_scene].length;i++) {
+					 if(event.keyCode == EventHandler.#event_keyup[current_scene][i][0]) {
+						 EventHandler.#event_keyup[current_scene][i][1](event);
+					 }
+				 }
+			 }
+		}
+	}
+	static handleKeyPress(event) {
+		if(current_scene in EventHandler.#event_keypress) {
+			 if(EventHandler.#event_keypress[current_scene] !== undefined) {
+				 for(var i = 0; i < EventHandler.#event_keypress[current_scene].length;i++) {
+					 if(event.keyCode == EventHandler.#event_keypress[current_scene][i][0]) {
+						 EventHandler.#event_keypress[current_scene][i][1](event);
+					 }
+				 }
+			 }
+		}
+	}
+	static handleMLeftDown(event) {
+		if(current_scene in EventHandler.#event_mouseleftdown) {
+			 if(EventHandler.#event_mouseleftdown[current_scene] !== undefined) {
+				 for(var i = 0; i < EventHandler.#event_mouseleftdown[current_scene].length;i++) {
+					 EventHandler.#event_mouseleftdown[current_scene][i](event);
+				 }
+			 }
+		}
+	}
+	static handleClick(event, mouse_x, mouse_y) {
+		if(current_scene in EventHandler.#event_click) {
+			 if(EventHandler.#event_click[current_scene] !== undefined) {
+				 for(var i = 0; i < EventHandler.#event_click[current_scene].length;i++) {
+					 var temp = new Rect(mouse_x, mouse_y, 1, 1);
+					 if(CollisionSolver.testCollisions(temp, EventHandler.#event_click[current_scene][i][0])) {
+						 EventHandler.#event_click[current_scene][i][1](event);
+					 }
+				 }
+			 }
+		}
+	}
+	static handleMRightDown(event) {
+		if(current_scene in EventHandler.#event_mouserightdown) {
+			 if(EventHandler.#event_mouserightdown[current_scene] !== undefined) {
+				 for(var i = 0; i < EventHandler.#event_mouserightdown[current_scene].length;i++) {
+					 EventHandler.#event_mouserightdown[current_scene][i](event);
+				 }
+			 }
+		}
+	}
+	static handleMLeftUp(event) {
+		if(current_scene in EventHandler.#event_mouseleftup) {
+			 if(EventHandler.#event_mouseleftup[current_scene] !== undefined) {
+				 for(var i = 0; i < EventHandler.#event_mouseleftup[current_scene].length;i++) {
+					 EventHandler.#event_mouseleftup[current_scene][i](event);
+				 }
+			 }
+		}
+	}
+	static handleMRightUp(event) {
+		if(current_scene in EventHandler.#event_mouserightup) {
+			 if(EventHandler.#event_mouserightup[current_scene] !== undefined) {
+				 for(var i = 0; i < EventHandler.#event_mouserightup[current_scene].length;i++) {
+					 EventHandler.#event_mouserightup[current_scene][i](event);
+				 }
+			 }
+		}
+	}
+	static handleMHover(event, mouse_x, mouse_y) {
+		if(current_scene in EventHandler.#event_mousehover) {
+			 if(EventHandler.#event_mousehover[current_scene] !== undefined) {
+				 for(var i = 0; i < EventHandler.#event_mousehover[current_scene].length;i++) {
+					 var temp = new Rect(mouse_x, mouse_y, 1, 1);
+					 if(CollisionSolver.testCollisions(temp, EventHandler.#event_mousehover[current_scene][i][0])) {
+						 EventHandler.#event_mousehover[current_scene][i][1](event);
+					 }
+				 }
+			 }
+		}
+		if(current_scene in EventHandler.#event_mousenohover) {
+			 if(EventHandler.#event_mousenohover[current_scene] !== undefined) {
+				 for(var i = 0; i < EventHandler.#event_mousenohover[current_scene].length;i++) {
+					 var temp = new Rect(mouse_x, mouse_y, 1, 1);
+					 if(!CollisionSolver.testCollisions(temp, EventHandler.#event_mousenohover[current_scene][i][0])) {
+						 EventHandler.#event_mousenohover[current_scene][i][1](event);
+					 }
+				 }
+			 }
+		}
+	}
+	// For keyboard events
+	static addEventKeyboard(scene_name, event_type, key, callback) {
+		switch(event_type) {
+			case "keydown": {
+				if(!(scene_name in EventHandler.#event_keydown)) {
+					EventHandler.#event_keydown[scene_name] = [[key, callback]];
+				}
+				else {
+					EventHandler.#event_keydown[scene_name].push([key, callback]);
+				}
+				break;
+			}
+			case "keyup": {
+				if(!(scene_name in EventHandler.#event_keyup)) {
+					EventHandler.#event_keyup[scene_name] = [[key, callback]];
+				}
+				else {
+					EventHandler.#event_keyup[scene_name].push([key, callback]);
+				}
+				break;
+			}
+			case "keypress": {
+				if(!(scene_name in EventHandler.#event_keypress)) {
+					EventHandler.#event_keypress[scene_name] = [[key, callback]];
+				}
+				else {
+					EventHandler.#event_keypress[scene_name].push([key, callback]);
+				}
+				break;
+			}
+			default: {
+				console.log("<-- ERROR addEvent: " + event_type + " not found. -->");
+				break;
+			}
+		}
+	}
+	// For non-keyboard events
+	static addEventMouse(scene_name, event_type, callback) {
+		switch(event_type) {
+			case "mouseleftdown": {
+				if(!(scene_name in EventHandler.#event_mouseleftdown)) {
+					EventHandler.#event_mouseleftdown[scene_name] = [callback];
+				}
+				else {
+					EventHandler.#event_mouseleftdown[scene_name].push(callback);
+				}
+				break;
+			}
+			case "mouserightdown": {
+				if(!(scene_name in EventHandler.#event_mouserightdown)) {
+					EventHandler.#event_mouserightdown[scene_name] = [callback];
+				}
+				else {
+					EventHandler.#event_mouserightdown[scene_name].push(callback);
+				}
+				break;
+			}
+			case "mouseleftup": {
+				if(!(scene_name in EventHandler.#event_mouseleftup)) {
+					EventHandler.#event_mouseleftup[scene_name] = [callback];
+				}
+				else {
+					EventHandler.#event_mouseleftup[scene_name].push(callback);
+				}
+				break;
+			}
+			case "mouserightup": {
+				if(!(scene_name in EventHandler.#event_mouserightup)) {
+					EventHandler.#event_mouserightup[scene_name] = [callback];
+				}
+				else {
+					EventHandler.#event_mouserightup[scene_name].push(callback);
+				}
+				break;
+			}
+			default: {
+				console.log("<-- ERROR addEvent: " + event_type + " not found. -->");
+				break;
+			}
+		}
+	}
+	// For hover events
+	static addEventHover(scene_name, event_type, rect, callback) {
+		if(event_type == "hover") {
+			if(!(scene_name in EventHandler.#event_mousehover)) {
+				EventHandler.#event_mousehover[scene_name] = [[rect, callback]];
+			}
+			else {
+				EventHandler.#event_mousehover[scene_name].push([rect, callback]);
+			}
+		}
+		else {
+			if(event_type == "nohover") {
+				if(!(scene_name in EventHandler.#event_mousenohover)) {
+					EventHandler.#event_mousenohover[scene_name] = [[rect, callback]];
+				}
+				else {
+					EventHandler.#event_mousenohover[scene_name].push([rect, callback]);
+				}
+			}
+			else {
+				if(event_type == "click") {
+					if(!(scene_name in EventHandler.#event_click)) {
+						EventHandler.#event_click[scene_name] = [[rect, callback]];
+					}
+					else {
+						EventHandler.#event_click[scene_name].push([rect, callback]);
+					}
+				}
+				else {
+					console.log("<-- ERROR addEvent: " + event_type + " not found. -->");
+				}
+			}
+		}
+	}
+	// Keyboard Events
+	static #event_keydown = {};
+	static #event_keyup = {};
+	static #event_keypress = {};
+	// Mouse Events
+	static #event_mouseleftdown = {};
+	static #event_mouserightdown = {};
+	static #event_mouseleftup = {};
+	static #event_mouserightup = {};
+	static #event_mousehover = {};
+	static #event_mousenohover = {};
+	// Object Events
+	static #event_click = {};
+}
+$(document).on("keydown", function(event) {
+	EventHandler.handleKeyDown(event);
+});
+$(document).on("keyup", function(event) {
+	EventHandler.handleKeyUp(event);
+});
+$(document).on("keypress", function(event) {
+	EventHandler.handleKeyPress(event);
+});
+$(document).on("mousedown", function(event) {
+	switch(event.which) {
+		case 1: {
+			EventHandler.handleMLeftDown(event);
+			var $canvas = $("#screen");
+			EventHandler.handleClick(event, (event.pageX - $canvas.offset().left), (event.pageY - $canvas.offset().top));
+			break;
+		}
+		case 3: {
+			EventHandler.handleMRightDown(event);
+			break;
+		}
+		default: {
+			break;
+		}
+	}
+});
+$(document).on("mouseup", function(event) {
+	switch(event.which) {
+		case 1: {
+			EventHandler.handleMLeftUp(event);
+			break;
+		}
+		case 3: {
+			EventHandler.handleMRightUp(event);
+			break;
+		}
+		default: {
+			break;
+		}
+	}
+});
+$(document).on("mousemove", function(event) {
+	if(loading_done == true) {
+		var $canvas = $("#screen");
+		EventHandler.handleMHover(event, (event.pageX - $canvas.offset().left), (event.pageY - $canvas.offset().top));
+	}
+});
 class Rect {
 	// Constructor
 	constructor(pos_x, pos_y, width, height) {
@@ -164,7 +493,7 @@ class Rect {
 	setWidth(new_width) {
 		this.#width = new_width;
 	}
-	setheight(new_height) {
+	setHeight(new_height) {
 		this.#height = new_height;
 	}
 	setXPos(new_pos_x) {
@@ -232,6 +561,25 @@ class Rect {
 		}
 		else {
 			CollisionSolver.removeRect(this);
+		}
+	}
+	addEventKeyboard(scene_name, event_type, key, callback) {
+		var number = null;
+		if(isNaN(key)) {
+			key = ("" + key).toUpperCase();
+			number = key.charCodeAt(0);
+		}
+		else {
+			number = Number(key);
+		}
+		EventHandler.addEventKeyboard(scene_name, event_type, number, function(event) { callback(event, this); }.bind(this));
+	}
+	addEvent(scene_name, event_type, callback) {
+		if(event_type == "hover" || event_type == "nohover" || event_type == "click") {
+			EventHandler.addEventHover(scene_name, event_type, this, function(event) { callback(event, this); }.bind(this));
+		}
+		else {
+			EventHandler.addEventMouse(scene_name, event_type, function(event) { callback(event, this); }.bind(this));
 		}
 	}
 	width() {
@@ -303,10 +651,6 @@ function clearScreen() {
 	var draw_context = canvas.getContext("2d");
 	draw_context.clearRect(0, 0, canvas.width, canvas.height);
 }
-var square1 = new Rect(0, 0, 50, 50);
-square1.setImg("4");
-var square2 = new Rect(500, 500, 50, 50);
-square2.setColor("green");
 // Runs the main game and handles scene switching
 function mainLoop() {
 	// Handle any collisions from the last frame
@@ -316,8 +660,6 @@ function mainLoop() {
 	// Render the current scene
 	switch(current_scene) {
 		case "TEST": {
-			square2.draw();
-			square1.draw();
 			break;
 		}
 		default: {
@@ -332,21 +674,3 @@ function exitLoop() {
 	clearInterval(running_interval);
 	// !TODO clean up resources
 }
-$(document).on("keydown", function(event) {
-	// W or ArrowUp
-	if (event.keyCode == 87 || event.keyCode == 38) {
-		square1.setYPos(square1.ypos() - 10); 
-	}
-	// A or ArrowLeft
-	if (event.keyCode == 65 || event.keyCode == 37) {
-		square1.setXPos(square1.xpos() - 10); 
-	}
-	// S or ArrowDown
-	if (event.keyCode == 83 || event.keyCode == 40) {
-		square1.setYPos(square1.ypos() + 10); 
-	}
-	// D or ArrowRight
-	if (event.keyCode == 68 || event.keyCode == 39) {
-		square1.setXPos(square1.xpos() + 10); 
-	}
-});
