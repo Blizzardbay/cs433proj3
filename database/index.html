@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UPLOAD FILE</title>
+    <!-- Including the xlsx library for reading Excel files -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.2/xlsx.full.min.js"></script>
+    <!-- Including jQuery library for easier DOM manipulation -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1>POKEMON GAME DATA</h1>
+    <!-- File input for uploading Excel files -->
+    <input type="file" id="fileUpload" accept=".xlsx" />
+    <!-- Button to trigger the upload process -->
+    <button id="uploadButton">Upload to Database</button>
+
+    <!-- Including the external JavaScript file for handling the file upload and processing -->
+    <script src="upload.js"></script>
+  </body>
+</html>
