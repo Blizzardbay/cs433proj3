@@ -9,9 +9,12 @@ $(document).ready(function() {
 	
 
     $('#PlayButton').click(function() {
-        $('#menu').remove(); 
-        $('#screen').show();
-        startGame();         
+		if(loading_done == true) {
+            $('#textheading').remove();
+            $('#menu').remove(); 
+            $('#screen').show();
+            startGame();   
+        }     
     });
 
 	$('#SoundSettingsButton').click(function() {
