@@ -12,7 +12,13 @@ $(document).ready(function() {
         alert('Sound settings will be here!');
     });
 
-
+	$('#quitButton').click(function() {
+        $('#menu').remove(); 
+		$('#screen').show();//just having it do this for now until i figure where to send quit to
+        startGame(); //just having it do this for now until i figure where to send quit to
+        alert('Quitting the game.'); 
+        //window.location.href = //idk where to send it >:|
+    });
 
 });	
 // Image variables
