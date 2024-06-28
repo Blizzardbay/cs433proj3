@@ -3,10 +3,33 @@
 	<head>
 		<title>Project 3</title>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+		<style>
+			/* Add some basic styling for the menu */
+			#menu {
+				width: 300px;
+				margin: 0 auto;
+				text-align: center;
+				padding-top: 100px;
+			}
+			#menu button {
+				display: block;
+				width: 100%;
+				padding: 10px;
+				margin: 10px 0;
+				font-size: 18px;
+			}
+			#screen {
+				display: none; /* Hide canvas by default */
+			}
+		</style>
 	</head>
 	<body>
 		<script src="proj3.js"></script>
 		<h1>Project 3</h1>
+		<div id="menu">
+			<button id="playButton">Play</button>
+			<button id="soundSettingsButton">Sound Settings</button>
+		</div>
 		<canvas id="screen" width="1080" height="720" style="border:1px solid #000000"></canvas>
 	</body>
 </html>
