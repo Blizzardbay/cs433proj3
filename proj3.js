@@ -1,6 +1,7 @@
 // Project 3 CMSC 433: Created By: Darrian Corkadel, <List names here>
 //menu handling
 $(document).ready(function() {
+	var backgroundMusic = document.getElementById('backgroundMusic');
 
     $('#playButton').click(function() {
         $('#menu').remove(); 
@@ -17,6 +18,7 @@ $(document).ready(function() {
 		$('#screen').show();//just having it do this for now until i figure where to send quit to
         startGame(); //just having it do this for now until i figure where to send quit to
         alert('Quitting the game.'); 
+		backgroundMusic.pause();
         //window.location.href = //idk where to send it >:|
     });
 
