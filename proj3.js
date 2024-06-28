@@ -68,39 +68,75 @@ class CollisionSolver {
 					var posx_dyn = value_dyn.xpos();
 					var posy_dyn = value_dyn.ypos();
 					
+					var points_dyn = [[posx_dyn, posy_dyn],[posx_dyn + width_dyn, posy_dyn],[posx_dyn + width_dyn, posy_dyn + height_dyn],[posx_dyn, posy_dyn + height_dyn]];
+					var center_dyn = [posx_dyn + (width_dyn / 2), posy_dyn + (height_dyn / 2)];
+					
 					var width_stat = value_stat.width();
 					var height_stat = value_stat.height();
 					var posx_stat = value_stat.xpos();
 					var posy_stat = value_stat.ypos();
+					
+					var points_stat = [[posx_stat, posy_stat],[posx_stat + width_stat, posy_stat],[posx_stat + width_stat, posy_stat + height_stat],[posx_stat, posy_stat + height_stat]];
 					// Note: we are breaking after b/c the next conflict will
 					// be solved in the next frame
-					// Left
-					var left = posx_dyn + width_dyn > posx_stat && posx_dyn < posx_stat;
-					var right = posx_dyn < posx_stat + width_stat && posx_dyn > posx_stat;
-					var height1 = posy_dyn + height_dyn > posy_stat && posy_dyn < posy_stat + height_stat;
-					if(left && height1) {
-						value_dyn.setXPos(posx_stat - width_dyn);
-						break;
-					}
-					// Right
-					if(right && height1) {
-						value_dyn.setXPos(posx_stat + width_stat);
-						break;
-					}
-					// Top
-					if(posy_dyn + height_dyn > posy_stat && posy_dyn < posy_stat && (left || right)) {
-						value_dyn.setYPos(posy_stat - height_dyn);
-						console.log("runs1");
-						break;
-					}
-					// Bottom
-					if(posy_dyn > posy_stat + height_stat && posy_dyn > posy_stat  && (left || right)) {
-						value_dyn.setYPos(posy_stat + height_stat);
-						console.log("runs4");
-						break;
+					for(var i = 0; i < points_dyn.length;i++) {
+						var line_dyn = [center_dyn, points_dyn[i]];
+						for(var j = 0; j < points_stat.length;j++) {
+							var edge_stat = [points_stat[j], points_stat[(j + 1) % points_stat.length]];
+							
+							var d = ((line_dyn[0][0] - line_dyn[1][0])*(edge_stat[0][1] - edge_stat[1][1])) - ((line_dyn[0][1] - line_dyn[1][1])*(edge_stat[0][0] - edge_stat[1][0]));
+							
+							var t = (((line_dyn[0][0] - edge_stat[0][0])*(edge_stat[0][1] - edge_stat[1][1])) - ((line_dyn[0][1] - edge_stat[0][1])*(edge_stat[0][0] - edge_stat[1][0])))/d;
+							
+							var u = -(((line_dyn[0][0] - line_dyn[1][0])*(line_dyn[0][1] - edge_stat[0][1])) - ((line_dyn[0][1] - line_dyn[1][1])*(line_dyn[0][0] - edge_stat[0][0])))/d;
+							
+							if(u >= 0 && u <= 1.0 && t >= 0 && t <= 1.0) {
+								if(value_dyn.xpos() < value_stat.xpos()) {
+									value_dyn.setXPos(posx_dyn + ((1.0 - t) * (line_dyn[0][0] - line_dyn[1][0])));
+								}
+								if(value_dyn.xpos() > value_stat.xpos()) {
+									value_dyn.setXPos(posx_dyn + ((1.0 - t) * (line_dyn[0][0] - line_dyn[1][0])));
+									if(value_dyn.ypos() > value_stat.ypos()) {
+										value_dyn.setYPos(posy_dyn + ((1.0 - t) * (line_dyn[0][1] - line_dyn[1][1])));
+									}
+									if(value_dyn.ypos() < value_stat.ypos()) {
+										value_dyn.setYPos(posy_dyn + ((1.0 - t) * (line_dyn[0][1] - line_dyn[1][1])));
+									}
+									break;
+								}
+								if(value_dyn.ypos() > value_stat.ypos()) {
+									value_dyn.setYPos(posy_dyn + ((1.0 - t) * (line_dyn[0][1] - line_dyn[1][1])));
+								}
+								if(value_dyn.ypos() < value_stat.ypos()) {
+									value_dyn.setYPos(posy_dyn + ((1.0 - t) * (line_dyn[0][1] - line_dyn[1][1])));
+									break;
+								}
+							}
+							
+						}	
 					}
 				}
 			}
+		}
+	}
+	static testCollisions(rect1, rect2) {
+		// AABB - Axis Aligned Bounding Box
+		if(rect1.xpos() + rect1.width() >= rect2.xpos() && rect1.xpos() <= rect2.xpos() + rect2.width() &&
+				rect1.ypos() + rect1.height() >= rect2.ypos() && rect1.ypos() <= rect2.ypos() + rect2.height()) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	static testInside(rect1, rect2) {
+		// AABB - Axis Aligned Bounding Box
+		if(rect1.xpos() + rect1.width() > rect2.xpos() && rect1.xpos() < rect2.xpos() + rect2.width() &&
+				rect1.ypos() + rect1.height() > rect2.ypos() && rect1.ypos() < rect2.ypos() + rect2.height()) {
+			return true;
+		}
+		else {
+			return false;
 		}
 	}
 	static #dynamic_objects = {};
@@ -266,10 +302,6 @@ function clearScreen() {
 	var draw_context = canvas.getContext("2d");
 	draw_context.clearRect(0, 0, canvas.width, canvas.height);
 }
-var square1 = new Rect(0, 0, 50, 50);
-square1.setImg("4");
-var square2 = new Rect(500, 500, 50, 50);
-square2.setColor("green");
 // Runs the main game and handles scene switching
 function mainLoop() {
 	// Handle any collisions from the last frame
@@ -279,8 +311,6 @@ function mainLoop() {
 	// Render the current scene
 	switch(current_scene) {
 		case "TEST": {
-			square2.draw();
-			square1.draw();
 			break;
 		}
 		default: {
@@ -295,21 +325,3 @@ function exitLoop() {
 	clearInterval(running_interval);
 	// !TODO clean up resources
 }
-$(document).on("keydown", function(event) {
-	// W or ArrowUp
-	if (event.keyCode == 87 || event.keyCode == 38) {
-		square1.setYPos(square1.ypos() - 10); 
-	}
-	// A or ArrowLeft
-	if (event.keyCode == 65 || event.keyCode == 37) {
-		square1.setXPos(square1.xpos() - 10); 
-	}
-	// S or ArrowDown
-	if (event.keyCode == 83 || event.keyCode == 40) {
-		square1.setYPos(square1.ypos() + 10); 
-	}
-	// D or ArrowRight
-	if (event.keyCode == 68 || event.keyCode == 39) {
-		square1.setXPos(square1.xpos() + 10); 
-	}
-});
