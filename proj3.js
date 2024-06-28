@@ -9,12 +9,12 @@ $(document).ready(function() {
 	
 
     $('#PlayButton').click(function() {
-		if(loading_done == true) {
+        if(loading_done == true) {
             $('#textheading').remove();
             $('#menu').remove(); 
             $('#screen').show();
             startGame();   
-        }     
+        }         
     });
 
 	$('#SoundSettingsButton').click(function() {
