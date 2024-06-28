@@ -8,7 +8,8 @@ $(document).ready(function() {
 
     $('#PlayButton').click(function() {
 		if(loading_done == true) {
-			 $('#menu').remove(); 
+			$('#textheading').remove();
+			$('#menu').remove(); 
 			$('#screen').show();
 			startGame();   
 		}
@@ -65,6 +66,8 @@ function waitForLoad() {
 waitForLoad();
 function startGame() {
 	if(loading_done == true) {
+		var canvas = document.getElementById("screen");
+		canvas.oncontextmenu = function(menu) { menu.preventDefault(); menu.stopPropagation(); }
 		// Run the main loop function
 		running_interval = setInterval(mainLoop, 7); // Note: 7ms ~= 144fps
 	}
@@ -192,6 +195,286 @@ class CollisionSolver {
 	static #static_objects = {};
 	static #static_count = 0;
 }
+class EventHandler {
+	static handleKeyDown(event) {
+		 if(current_scene in EventHandler.#event_keydown) {
+			 if(EventHandler.#event_keydown[current_scene] !== undefined) {
+				 for(var i = 0; i < EventHandler.#event_keydown[current_scene].length;i++) {
+					 if(event.keyCode == EventHandler.#event_keydown[current_scene][i][0]) {
+						 EventHandler.#event_keydown[current_scene][i][1](event);
+					 }
+				 }
+			 }
+		}
+	}
+	static handleKeyUp(event) {
+		if(current_scene in EventHandler.#event_keyup) {
+			 if(EventHandler.#event_keyup[current_scene] !== undefined) {
+				 for(var i = 0; i < EventHandler.#event_keyup[current_scene].length;i++) {
+					 if(event.keyCode == EventHandler.#event_keyup[current_scene][i][0]) {
+						 EventHandler.#event_keyup[current_scene][i][1](event);
+					 }
+				 }
+			 }
+		}
+	}
+	static handleKeyPress(event) {
+		if(current_scene in EventHandler.#event_keypress) {
+			 if(EventHandler.#event_keypress[current_scene] !== undefined) {
+				 for(var i = 0; i < EventHandler.#event_keypress[current_scene].length;i++) {
+					 if(event.keyCode == EventHandler.#event_keypress[current_scene][i][0]) {
+						 EventHandler.#event_keypress[current_scene][i][1](event);
+					 }
+				 }
+			 }
+		}
+	}
+	static handleMLeftDown(event) {
+		if(current_scene in EventHandler.#event_mouseleftdown) {
+			 if(EventHandler.#event_mouseleftdown[current_scene] !== undefined) {
+				 for(var i = 0; i < EventHandler.#event_mouseleftdown[current_scene].length;i++) {
+					 EventHandler.#event_mouseleftdown[current_scene][i](event);
+				 }
+			 }
+		}
+	}
+	static handleClick(event, mouse_x, mouse_y) {
+		if(current_scene in EventHandler.#event_click) {
+			 if(EventHandler.#event_click[current_scene] !== undefined) {
+				 for(var i = 0; i < EventHandler.#event_click[current_scene].length;i++) {
+					 var temp = new Rect(mouse_x, mouse_y, 1, 1);
+					 if(CollisionSolver.testCollisions(temp, EventHandler.#event_click[current_scene][i][0])) {
+						 EventHandler.#event_click[current_scene][i][1](event);
+					 }
+				 }
+			 }
+		}
+	}
+	static handleMRightDown(event) {
+		if(current_scene in EventHandler.#event_mouserightdown) {
+			 if(EventHandler.#event_mouserightdown[current_scene] !== undefined) {
+				 for(var i = 0; i < EventHandler.#event_mouserightdown[current_scene].length;i++) {
+					 EventHandler.#event_mouserightdown[current_scene][i](event);
+				 }
+			 }
+		}
+	}
+	static handleMLeftUp(event) {
+		if(current_scene in EventHandler.#event_mouseleftup) {
+			 if(EventHandler.#event_mouseleftup[current_scene] !== undefined) {
+				 for(var i = 0; i < EventHandler.#event_mouseleftup[current_scene].length;i++) {
+					 EventHandler.#event_mouseleftup[current_scene][i](event);
+				 }
+			 }
+		}
+	}
+	static handleMRightUp(event) {
+		if(current_scene in EventHandler.#event_mouserightup) {
+			 if(EventHandler.#event_mouserightup[current_scene] !== undefined) {
+				 for(var i = 0; i < EventHandler.#event_mouserightup[current_scene].length;i++) {
+					 EventHandler.#event_mouserightup[current_scene][i](event);
+				 }
+			 }
+		}
+	}
+	static handleMHover(event, mouse_x, mouse_y) {
+		if(current_scene in EventHandler.#event_mousehover) {
+			 if(EventHandler.#event_mousehover[current_scene] !== undefined) {
+				 for(var i = 0; i < EventHandler.#event_mousehover[current_scene].length;i++) {
+					 var temp = new Rect(mouse_x, mouse_y, 1, 1);
+					 if(CollisionSolver.testCollisions(temp, EventHandler.#event_mousehover[current_scene][i][0])) {
+						 EventHandler.#event_mousehover[current_scene][i][1](event);
+					 }
+				 }
+			 }
+		}
+		if(current_scene in EventHandler.#event_mousenohover) {
+			 if(EventHandler.#event_mousenohover[current_scene] !== undefined) {
+				 for(var i = 0; i < EventHandler.#event_mousenohover[current_scene].length;i++) {
+					 var temp = new Rect(mouse_x, mouse_y, 1, 1);
+					 if(!CollisionSolver.testCollisions(temp, EventHandler.#event_mousenohover[current_scene][i][0])) {
+						 EventHandler.#event_mousenohover[current_scene][i][1](event);
+					 }
+				 }
+			 }
+		}
+	}
+	// For keyboard events
+	static addEventKeyboard(scene_name, event_type, key, callback) {
+		switch(event_type) {
+			case "keydown": {
+				if(!(scene_name in EventHandler.#event_keydown)) {
+					EventHandler.#event_keydown[scene_name] = [[key, callback]];
+				}
+				else {
+					EventHandler.#event_keydown[scene_name].push([key, callback]);
+				}
+				break;
+			}
+			case "keyup": {
+				if(!(scene_name in EventHandler.#event_keyup)) {
+					EventHandler.#event_keyup[scene_name] = [[key, callback]];
+				}
+				else {
+					EventHandler.#event_keyup[scene_name].push([key, callback]);
+				}
+				break;
+			}
+			case "keypress": {
+				if(!(scene_name in EventHandler.#event_keypress)) {
+					EventHandler.#event_keypress[scene_name] = [[key, callback]];
+				}
+				else {
+					EventHandler.#event_keypress[scene_name].push([key, callback]);
+				}
+				break;
+			}
+			default: {
+				console.log("<-- ERROR addEvent: " + event_type + " not found. -->");
+				break;
+			}
+		}
+	}
+	// For non-keyboard events
+	static addEventMouse(scene_name, event_type, callback) {
+		switch(event_type) {
+			case "mouseleftdown": {
+				if(!(scene_name in EventHandler.#event_mouseleftdown)) {
+					EventHandler.#event_mouseleftdown[scene_name] = [callback];
+				}
+				else {
+					EventHandler.#event_mouseleftdown[scene_name].push(callback);
+				}
+				break;
+			}
+			case "mouserightdown": {
+				if(!(scene_name in EventHandler.#event_mouserightdown)) {
+					EventHandler.#event_mouserightdown[scene_name] = [callback];
+				}
+				else {
+					EventHandler.#event_mouserightdown[scene_name].push(callback);
+				}
+				break;
+			}
+			case "mouseleftup": {
+				if(!(scene_name in EventHandler.#event_mouseleftup)) {
+					EventHandler.#event_mouseleftup[scene_name] = [callback];
+				}
+				else {
+					EventHandler.#event_mouseleftup[scene_name].push(callback);
+				}
+				break;
+			}
+			case "mouserightup": {
+				if(!(scene_name in EventHandler.#event_mouserightup)) {
+					EventHandler.#event_mouserightup[scene_name] = [callback];
+				}
+				else {
+					EventHandler.#event_mouserightup[scene_name].push(callback);
+				}
+				break;
+			}
+			default: {
+				console.log("<-- ERROR addEvent: " + event_type + " not found. -->");
+				break;
+			}
+		}
+	}
+	// For hover events
+	static addEventHover(scene_name, event_type, rect, callback) {
+		if(event_type == "hover") {
+			if(!(scene_name in EventHandler.#event_mousehover)) {
+				EventHandler.#event_mousehover[scene_name] = [[rect, callback]];
+			}
+			else {
+				EventHandler.#event_mousehover[scene_name].push([rect, callback]);
+			}
+		}
+		else {
+			if(event_type == "nohover") {
+				if(!(scene_name in EventHandler.#event_mousenohover)) {
+					EventHandler.#event_mousenohover[scene_name] = [[rect, callback]];
+				}
+				else {
+					EventHandler.#event_mousenohover[scene_name].push([rect, callback]);
+				}
+			}
+			else {
+				if(event_type == "click") {
+					if(!(scene_name in EventHandler.#event_click)) {
+						EventHandler.#event_click[scene_name] = [[rect, callback]];
+					}
+					else {
+						EventHandler.#event_click[scene_name].push([rect, callback]);
+					}
+				}
+				else {
+					console.log("<-- ERROR addEvent: " + event_type + " not found. -->");
+				}
+			}
+		}
+	}
+	// Keyboard Events
+	static #event_keydown = {};
+	static #event_keyup = {};
+	static #event_keypress = {};
+	// Mouse Events
+	static #event_mouseleftdown = {};
+	static #event_mouserightdown = {};
+	static #event_mouseleftup = {};
+	static #event_mouserightup = {};
+	static #event_mousehover = {};
+	static #event_mousenohover = {};
+	// Object Events
+	static #event_click = {};
+}
+$(document).on("keydown", function(event) {
+	EventHandler.handleKeyDown(event);
+});
+$(document).on("keyup", function(event) {
+	EventHandler.handleKeyUp(event);
+});
+$(document).on("keypress", function(event) {
+	EventHandler.handleKeyPress(event);
+});
+$(document).on("mousedown", function(event) {
+	switch(event.which) {
+		case 1: {
+			EventHandler.handleMLeftDown(event);
+			var $canvas = $("#screen");
+			EventHandler.handleClick(event, (event.pageX - $canvas.offset().left), (event.pageY - $canvas.offset().top));
+			break;
+		}
+		case 3: {
+			EventHandler.handleMRightDown(event);
+			break;
+		}
+		default: {
+			break;
+		}
+	}
+});
+$(document).on("mouseup", function(event) {
+	switch(event.which) {
+		case 1: {
+			EventHandler.handleMLeftUp(event);
+			break;
+		}
+		case 3: {
+			EventHandler.handleMRightUp(event);
+			break;
+		}
+		default: {
+			break;
+		}
+	}
+});
+$(document).on("mousemove", function(event) {
+	if(loading_done == true) {
+		var $canvas = $("#screen");
+		EventHandler.handleMHover(event, (event.pageX - $canvas.offset().left), (event.pageY - $canvas.offset().top));
+	}
+});
 class Rect {
 	// Constructor
 	constructor(pos_x, pos_y, width, height) {
@@ -211,7 +494,7 @@ class Rect {
 	setWidth(new_width) {
 		this.#width = new_width;
 	}
-	setheight(new_height) {
+	setHeight(new_height) {
 		this.#height = new_height;
 	}
 	setXPos(new_pos_x) {
@@ -279,6 +562,25 @@ class Rect {
 		}
 		else {
 			CollisionSolver.removeRect(this);
+		}
+	}
+	addEventKeyboard(scene_name, event_type, key, callback) {
+		var number = null;
+		if(isNaN(key)) {
+			key = ("" + key).toUpperCase();
+			number = key.charCodeAt(0);
+		}
+		else {
+			number = Number(key);
+		}
+		EventHandler.addEventKeyboard(scene_name, event_type, number, function(event) { callback(event, this); }.bind(this));
+	}
+	addEvent(scene_name, event_type, callback) {
+		if(event_type == "hover" || event_type == "nohover" || event_type == "click") {
+			EventHandler.addEventHover(scene_name, event_type, this, function(event) { callback(event, this); }.bind(this));
+		}
+		else {
+			EventHandler.addEventMouse(scene_name, event_type, function(event) { callback(event, this); }.bind(this));
 		}
 	}
 	width() {
@@ -350,8 +652,6 @@ function clearScreen() {
 	var draw_context = canvas.getContext("2d");
 	draw_context.clearRect(0, 0, canvas.width, canvas.height);
 }
-var sq1 = new Rect(0, 0, 50, 50);
-sq1.setColor("rgba(255,0,0,1)");
 // Runs the main game and handles scene switching
 function mainLoop() {
 	// Handle any collisions from the last frame
@@ -361,7 +661,6 @@ function mainLoop() {
 	// Render the current scene
 	switch(current_scene) {
 		case "TEST": {
-			sq1.draw();
 			break;
 		}
 		default: {
