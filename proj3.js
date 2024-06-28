@@ -4,10 +4,13 @@ $(document).ready(function() {
 	var MenuMusic = document.getElementById('MenuMusic');
 	var SoundSettings = $('#SoundSettings');
     var volumeControl = $('#volumeControl');
+	var MenuOptionButton = $('#MenuOptionButton');
+	
 
     $('#PlayButton').click(function() {
         $('#menu').remove(); 
         $('#screen').show();
+		MenuOptionButton.show();
         startGame();         
     });
 
