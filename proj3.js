@@ -10,12 +10,18 @@ $(document).ready(function() {
 	var MenuOptionButton = $('#MenuOptionButton');
 	
     $('#PlayButton').click(function() {
+		console.log("Play button clicked");
         if(loading_done == true) {
             $('#textheading').remove();
             $('#menu').hide(); 
             $('#screen').show();
 			$('#MenuOptionButton').show(); 
+			$('#battleMenu').show();
+            $('#battleLog').show();
             startGame();   
+        }
+		else {
+            console.log("Loading not done yet");
         }         
     });
 
@@ -46,13 +52,17 @@ $(document).ready(function() {
     volumeControl.on('input', function() {
         MenuMusic.volume = this.value / 100;
     });
+	
+	$('#FightButton').click(function() {
+        console.log("Fight button clicked");
+        fight();
 
-});	
+    });	
+
+	loadImages();
      
 
-$('#FightButton').click(function() {
-	console.log("Fight button clicked");
-    fight();
+
 });
 
 // Basic battle logic for the fight button
