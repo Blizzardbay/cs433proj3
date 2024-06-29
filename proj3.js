@@ -51,23 +51,8 @@ $(document).ready(function() {
     volumeControl.on('input', function() {
         MenuMusic.volume = this.value / 100;
     });
-	initGame();
+	
 });
-
-// Function to initialize the game
-function initGame() {
-    // Parse the image list to create a list of Pokemon names and stats
-    var pokemonList = parsePokemonList();
-
-    // Randomly select Pokemon for player and enemy
-    playerPokemon = getRandomPokemon(pokemonList);
-    enemyPokemon = getRandomPokemon(pokemonList);
-
-    // Update the battle log with initial values
-    updateBattleLog();
-
-    waitForLoad();
-}
 
 // Function to parse the image list and create Pokemon stats
 function parsePokemonList() {
@@ -115,7 +100,6 @@ function fight() {
     // Update battle log
     updateBattleLog();
 }
-
 	
 	
 
