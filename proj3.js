@@ -12,7 +12,7 @@ $(document).ready(function() {
     $('#PlayButton').click(function() {
 		console.log("Play button clicked");
         if(loading_done == true) {
-            $('#textheading').remove();
+            $('#heading').hide();
             $('#menu').hide(); 
             $('#screen').show();
 			$('#MenuOptionButton').show(); 
@@ -58,11 +58,6 @@ $(document).ready(function() {
         fight();
 
     });	
-
-	loadImages();
-     
-
-
 });
 
 // Basic battle logic for the fight button
@@ -130,14 +125,14 @@ function exitGame() {
 }
 // Drawing functions / Classes
 class CollisionSolver {
-	static addRect(rect) {
+	static addRect(scene_name, rect) {
 		if(rect.collisionType() == "Static") {
-			CollisionSolver.#static_objects[rect.id().toString()] = rect;
+			CollisionSolver.#static_objects[scene_name + rect.id().toString()] = rect;
 			CollisionSolver.#static_count = CollisionSolver.#static_count + 1;
 		}
 		else {
 			if(rect.collisionType() == "Dynamic") {
-				CollisionSolver.#dynamic_objects[rect.id().toString()] = rect;
+				CollisionSolver.#dynamic_objects[scene_name + rect.id().toString()] = rect;
 				CollisionSolver.#dynamic_count = CollisionSolver.#dynamic_count + 1;
 			}
 			else {
@@ -145,14 +140,14 @@ class CollisionSolver {
 			}
 		}
 	}
-	static removeRect(rect) {
+	static removeRect(scene_name, rect) {
 		if(rect.collisionType() == "Static") {
-			CollisionSolver.#static_objects.delete(rect.id().toString());
+			CollisionSolver.#static_objects.delete(scene_name + rect.id().toString());
 			CollisionSolver.#static_count = CollisionSolver.#static_count - 1;
 		}
 		else {
 			if(rect.collisionType() == "Dynamic") {
-				CollisionSolver.#dynamic_objects.delete(rect.id().toString());
+				CollisionSolver.#dynamic_objects.delete(scene_name + rect.id().toString());
 				CollisionSolver.#dynamic_count = CollisionSolver.#dynamic_count - 1;
 			}
 			else {
@@ -537,6 +532,10 @@ class Rect {
 		this.#color = "rgba(0, 0, 0, 0)";
 		this.#img = "";	
 		this.#has_collisions = false;
+		this.#text = "";
+		this.#font = "";
+		this.#font_color = "";
+		this.#text_alignment = "";
 		this.#id = Rect.#counter;
 		Rect.#counter = Rect.#counter + 1;
 	}
@@ -593,28 +592,28 @@ class Rect {
 			}
 		}
 	}
-	setCollisions(new_value) {
+	setCollisions(scene_name, new_value) {
 		this.#has_collisions = new_value;
 		this.#collision_type = "Static";
 		if(this.#has_collisions == true) {
-			CollisionSolver.addRect(this);
+			CollisionSolver.addRect(scene_name, this);
 		}
 		else {
-			CollisionSolver.removeRect(this);
+			CollisionSolver.removeRect(scene_name, this);
 		}
 	}
-	setCollisions(new_value, type) {
+	setCollisions(scene_name, new_value, type) {
 		this.#has_collisions = new_value;
 		this.#collision_type = type;
 		if(this.#has_collisions == true) {
 			
-			CollisionSolver.addRect(this);
+			CollisionSolver.addRect(scene_name, this);
 		}
 		else {
-			CollisionSolver.removeRect(this);
+			CollisionSolver.removeRect(scene_name, this);
 		}
 	}
-	addEventKeyboard(scene_name, event_type, key, callback) {
+	addEventKeyboard(scene_name, state_name, event_type, key, callback) {
 		var number = null;
 		if(isNaN(key)) {
 			key = ("" + key).toUpperCase();
@@ -623,15 +622,21 @@ class Rect {
 		else {
 			number = Number(key);
 		}
-		EventHandler.addEventKeyboard(scene_name, event_type, number, function(event) { callback(event, this); }.bind(this));
+		EventHandler.addEventKeyboard(scene_name + state_name, event_type, number, function(event) { callback(event, this); }.bind(this));
 	}
-	addEvent(scene_name, event_type, callback) {
+	addEvent(scene_name, state_name, event_type, callback) {
 		if(event_type == "hover" || event_type == "nohover" || event_type == "click") {
-			EventHandler.addEventHover(scene_name, event_type, this, function(event) { callback(event, this); }.bind(this));
+			EventHandler.addEventHover(scene_name + state_name, event_type, this, function(event) { callback(event, this); }.bind(this));
 		}
 		else {
-			EventHandler.addEventMouse(scene_name, event_type, function(event) { callback(event, this); }.bind(this));
+			EventHandler.addEventMouse(scene_name + state_name, event_type, function(event) { callback(event, this); }.bind(this));
 		}
+	}
+	setText(new_text, font_info, font_color, align) {
+		this.#text = new_text;
+		this.#font = font_info;
+		this.#font_color = font_color;
+		this.#text_alignment = align;
 	}
 	width() {
 		return Object.freeze(this.#width);
@@ -660,6 +665,9 @@ class Rect {
 	hasCollisions() {
 		return Object.freeze(this.#has_collisions);
 	}
+	text() {
+		return Object.freeze(this.#text);
+	}
 	collisionType() {
 		return Object.freeze(this.#collision_type);
 	}
@@ -673,10 +681,36 @@ class Rect {
 		var draw_context = canvas.getContext("2d");
 		if(this.#img != "") {
 			draw_context.drawImage(image_list[this.#img], 0, 0, image_list[this.#img].width, image_list[this.#img].height, this.#pos_x + this.#offset_x, this.#pos_y + this.#offset_y, this.#width, this.#height);
+			if(this.#text != "") {
+				draw_context.fillStyle = this.#font_color;
+				draw_context.font = this.#font;
+				if(this.#text_alignment == "bottom") {
+					draw_context.fillText(this.#text, this.#pos_x + this.#offset_x, this.#pos_y + this.#height + this.#offset_y, this.#width);
+				}
+				else {
+					var index = this.#font.indexOf("px");
+					var str = this.#font.substr(0, index);
+					var size_num = Number(str);
+					draw_context.fillText(this.#text, this.#pos_x + this.#offset_x, this.#pos_y + (this.#height / 2.0) + (size_num / 2.75) + this.#offset_y, this.#width);
+				}
+			}
 		}
 		else {
 			draw_context.fillStyle = this.#color;
 			draw_context.fillRect(this.#pos_x + this.#offset_x, this.#pos_y + this.#offset_y, this.#width, this.#height);
+			if(this.#text != "") {
+				draw_context.fillStyle = this.#font_color;
+				draw_context.font = this.#font;
+				if(this.#text_alignment == "bottom") {
+					draw_context.fillText(this.#text, this.#pos_x + this.#offset_x, this.#pos_y + this.#height + this.#offset_y, this.#width);
+				}
+				else {
+					var index = this.#font.indexOf("px");
+					var str = this.#font.substr(0, index);
+					var size_num = Number(str);
+					draw_context.fillText(this.#text, this.#pos_x + this.#offset_x, this.#pos_y + (this.#height / 2.0) + (size_num / 2.75) + this.#offset_y, this.#width);
+				}
+			}
 		}
 	}
 	// Variables
@@ -688,6 +722,10 @@ class Rect {
 	#offset_y = 0;					// An offset to the y position of the rect (should be used for effects)
 	#color = "rgba(0, 0, 0, 0)";	// The color of the rect, note: If there is an image the image will be colored
 	#img = "";						// A possible image to be used when rendering
+	#text = "";						// Text to be rendered inside the rect
+	#font = "";						// Font info for the text
+	#font_color = "";				// Color of the text
+	#text_alignment = "";			// Either bottom or center, top is not supported by text standards
 	// Events
 	
 	// Collisions
@@ -702,6 +740,11 @@ function clearScreen() {
 	var draw_context = canvas.getContext("2d");
 	draw_context.clearRect(0, 0, canvas.width, canvas.height);
 }
+var text_test1 = new Rect(0,200, 100, 100);
+text_test1.setColor("green");
+text_test1.setText("This works!", "32px serif", "black", "center");
+var text_test2 = new Rect(0,200, 100, 50);
+text_test2.setColor("white");
 // Runs the main game and handles scene switching
 function mainLoop() {
 	// Handle any collisions from the last frame
@@ -711,6 +754,8 @@ function mainLoop() {
 	// Render the current scene
 	switch(current_scene) {
 		case "TEST": {
+			text_test1.draw();
+			//text_test2.draw();
 			break;
 		}
 		default: {
