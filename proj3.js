@@ -51,6 +51,10 @@ $(document).ready(function() {
     volumeControl.on('input', function() {
         MenuMusic.volume = this.value / 100;
     });
+	$('#FightButton').click(function() {
+        console.log("Fight button clicked");
+        fight();
+    });
 	
 });
 
