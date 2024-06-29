@@ -41,6 +41,14 @@
             border: 1px solid #888;
             width: 80%;
         }
+		#MenuOptionButton {
+            display: none;
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            padding: 10px;
+            font-size: 18px;
+        }
 		</style>
 	</head>
 	<body>
@@ -54,6 +62,7 @@
 			<button id="QuitButton">Quit</button>
 		</div>
 		<canvas id="screen" width="1080" height="720" style="border:1px solid #000000"></canvas>
+		<button id="MenuOptionButton">Main Menu</button>
 		<audio id="MenuMusic" src="main_menu_sound.mp3" autoplay loop></audio> <!--this is just example audio we can change it later-->
 		<div id="SoundSettings">
 			<div id="SoundSettingsDisplay">
