@@ -1,5 +1,7 @@
 // Project 3 CMSC 433: Created By: Darrian Corkadel, <List names here>
 var loading_done = false;
+var playerPokemon = { name: "Blastoise", hp: 100, attack: 20 };
+var enemyPokemon = { name: "Caterpie", hp: 50, attack: 5 };
 //menu handling
 $(document).ready(function() {
 	var MenuMusic = document.getElementById('MenuMusic');
@@ -46,8 +48,7 @@ $(document).ready(function() {
     });
 
 });	
-     var playerPokemon = { name: "Blastoise", hp: 100, attack: 20 };
-     var enemyPokemon = { name: "Caterpie", hp: 50, attack: 5 };
+     
 
 $('#FightButton').click(function() {
 	console.log("Fight button clicked");
