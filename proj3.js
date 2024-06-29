@@ -39,10 +39,11 @@ $(document).ready(function() {
     });
 
 });	
-var playerPokemon = { name: "Blastoise", hp: 100, attack: 20 };
-var enemyPokemon = { name: "Caterpie", hp: 50, attack: 5 };
+     var playerPokemon = { name: "Blastoise", hp: 100, attack: 20 };
+     var enemyPokemon = { name: "Caterpie", hp: 50, attack: 5 };
 
 $('#FightButton').click(function() {
+	console.log("Fight button clicked");
     fight();
 });
 
