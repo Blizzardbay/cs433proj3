@@ -740,11 +740,6 @@ function clearScreen() {
 	var draw_context = canvas.getContext("2d");
 	draw_context.clearRect(0, 0, canvas.width, canvas.height);
 }
-var text_test1 = new Rect(0,200, 100, 100);
-text_test1.setColor("green");
-text_test1.setText("This works!", "32px serif", "black", "center");
-var text_test2 = new Rect(0,200, 100, 50);
-text_test2.setColor("white");
 // Runs the main game and handles scene switching
 function mainLoop() {
 	// Handle any collisions from the last frame
@@ -754,8 +749,6 @@ function mainLoop() {
 	// Render the current scene
 	switch(current_scene) {
 		case "TEST": {
-			text_test1.draw();
-			//text_test2.draw();
 			break;
 		}
 		default: {
