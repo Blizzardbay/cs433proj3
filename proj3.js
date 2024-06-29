@@ -5,9 +5,8 @@ $(document).ready(function() {
 	var MenuMusic = document.getElementById('MenuMusic');
 	var SoundSettings = $('#SoundSettings');
     var volumeControl = $('#volumeControl');
-	var MenuOptionButton = $('#MenuOptionButton');
+	//var MenuOptionButton = $('#MenuOptionButton');
 	
-
     $('#PlayButton').click(function() {
         if(loading_done == true) {
             $('#textheading').remove();
