@@ -1182,8 +1182,8 @@ function mainLoop() {
 			break;
 		}
 		case "BATTLE": {
-			purple.draw();
-			player.draw();
+			owwe_purple.draw();
+			owwe_player.draw();
 			document.getElementById('fightMenu').style.display = 'flex';
 			break;
 		}
