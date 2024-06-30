@@ -10,7 +10,7 @@ document.getElementById('fightMenu').style.display = 'none';
 
 async function databaseFinishedLoading() {
 	// Runs upload.js and waits for it to stop running
-	const database_loading = await import("/upload.js");
+	const database_loading = await import("./upload.js");
 	// Then checks
 	var temp_loading_done = await database_loading.checkState();
 	
