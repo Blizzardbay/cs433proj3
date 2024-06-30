@@ -7,7 +7,6 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 		<!-- JavaScript file for handling the file upload and processing -->
-		<script src="upload.js"></script>
 		<style>
 			/* Add some basic styling for the menu */
 			#menu {
@@ -95,38 +94,43 @@
 		</style>
 	</head>
 	<body>
-		<h1 id="heading">Project 3</h1>
-		<div id="menu">
-			<button id="PlayButton">Play</button>
-			<button id="SoundSettingsButton">Sound Settings</button>
-			<button id="QuitButton">Quit</button>
+		<div style="display:block;"id="Loading">
+			<h1>Loading...</h1>
 		</div>
-		<canvas id="screen" width="1080" height="720" style="border: 1px solid #000000"></canvas>
-		<button id="MenuOptionButton">Main Menu</button>
-		<audio id="MenuMusic" src="main_menu_sound.mp3" autoplay loop></audio>
-		<!--this is just example audio we can change it later-->
-		<div id="SoundSettings">
-			<div id="SoundSettingsDisplay">
-				<h2>Sound Settings</h2>
-				<label for="volumeControl">Volume: </label>
-				<input type="range" id="volumeControl" min="0" max="100" value="50" />
-				<br /><br />
-				<button id="CloseSound">Close</button>
+		<div style="display:none;" id="CompletedLoading">
+			<h1 id="heading">Project 3</h1>
+			<div id="menu">
+				<button id="PlayButton">Play</button>
+				<button id="SoundSettingsButton">Sound Settings</button>
+				<button id="QuitButton">Quit</button>
+			</div>
+			<canvas id="screen" width="1080" height="720" style="border: 1px solid #000000"></canvas>
+			<button id="MenuOptionButton">Main Menu</button>
+			<audio id="MenuMusic" src="main_menu_sound.mp3" autoplay loop></audio>
+			<!--this is just example audio we can change it later-->
+			<div id="SoundSettings">
+				<div id="SoundSettingsDisplay">
+					<h2>Sound Settings</h2>
+					<label for="volumeControl">Volume: </label>
+					<input type="range" id="volumeControl" min="0" max="100" value="50" />
+					<br /><br />
+					<button id="CloseSound">Close</button>
+				</div>
+			</div>
+			<!-- Battle Menu -->
+			<div id="battleMenu">
+				<button id="FightButton">Fight</button>
+			</div>
+			<!-- Battle Log -->
+			<div id="battleLog"></div>
+			<div id="fightMenu">
+				<div class="menu-item menu-item-attack" onclick="handleAttack()">Attack</div>
+				<div class="menu-item menu-item-defend" onclick="handleDefend()">Defend</div>
+				<div class="menu-item menu-item-run" onclick="handleRun()">Run</div>
+				<div class="menu-item menu-item-item" onclick="handleItem()">Item</div>
 			</div>
 		</div>
-		<!-- Battle Menu -->
-		<div id="battleMenu">
-			<button id="FightButton">Fight</button>
-		</div>
-		<!-- Battle Log -->
-		<div id="battleLog"></div>
-		<div id="fightMenu">
-			<div class="menu-item menu-item-attack" onclick="handleAttack()">Attack</div>
-        	<div class="menu-item menu-item-defend" onclick="handleDefend()">Defend</div>
-        	<div class="menu-item menu-item-run" onclick="handleRun()">Run</div>
-			<div class="menu-item menu-item-item" onclick="handleItem()">Item</div>
-		</div>
-		<script src="proj3.js"></script>
+		<script type="module" src="proj3.js"></script>
 	</body>
 </html>
 

@@ -1,12 +1,32 @@
 // Project 3 CMSC 433: Created By: Darrian Corkadel, <List names here>
+var image_loading_done = false;
+var database_loading_done = false;
+var game_loading_done = false;
 var loading_done = false;
 var playerPokemon;
 var enemyPokemon;
 var allPokemons = [];
 document.getElementById('fightMenu').style.display = 'none';
 
+async function databaseFinishedLoading() {
+	// Runs upload.js and waits for it to stop running
+	const database_loading = await import("/proj3/cs433proj3/upload.js");
+	// Then checks
+	var temp_loading_done = await database_loading.checkState();
+	
+	var loading_div = document.getElementById("Loading");
+	var complete_div = document.getElementById("CompletedLoading");
+	loading_div.style.display = "none";
+	complete_div.style.display = "block";
+	database_loading_done = true;
+	// First load the resources
+	waitForLoad();
+}
+
+databaseFinishedLoading();
+
 //menu handling
-$(document).ready(function () {
+$(document).ready(function() {
 	var MenuMusic = document.getElementById("MenuMusic");
 	var SoundSettings = $("#SoundSettings");
 	var volumeControl = $("#volumeControl");
@@ -14,7 +34,8 @@ $(document).ready(function () {
 
 	$("#PlayButton").click(function () {
 		console.log("Play button clicked");
-		if (loading_done == true) {
+		if (image_loading_done == true && database_loading_done == true && game_loading_done == true) {
+			loading_done = true;
 			$("#heading").hide();
 			$("#menu").hide();
 			$("#screen").show();
@@ -154,7 +175,7 @@ function waitForLoad() {
 		image_list[image_load_list[i]].onload = function () {
 			complete_images = complete_images + 1;
 			if (complete_images == image_load_list.length) {
-				loading_done = true; // Loading is indicated to be done
+				image_loading_done = true; // Loading is indicated to be done
 			}
 		};
 	}
@@ -169,15 +190,13 @@ function waitForLoad() {
 
 		// Initialize player and enemy Pokémon after data is loaded
 		initializeGame();
-		loading_done = true;
+		game_loading_done = true;
 	},
 	error: function (jqXHR, textStatus, errorThrown) {
 		console.error("Failed to load Pokémon data:", textStatus, errorThrown);
 	},
 	});
 }
-// First load the resources
-waitForLoad();
 
 var player = null;
 var purple = null;
