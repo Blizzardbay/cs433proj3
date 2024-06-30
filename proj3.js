@@ -1105,85 +1105,7 @@ class Rect {
 	#id = 0;
 	static #counter = 0;
 }
-class Player_Stats{
-	
-	constructor(name, hp, attackPower, defense, specialAtk, speed, items = []) {
-        this.#name = name;
-        this.#hp = hp;
-        this.#attackPower = attackPower;
-        this.#defense = defense;
-        this.#specialAtk = specialAtk;
-        this.#speed = speed;
-        this.#items = items;
-    }
-	setName(new_name){
-		this.#name = name;
-	}
-	setHp(new_hp) {
-		this.#hp = new_hp;
-	}
-	setAttackPower(new_attackPower) {
-		this.#attackPower = new_attackPower;
-	}
-	setdefense(new_defense) {
-		this.#defense = new_defense;
-	}
-	setspecialAttack(new_specialAttack) {
-		this.#specialAtk = new_specialAttack;
-	}
-	setSpeed(new_speed){
-		this.#speed = new_speed;
-	}
-	setItems(new_items){
-		this.#items = new_items;
-	}
-	setHp(new_hp) {
-		this.#hp = new_hp;
-	}
-	setAttackPower(new_attackPower) {
-		this.#attackPower = new_attackPower;
-	}
-	setdefense(new_defense) {
-		this.#defense = new_defense;
-	}
-	setspecialAttack(new_specialAttack) {
-		this.#specialAtk = new_specialAttack;
-	}
-	setSpeed(new_speed){
-		this.#speed = new_speed;
-	}
-	setItems(new_items){
-		this.#items = new_items;
-	}
-	getName(){
-		return this.#name;
-	}
-	getHp() {
-		return this.#hp;
-	}
-	getAttackPower() {
-		return this.#attackPower;
-	}
-	getdefense() {
-		return this.#defense;
-	}
-	getspecialAttack() {
-		return this.#specialAtk;
-	}
-	getSpeed(){
-		return this.#speed;
-	}
-	getItems(){
-		return this.#items;
-	}
-	#name;
-    #hp;
-    #attackPower;
-    #defense;
-    #specialAtk;
-    #speed;
-    #items;
-}
+
 function clearScreen() {
 	var canvas = document.getElementById("screen");
 	var draw_context = canvas.getContext("2d");
@@ -1191,7 +1113,10 @@ function clearScreen() {
 }
 function handleAttack() {
 	console.log("Attack selected");
-	// Implement your attack logic here
+	var num = playerPokemon.hp;
+	enemyPokemon.hp -= num;
+	console.log(playerPokemon.hp);
+	console.log(enemyPokemon.hp);
 }
 
 function handleDefend() {
