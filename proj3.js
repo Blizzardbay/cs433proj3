@@ -945,8 +945,9 @@ function handleDefend() {
 }
 
 function handleRun() {
+	current_scene = "OPENWORLD";
 	console.log("Run selected");
-	// Implement your run logic here
+	
 }
 function handleItem() {
 	console.log("Item selected");
@@ -981,7 +982,18 @@ function mainLoop() {
 		case "BATTLE": {
 			purple.draw();
 			player.draw();
-			document.getElementById('fightMenu').style.display = 'flex';
+			
+			while(playerPokemon.hp > 0 && enemyPokemon.hp > 0){
+				var playerTurn = true;
+				if(playerTurn == true){
+				document.getElementById('fightMenu').style.display = 'flex';
+					playerTurn = false;
+				}
+				else{
+					playerPokemon.hp -= enemyPokemon.attack;
+					playerTurn = true;
+				}
+			}
 			break;
 		}
 		default: {
