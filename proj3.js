@@ -3,6 +3,7 @@ var loading_done = false;
 var playerPokemon;
 var enemyPokemon;
 var allPokemons = [];
+document.getElementById('fightMenu').style.display = 'none';
 
 //menu handling
 $(document).ready(function () {
@@ -910,6 +911,24 @@ function clearScreen() {
 	var draw_context = canvas.getContext("2d");
 	draw_context.clearRect(0, 0, canvas.width, canvas.height);
 }
+function handleAttack() {
+	console.log("Attack selected");
+	// Implement your attack logic here
+}
+
+function handleDefend() {
+	console.log("Defend selected");
+	// Implement your defend logic here
+}
+
+function handleRun() {
+	console.log("Run selected");
+	// Implement your run logic here
+}
+function handleItem() {
+	console.log("Item selected");
+}
+
 // Runs the main game and handles scene switching
 function mainLoop() {
 	// Handle any collisions from the last frame
@@ -931,11 +950,14 @@ function mainLoop() {
 					}
 				}
 			}
+			document.getElementById('fightMenu').style.display = 'none';
+
 			player.draw();
 			break;
 		}
 		case "BATTLE": {
 			purple.draw();
+			document.getElementById('fightMenu').style.display = 'flex';
 			break;
 		}
 		default: {
@@ -950,3 +972,4 @@ function exitLoop() {
 	clearInterval(running_interval);
 	// !TODO clean up resources
 }
+
