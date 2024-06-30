@@ -37,14 +37,15 @@ $(document).ready(function () {
 
 	$("#QuitButton").click(function () {
 		$("#menu").remove();
-		$("#screen").show(); //just having it do this for now until i figure where to send quit to
-		startGame(); //just having it do this for now until i figure where to send quit to
+		$("#screen").show(); 
+		startGame();
 		alert("Quitting the game.");
 		MenuMusic.pause();
 		window.location.href = "proj3.html";
 	});
 
 	MenuOptionButton.click(function () {
+		document.getElementById('fightMenu').style.display = 'none';
 		$("#screen").hide();
 		$("#menu").show();
 		MenuOptionButton.hide();
@@ -198,9 +199,8 @@ function startGame() {
 		player.setCollisions("OPENWORLD", true, "Dynamic");
 
 		purple = new Rect(256,128,100,64);
-		purple.setColor("rgba(0,0,0,0)");
-		purple.setText("Fight!", "32px serif", "black", "center");
-
+		purple.setColor("rgba(5,0,0,0)");
+		
 		world_objects = [];
 		grass_objects = [];
 		var str = "\
@@ -906,6 +906,85 @@ class Rect {
 	#id = 0;
 	static #counter = 0;
 }
+class Player_Stats{
+	
+	constructor(name, hp, attackPower, defense, specialAtk, speed, items = []) {
+        this.#name = name;
+        this.#hp = hp;
+        this.#attackPower = attackPower;
+        this.#defense = defense;
+        this.#specialAtk = specialAtk;
+        this.#speed = speed;
+        this.#items = items;
+    }
+	setName(new_name){
+		this.#name = name;
+	}
+	setHp(new_hp) {
+		this.#hp = new_hp;
+	}
+	setAttackPower(new_attackPower) {
+		this.#attackPower = new_attackPower;
+	}
+	setdefense(new_defense) {
+		this.#defense = new_defense;
+	}
+	setspecialAttack(new_specialAttack) {
+		this.#specialAtk = new_specialAttack;
+	}
+	setSpeed(new_speed){
+		this.#speed = new_speed;
+	}
+	setItems(new_items){
+		this.#items = new_items;
+	}
+	setHp(new_hp) {
+		this.#hp = new_hp;
+	}
+	setAttackPower(new_attackPower) {
+		this.#attackPower = new_attackPower;
+	}
+	setdefense(new_defense) {
+		this.#defense = new_defense;
+	}
+	setspecialAttack(new_specialAttack) {
+		this.#specialAtk = new_specialAttack;
+	}
+	setSpeed(new_speed){
+		this.#speed = new_speed;
+	}
+	setItems(new_items){
+		this.#items = new_items;
+	}
+	getName(){
+		return this.#name;
+	}
+	getHp() {
+		return this.#hp;
+	}
+	getAttackPower() {
+		return this.#attackPower;
+	}
+	getdefense() {
+		return this.#defense;
+	}
+	getspecialAttack() {
+		return this.#specialAtk;
+	}
+	getSpeed(){
+		return this.#speed;
+	}
+	getItems(){
+		return this.#items;
+	}
+	#name;
+    #hp;
+    #attackPower;
+    #defense;
+    #specialAtk;
+    #speed;
+    #items;
+}
 function clearScreen() {
 	var canvas = document.getElementById("screen");
 	var draw_context = canvas.getContext("2d");
@@ -957,6 +1036,7 @@ function mainLoop() {
 		}
 		case "BATTLE": {
 			purple.draw();
+			player.draw();
 			document.getElementById('fightMenu').style.display = 'flex';
 			break;
 		}
@@ -972,4 +1052,3 @@ function exitLoop() {
 	clearInterval(running_interval);
 	// !TODO clean up resources
 }
-
