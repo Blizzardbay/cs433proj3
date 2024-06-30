@@ -47,25 +47,12 @@ if ($conn->query($tableCreationQuery) === FALSE) {
 $jsonData = json_decode($_POST['data'], true);
 
 // Prepare an SQL statement for inserting data
-// The ? symbols are placeholders for the actual values that will be bound later
 $stmt = $conn->prepare("
 INSERT INTO pokemonData (name, type1, type2, total, hp, attack, defense, sp_atk, sp_def, speed, generation, legendary) 
 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 ");
 
-// 'sssiiiiiiiii' means:
-// 's' for string (name)
-// 's' for string (type1)
-// 's' for string (type2)
-// 'i' for integer (total)
-// 'i' for integer (hp)
-// 'i' for integer (attack)
-// 'i' for integer (defense)
-// 'i' for integer (sp_atk)
-// 'i' for integer (sp_def)
-// 'i' for integer (speed)
-// 'i' for integer (generation)
-// 'i' for integer (legendary)
+// Bind parameters
 $stmt->bind_param(
     'sssiiiiiiiii',
     $name, $type1, $type2, $total, $hp, $attack, $defense, $sp_atk, $sp_def, $speed, $generation, $legendary
