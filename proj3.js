@@ -10,7 +10,7 @@ document.getElementById('fightMenu').style.display = 'none';
 
 async function databaseFinishedLoading() {
 	// Runs upload.js and waits for it to stop running
-	const database_loading = await import("/proj3/cs433proj3/upload.js");
+	const database_loading = await import("/upload.js");
 	// Then checks
 	var temp_loading_done = await database_loading.checkState();
 	
@@ -151,6 +151,27 @@ function fight() {
 	updateBattleLog();
 }
 
+// !TODO someone implement this function!!!!!!!
+function selectStarterPokemon(pokemon) {
+	switch(pokemon) {
+		case "Balbasaur": {
+			
+			break;
+		}
+		case "Charmander": {
+			
+			break;
+		}
+		case "Squirtle" : {
+			
+			break;
+		}
+		default: {
+			break;
+		}
+	}
+}
+
 // Reset game after win/loss
 function resetGame() {
 	playerPokemon = getRandomPokemon(parsePokemonList());
@@ -163,7 +184,7 @@ var image_load_list=["004Charmander.png","005Charmeleon.png","006Charizard.png",
 var image_list = {};
 // Main engine variables
 var current_scene = "OPENWORLD"; // Mainly used for switching the entire content of the screen
-var scene_state = null; // Used for updating sub-menus or overlays when a scene is running
+var scene_state = "POKEMON_SELECTION"; // Used for updating sub-menus or overlays when a scene is running
 var running_interval = null; // The interval running the mainLoop function
 // Loading checks / database loading checks
 function waitForLoad() {
@@ -197,11 +218,28 @@ function waitForLoad() {
 	},
 	});
 }
+// NOTE: owwe : Open_World World_Exploration
+// NOTE: owps : Open World Pokemon Selection
+var owwe_player = null;
+var owwe_purple = null;
+var owwe_world_objects = null;
+var owwe_grass_objects = null;
 
-var player = null;
-var purple = null;
-var world_objects = null;
-var grass_objects = null;
+var owps_background = null;
+
+var owps_bulbasaur = null;
+var owps_charmander = null;
+var owps_squirtle = null;
+
+var owps_title = null;
+
+var owps_desc_bulbasaur = null;
+var owps_desc_charmander = null;
+var owps_desc_squirtle = null;
+
+var owps_select_bulbasaur = null;
+var owps_select_charmander = null;
+var owps_select_squirtle = null;
 
 function startGame() {
 	console.log("Game started with the following Pokémon data:", allPokemons); // debug check
@@ -209,38 +247,82 @@ function startGame() {
 		var canvas = document.getElementById("screen");
 		canvas.oncontextmenu = function(menu) { menu.preventDefault(); menu.stopPropagation(); }
 		
-		player = new Rect(40,40,40,40);
-		player.setColor("blue");
-		player.addEventKeyboard("OPENWORLD","", "keydown", 'w', function(event, rect) { rect.setYPos(rect.ypos() - 10); });
-		player.addEventKeyboard("OPENWORLD","", "keydown", "a", function(event, rect) { rect.setXPos(rect.xpos() - 10); });
-		player.addEventKeyboard("OPENWORLD","", "keydown", 's', function(event, rect) { rect.setYPos(rect.ypos() + 10); });
-		player.addEventKeyboard("OPENWORLD","", "keydown", 'd', function(event, rect) { rect.setXPos(rect.xpos() + 10); });
-		player.setCollisions("OPENWORLD", true, "Dynamic");
+		owps_background = new Rect(1280 * 0.125, 720 * 0.25, 0.75 * 1280, 0.5 * 720);
+		owps_background.setColor("grey");
 
-		purple = new Rect(256,128,100,64);
-		purple.setColor("rgba(5,0,0,0)");
+		owps_bulbasaur = new Rect((1280 * 0.125) + 8.4, 720 * 0.25, 300, 300);
+		owps_bulbasaur.setImg("009");
+		owps_charmander = new Rect((1280 * 0.125) + ((0.75 * 1280) *(1/3)) + 8.4, 720 * 0.25, 300, 300);
+		owps_charmander.setImg("004");
+		owps_squirtle = new Rect((1280 * 0.125) + ((0.75 * 1280) * (2/3)) + 8.4, 720 * 0.25, 300, 300);
+		owps_squirtle.setImg("007");
+
+		owps_title = new Rect((1280 * 0.125), 720 * (1/16), (0.75 * 1280), 720 * (2/16));
+		owps_title.setColor("white");
+		owps_title.setText("Please Pick A Starting Pokemon!", "32px serif", "black", "center", "center");
+
+		owps_desc_bulbasaur = new Rect((1280 * 0.125), (720 * 0.25) + 300, ((0.75 * 1280) * (1/3)), 60);
+		owps_desc_bulbasaur.setColor("green");
+		owps_desc_bulbasaur.setText("Bulbasaur Grass Type", "32px serif", "white", "center", "center");
+		owps_desc_charmander = new Rect((1280 * 0.125) + ((0.75 * 1280) * (1/3)), (720 * 0.25) + 300, ((0.75 * 1280) *(1/3)), 60);
+		owps_desc_charmander.setColor("red");
+		owps_desc_charmander.setText("Charmander Fire Type", "32px serif", "white", "center", "center");
+		owps_desc_squirtle = new Rect((1280 * 0.125) + ((0.75 * 1280) * (2/3)), (720 * 0.25) + 300, ((0.75 * 1280) * (1/3)), 60);
+		owps_desc_squirtle.setColor("blue");
+		owps_desc_squirtle.setText("Squirtle Water Type", "32px serif", "white", "center", "center");
+
+		owps_select_bulbasaur = new Rect((1280 * 0.125) + (((0.75 * 1280) * (1/3)) * 0.125), (720 * 0.75) + 30, ((0.75 * 1280) * (1/3)) * 0.75, 60);
+		owps_select_bulbasaur.setColor("rgba(0,64,0,1");
+		owps_select_bulbasaur.setText("Select", "32px serif", "white", "center", "center");
+		owps_select_bulbasaur.addEvent("OPENWORLD", "POKEMON_SELECTION", "click", function(event, rect) { selectStarterPokemon("Balbasaur"); scene_state = "WORLD_EXPLORATION"; });
+		owps_select_bulbasaur.addEvent("OPENWORLD", "POKEMON_SELECTION", "hover", function(event, rect) { rect.setColor("rgba(0,96,0,1"); });
+		owps_select_bulbasaur.addEvent("OPENWORLD", "POKEMON_SELECTION", "nohover", function(event, rect) { rect.setColor("rgba(0,64,0,1"); });
+		owps_select_charmander = new Rect((1280 * 0.125) + ((0.75 * 1280) * (1/3)) + (((0.75 * 1280) * (1/3)) * 0.125), (720 * 0.75) + 30, ((0.75 * 1280) * (1/3)) * 0.75, 60);
+		owps_select_charmander.setColor("rgba(127,0,0,1");
+		owps_select_charmander.setText("Select", "32px serif", "white", "center", "center");
+		owps_select_charmander.addEvent("OPENWORLD", "POKEMON_SELECTION", "click", function(event, rect) { selectStarterPokemon("Charmander"); scene_state = "WORLD_EXPLORATION"; });
+		owps_select_charmander.addEvent("OPENWORLD", "POKEMON_SELECTION", "hover", function(event, rect) { rect.setColor("rgba(163,0,0,1"); });
+		owps_select_charmander.addEvent("OPENWORLD", "POKEMON_SELECTION", "nohover", function(event, rect) { rect.setColor("rgba(127,0,0,1"); });
+		owps_select_squirtle = new Rect((1280 * 0.125) + ((0.75 * 1280) * (2/3)) + (((0.75 * 1280) * (1/3)) * 0.125), (720 * 0.75) + 30, ((0.75 * 1280) * (1/3)) * 0.75, 60);
+		owps_select_squirtle.setColor("rgba(0,0,127,1");
+		owps_select_squirtle.setText("Select", "32px serif", "white", "center", "center");
+		owps_select_squirtle.addEvent("OPENWORLD", "POKEMON_SELECTION", "click", function(event, rect) { selectStarterPokemon("Squirtle"); scene_state = "WORLD_EXPLORATION"; });
+		owps_select_squirtle.addEvent("OPENWORLD", "POKEMON_SELECTION", "hover", function(event, rect) { rect.setColor("rgba(0,0,163,1"); });
+		owps_select_squirtle.addEvent("OPENWORLD", "POKEMON_SELECTION", "nohover", function(event, rect) { rect.setColor("rgba(0,0,127,1"); });
 		
-		world_objects = [];
-		grass_objects = [];
+		
+		owwe_player = new Rect(40,40,40,40);
+		owwe_player.setColor("blue");
+		owwe_player.addEventKeyboard("OPENWORLD","WORLD_EXPLORATION", "keydown", 'w', function(event, rect) { rect.setYPos(rect.ypos() - 10); });
+		owwe_player.addEventKeyboard("OPENWORLD","WORLD_EXPLORATION", "keydown", "a", function(event, rect) { rect.setXPos(rect.xpos() - 10); });
+		owwe_player.addEventKeyboard("OPENWORLD","WORLD_EXPLORATION", "keydown", 's', function(event, rect) { rect.setYPos(rect.ypos() + 10); });
+		owwe_player.addEventKeyboard("OPENWORLD","WORLD_EXPLORATION", "keydown", 'd', function(event, rect) { rect.setXPos(rect.xpos() + 10); });
+		owwe_player.setCollisions("OPENWORLD", true, "Dynamic");
+
+		owwe_purple = new Rect(256,128,100,64);
+		owwe_purple.setColor("rgba(5,0,0,0)");
+		
+		owwe_world_objects = [];
+		owwe_grass_objects = [];
 		var str = "\
-mmmmmmmmmmmmmmmmmmmmmmmmmmm\n\
-m    g    g     g         m\n\
-m   g   g    g            m\n\
-mmm g  mm g   mm          m\n\
-m                         m\n\
-m g ggg g g g gg          m\n\
-mgg gg gg gg gg g         m\n\
-mgg gg gg gg gg g         m\n\
-mgg gg gg gg gg g         m\n\
-mgg gg gg gg gg g         m\n\
-mgg gg gg gg gg g         m\n\
-mgg gg gg gg gg g         m\n\
-mgg gg gg gg gg g         m\n\
-mgg gg gg gg gg g         m\n\
-mgg gg gg gg gg g         m\n\
-mgg gg gg gg gg g         m\n\
-mgg gg gg gg gg g         m\n\
-mmmmmmmmmmmmmmmmmmmmmmmmmmm\n\
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\n\
+m    g    g     g              m\n\
+m   g   g    g                 m\n\
+mmm g  mm g   mm               m\n\
+m                              m\n\
+m g ggg g g g gg               m\n\
+mgg gg gg gg gg g              m\n\
+mgg gg gg gg gg g              m\n\
+mgg gg gg gg gg g              m\n\
+mgg gg gg gg gg g              m\n\
+mgg gg gg gg gg g              m\n\
+mgg gg gg gg gg g              m\n\
+mgg gg gg gg gg g              m\n\
+mgg gg gg gg gg g              m\n\
+mgg gg gg gg gg g              m\n\
+mgg gg gg gg gg g              m\n\
+mgg gg gg gg gg g              m\n\
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\n\
 		";
 		var temp_x = 0;
 		var temp_y = 0;
@@ -251,14 +333,14 @@ mmmmmmmmmmmmmmmmmmmmmmmmmmm\n\
 				temp.setColor("grey");
 				temp.setCollisions("OPENWORLD", true, "Static");
 				temp_x = temp_x + 40;
-				world_objects.push(temp);
+				owwe_world_objects.push(temp);
 			}
 			else {
 				if(str.charAt(i) === 'g') {
 					var temp = new Rect(temp_x, temp_y, 40, 40);
 					temp.setColor("rgba(0,127,0,1)");
 					temp_x = temp_x + 40;
-					grass_objects.push(temp);
+					owwe_grass_objects.push(temp);
 				}
 				else {
 					if(str.charAt(i) === '\n') {
@@ -432,103 +514,112 @@ class CollisionSolver {
 }
 class EventHandler {
 	static handleKeyDown(event) {
-		 if(current_scene in EventHandler.#event_keydown) {
-			 if(EventHandler.#event_keydown[current_scene] !== undefined) {
-				 for(var i = 0; i < EventHandler.#event_keydown[current_scene].length;i++) {
-					 if(event.keyCode == EventHandler.#event_keydown[current_scene][i][0]) {
-						 EventHandler.#event_keydown[current_scene][i][1](event);
+		var index = current_scene + scene_state;
+		 if(index in EventHandler.#event_keydown) {
+			 if(EventHandler.#event_keydown[index] !== undefined) {
+				 for(var i = 0; i < EventHandler.#event_keydown[index].length;i++) {
+					 if(event.keyCode == EventHandler.#event_keydown[index][i][0]) {
+						 EventHandler.#event_keydown[index][i][1](event);
 					 }
 				 }
 			 }
 		}
 	}
 	static handleKeyUp(event) {
-		if(current_scene in EventHandler.#event_keyup) {
-			 if(EventHandler.#event_keyup[current_scene] !== undefined) {
-				 for(var i = 0; i < EventHandler.#event_keyup[current_scene].length;i++) {
-					 if(event.keyCode == EventHandler.#event_keyup[current_scene][i][0]) {
-						 EventHandler.#event_keyup[current_scene][i][1](event);
+		var index = current_scene + scene_state;
+		if(index in EventHandler.#event_keyup) {
+			 if(EventHandler.#event_keyup[index] !== undefined) {
+				 for(var i = 0; i < EventHandler.#event_keyup[index].length;i++) {
+					 if(event.keyCode == EventHandler.#event_keyup[index][i][0]) {
+						 EventHandler.#event_keyup[index][i][1](event);
 					 }
 				 }
 			 }
 		}
 	}
 	static handleKeyPress(event) {
-		if(current_scene in EventHandler.#event_keypress) {
-			 if(EventHandler.#event_keypress[current_scene] !== undefined) {
-				 for(var i = 0; i < EventHandler.#event_keypress[current_scene].length;i++) {
-					 if(event.keyCode == EventHandler.#event_keypress[current_scene][i][0]) {
-						 EventHandler.#event_keypress[current_scene][i][1](event);
+		var index = current_scene + scene_state;
+		if(index in EventHandler.#event_keypress) {
+			 if(EventHandler.#event_keypress[index] !== undefined) {
+				 for(var i = 0; i < EventHandler.#event_keypress[index].length;i++) {
+					 if(event.keyCode == EventHandler.#event_keypress[index][i][0]) {
+						 EventHandler.#event_keypress[index][i][1](event);
 					 }
 				 }
 			 }
 		}
 	}
 	static handleMLeftDown(event) {
-		if(current_scene in EventHandler.#event_mouseleftdown) {
-			 if(EventHandler.#event_mouseleftdown[current_scene] !== undefined) {
-				 for(var i = 0; i < EventHandler.#event_mouseleftdown[current_scene].length;i++) {
-					 EventHandler.#event_mouseleftdown[current_scene][i](event);
+		var index = current_scene + scene_state;
+		if(index in EventHandler.#event_mouseleftdown) {
+			 if(EventHandler.#event_mouseleftdown[index] !== undefined) {
+				 for(var i = 0; i < EventHandler.#event_mouseleftdown[index].length;i++) {
+					 EventHandler.#event_mouseleftdown[index][i](event);
 				 }
 			 }
 		}
 	}
 	static handleClick(event, mouse_x, mouse_y) {
-		if(current_scene in EventHandler.#event_click) {
-			 if(EventHandler.#event_click[current_scene] !== undefined) {
-				 for(var i = 0; i < EventHandler.#event_click[current_scene].length;i++) {
+		var index = current_scene + scene_state;
+		if(index in EventHandler.#event_click) {
+			 if(EventHandler.#event_click[index] !== undefined) {
+				 for(var i = 0; i < EventHandler.#event_click[index].length;i++) {
 					 var temp = new Rect(mouse_x, mouse_y, 1, 1);
-					 if(CollisionSolver.testCollisions(temp, EventHandler.#event_click[current_scene][i][0])) {
-						 EventHandler.#event_click[current_scene][i][1](event);
+					 if(CollisionSolver.testCollisions(temp, EventHandler.#event_click[index][i][0])) {
+						 EventHandler.#event_click[index][i][1](event);
 					 }
 				 }
 			 }
 		}
 	}
 	static handleMRightDown(event) {
-		if(current_scene in EventHandler.#event_mouserightdown) {
-			 if(EventHandler.#event_mouserightdown[current_scene] !== undefined) {
-				 for(var i = 0; i < EventHandler.#event_mouserightdown[current_scene].length;i++) {
-					 EventHandler.#event_mouserightdown[current_scene][i](event);
+		var index = current_scene + scene_state;
+		if(index in EventHandler.#event_mouserightdown) {
+			 if(EventHandler.#event_mouserightdown[index] !== undefined) {
+				 for(var i = 0; i < EventHandler.#event_mouserightdown[index].length;i++) {
+					 EventHandler.#event_mouserightdown[index][i](event);
 				 }
 			 }
 		}
 	}
 	static handleMLeftUp(event) {
-		if(current_scene in EventHandler.#event_mouseleftup) {
-			 if(EventHandler.#event_mouseleftup[current_scene] !== undefined) {
-				 for(var i = 0; i < EventHandler.#event_mouseleftup[current_scene].length;i++) {
-					 EventHandler.#event_mouseleftup[current_scene][i](event);
+		var index = current_scene + scene_state;
+		if(index in EventHandler.#event_mouseleftup) {
+			 if(EventHandler.#event_mouseleftup[index] !== undefined) {
+				 for(var i = 0; i < EventHandler.#event_mouseleftup[index].length;i++) {
+					 EventHandler.#event_mouseleftup[index][i](event);
 				 }
 			 }
 		}
 	}
 	static handleMRightUp(event) {
-		if(current_scene in EventHandler.#event_mouserightup) {
-			 if(EventHandler.#event_mouserightup[current_scene] !== undefined) {
-				 for(var i = 0; i < EventHandler.#event_mouserightup[current_scene].length;i++) {
-					 EventHandler.#event_mouserightup[current_scene][i](event);
+		var index = current_scene + scene_state;
+		if(index in EventHandler.#event_mouserightup) {
+			 if(EventHandler.#event_mouserightup[index] !== undefined) {
+				 for(var i = 0; i < EventHandler.#event_mouserightup[index].length;i++) {
+					 EventHandler.#event_mouserightup[index][i](event);
 				 }
 			 }
 		}
 	}
 	static handleMHover(event, mouse_x, mouse_y) {
-		if(current_scene in EventHandler.#event_mousehover) {
-			 if(EventHandler.#event_mousehover[current_scene] !== undefined) {
-				 for(var i = 0; i < EventHandler.#event_mousehover[current_scene].length;i++) {
+		var index = current_scene + scene_state;
+		if(index in EventHandler.#event_mousehover) {
+			 if(EventHandler.#event_mousehover[index] !== undefined) {
+				 for(var i = 0; i < EventHandler.#event_mousehover[index].length;i++) {
 					 var temp = new Rect(mouse_x, mouse_y, 1, 1);
-					 if(CollisionSolver.testCollisions(temp, EventHandler.#event_mousehover[current_scene][i][0])) {
-						 EventHandler.#event_mousehover[current_scene][i][1](event);
+					 if(CollisionSolver.testCollisions(temp, EventHandler.#event_mousehover[index][i][0])) {
+						 EventHandler.#event_mousehover[index][i][1](event);
 					 }
 				 }
 			 }
 		}
-		if(current_scene in EventHandler.#event_mousenohover) {
-			 if(EventHandler.#event_mousenohover[current_scene] !== undefined) {
-				 for(var i = 0; i < EventHandler.#event_mousenohover[current_scene].length;i++) {
+		if(index in EventHandler.#event_mousenohover) {
+			 if(EventHandler.#event_mousenohover[index] !== undefined) {
+				 for(var i = 0; i < EventHandler.#event_mousenohover[index].length;i++) {
 					 var temp = new Rect(mouse_x, mouse_y, 1, 1);
-					 if(!CollisionSolver.testCollisions(temp, EventHandler.#event_mousenohover[current_scene][i][0])) {
-						 EventHandler.#event_mousenohover[current_scene][i][1](event);
+					 if(!CollisionSolver.testCollisions(temp, EventHandler.#event_mousenohover[index][i][0])) {
+						 EventHandler.#event_mousenohover[index][i][1](event);
 					 }
 				 }
 			 }
@@ -725,7 +816,8 @@ class Rect {
 		this.#text = "";
 		this.#font = "";
 		this.#font_color = "";
-		this.#text_alignment = "";
+		this.#text_alignment_x = "";
+		this.#text_alignment_y = "";
 		this.#id = Rect.#counter;
 		Rect.#counter = Rect.#counter + 1;
 	}
@@ -822,11 +914,12 @@ class Rect {
 			EventHandler.addEventMouse(scene_name + state_name, event_type, function(event) { callback(event, this); }.bind(this));
 		}
 	}
-	setText(new_text, font_info, font_color, align) {
+	setText(new_text, font_info, font_color, align_x, align_y) {
 		this.#text = new_text;
 		this.#font = font_info;
 		this.#font_color = font_color;
-		this.#text_alignment = align;
+		this.#text_alignment_x = align_x;
+		this.#text_alignment_y = align_y;
 	}
 	width() {
 		return Object.freeze(this.#width);
@@ -874,14 +967,57 @@ class Rect {
 			if(this.#text != "") {
 				draw_context.fillStyle = this.#font_color;
 				draw_context.font = this.#font;
-				if(this.#text_alignment == "bottom") {
-					draw_context.fillText(this.#text, this.#pos_x + this.#offset_x, this.#pos_y + this.#height + this.#offset_y, this.#width);
+				
+				var text_width = 0;
+				
+				if(this.#width < draw_context.measureText(this.#text).width) {
+					text_width = this.#width;
+				}
+				else {
+					text_width = draw_context.measureText(this.#text).width;
+				}
+				if(this.#text_alignment_y == "bottom") {
+					switch(this.#text_alignment_x) {
+						case "left": {
+							draw_context.fillText(this.#text, this.#pos_x + this.#offset_x, this.#pos_y + this.#height + this.#offset_y, text_width);
+							break;
+						}
+						case "right": {
+							draw_context.fillText(this.#text, this.#pos_x + this.#offset_x + (this.#width - text_width), this.#pos_y + this.#height + this.#offset_y, text_width);
+							break;
+						}
+						case "center": {
+							draw_context.fillText(this.#text, this.#pos_x + this.#offset_x + ((this.#width - text_width) / 2), this.#pos_y + this.#height + this.#offset_y, text_width);
+							break;
+						}
+						default: {
+							console.log("<-- ERROR text_alignment_x: " + this.#text_alignment_x + " not found. -->")
+							break;
+						}
+					}
 				}
 				else {
 					var index = this.#font.indexOf("px");
 					var str = this.#font.substr(0, index);
 					var size_num = Number(str);
-					draw_context.fillText(this.#text, this.#pos_x + this.#offset_x, this.#pos_y + (this.#height / 2.0) + (size_num / 2.75) + this.#offset_y, this.#width);
+					switch(this.#text_alignment_x) {
+						case "left": {
+							draw_context.fillText(this.#text, this.#pos_x + this.#offset_x, this.#pos_y + (this.#height / 2.0) + (size_num / 2.75) + this.#offset_y, text_width);
+							break;
+						}
+						case "right": {
+							draw_context.fillText(this.#text, this.#pos_x + this.#offset_x + (this.#width - text_width), this.#pos_y + (this.#height / 2.0) + (size_num / 2.75) + this.#offset_y, text_width);
+							break;
+						}
+						case "center": {
+							draw_context.fillText(this.#text, this.#pos_x + this.#offset_x + ((this.#width - text_width) / 2), this.#pos_y + (this.#height / 2.0) + (size_num / 2.75) + this.#offset_y, text_width);
+							break;
+						}
+						default: {
+							console.log("<-- ERROR text_alignment_x: " + this.#text_alignment_x + " not found. -->")
+							break;
+						}
+					}
 				}
 			}
 		}
@@ -891,14 +1027,57 @@ class Rect {
 			if(this.#text != "") {
 				draw_context.fillStyle = this.#font_color;
 				draw_context.font = this.#font;
-				if(this.#text_alignment == "bottom") {
-					draw_context.fillText(this.#text, this.#pos_x + this.#offset_x, this.#pos_y + this.#height + this.#offset_y, this.#width);
+				
+				var text_width = 0;
+				
+				if(this.#width < draw_context.measureText(this.#text).width) {
+					text_width = this.#width;
+				}
+				else {
+					text_width = draw_context.measureText(this.#text).width;
+				}
+				if(this.#text_alignment_y == "bottom") {
+					switch(this.#text_alignment_x) {
+						case "left": {
+							draw_context.fillText(this.#text, this.#pos_x + this.#offset_x, this.#pos_y + this.#height + this.#offset_y, text_width);
+							break;
+						}
+						case "right": {
+							draw_context.fillText(this.#text, this.#pos_x + this.#offset_x + (this.#width - text_width), this.#pos_y + this.#height + this.#offset_y, text_width);
+							break;
+						}
+						case "center": {
+							draw_context.fillText(this.#text, this.#pos_x + this.#offset_x + ((this.#width - text_width) / 2), this.#pos_y + this.#height + this.#offset_y, text_width);
+							break;
+						}
+						default: {
+							console.log("<-- ERROR text_alignment_x: " + this.#text_alignment_x + " not found. -->")
+							break;
+						}
+					}
 				}
 				else {
 					var index = this.#font.indexOf("px");
 					var str = this.#font.substr(0, index);
 					var size_num = Number(str);
-					draw_context.fillText(this.#text, this.#pos_x + this.#offset_x, this.#pos_y + (this.#height / 2.0) + (size_num / 2.75) + this.#offset_y, this.#width);
+					switch(this.#text_alignment_x) {
+						case "left": {
+							draw_context.fillText(this.#text, this.#pos_x + this.#offset_x, this.#pos_y + (this.#height / 2.0) + (size_num / 2.75) + this.#offset_y, text_width);
+							break;
+						}
+						case "right": {
+							draw_context.fillText(this.#text, this.#pos_x + this.#offset_x + (this.#width - text_width), this.#pos_y + (this.#height / 2.0) + (size_num / 2.75) + this.#offset_y, text_width);
+							break;
+						}
+						case "center": {
+							draw_context.fillText(this.#text, this.#pos_x + this.#offset_x + ((this.#width - text_width) / 2), this.#pos_y + (this.#height / 2.0) + (size_num / 2.75) + this.#offset_y, text_width);
+							break;
+						}
+						default: {
+							console.log("<-- ERROR text_alignment_x: " + this.#text_alignment_x + " not found. -->")
+							break;
+						}
+					}
 				}
 			}
 		}
@@ -915,7 +1094,8 @@ class Rect {
 	#text = "";						// Text to be rendered inside the rect
 	#font = "";						// Font info for the text
 	#font_color = "";				// Color of the text
-	#text_alignment = "";			// Either bottom or center, top is not supported by text standards
+	#text_alignment_x = "";			// Center or Left or Right
+	#text_alignment_y = "";			// Either bottom or center, top is not supported by text standards
 	// Events
 	
 	// Collisions
@@ -952,7 +1132,6 @@ function handleRun() {
 function handleItem() {
 	console.log("Item selected");
 }
-
 // Runs the main game and handles scene switching
 function mainLoop() {
 	// Handle any collisions from the last frame
@@ -962,38 +1141,50 @@ function mainLoop() {
 	// Render the current scene
 	switch(current_scene) {
 		case "OPENWORLD": {
-			for(var i = 0; i < world_objects.length;i++) {
-				world_objects[i].draw();
-			}
-			for(var i = 0; i < grass_objects.length;i++) {
-				grass_objects[i].draw();
-				
-				if(CollisionSolver.testInside(player, grass_objects[i]) == true) {
-					if(Math.random() > 0.99) {
-						current_scene = "BATTLE";
+			switch(scene_state) {
+				case "POKEMON_SELECTION": {
+					var canvas = document.getElementById("screen");
+					canvas.style.background = "black";
+					owps_title.draw();
+					owps_background.draw();
+					owps_bulbasaur.draw();
+					owps_charmander.draw();
+					owps_squirtle.draw();
+					owps_desc_bulbasaur.draw();
+					owps_desc_charmander.draw();
+					owps_desc_squirtle.draw();
+					owps_select_bulbasaur.draw();
+					owps_select_charmander.draw();
+					owps_select_squirtle.draw();
+					break;
+				}
+				case "WORLD_EXPLORATION": {
+					var canvas = document.getElementById("screen");
+					canvas.style.background = "white";
+					for(var i = 0; i < owwe_world_objects.length;i++) {
+						owwe_world_objects[i].draw();
 					}
+					for(var i = 0; i < owwe_grass_objects.length;i++) {
+						owwe_grass_objects[i].draw();
+						
+						if(CollisionSolver.testInside(owwe_player, owwe_grass_objects[i]) == true) {
+							if(Math.random() > 0.99) {
+								current_scene = "BATTLE";
+							}
+						}
+					}
+					document.getElementById('fightMenu').style.display = 'none';
+
+					owwe_player.draw();
+					break;
 				}
 			}
-			document.getElementById('fightMenu').style.display = 'none';
-
-			player.draw();
 			break;
 		}
 		case "BATTLE": {
 			purple.draw();
 			player.draw();
-			
-			while(playerPokemon.hp > 0 && enemyPokemon.hp > 0){
-				var playerTurn = true;
-				if(playerTurn == true){
-				document.getElementById('fightMenu').style.display = 'flex';
-					playerTurn = false;
-				}
-				else{
-					playerPokemon.hp -= enemyPokemon.attack;
-					playerTurn = true;
-				}
-			}
+			document.getElementById('fightMenu').style.display = 'flex';
 			break;
 		}
 		default: {
