@@ -111,6 +111,7 @@ function fight() {
   enemyPokemon.hp -= playerPokemon.attack;
   if (enemyPokemon.hp <= 0) {
     alert(playerPokemon.name + " wins!");
+    resetGame();
     return;
   }
 
@@ -118,11 +119,19 @@ function fight() {
   playerPokemon.hp -= enemyPokemon.attack;
   if (playerPokemon.hp <= 0) {
     alert(enemyPokemon.name + " wins!");
+    resetGame();
     return;
   }
 
   // Update battle log
   updateBattleLog();
+}
+
+// Reset game after win/loss
+function resetGame() {
+    playerPokemon = getRandomPokemon(parsePokemonList());
+    enemyPokemon = getRandomPokemon(parsePokemonList());
+    updateBattleLog();
 }
 
 // Image variables
