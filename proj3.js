@@ -107,8 +107,6 @@ function updateBattleLog() {
 
 // Basic battle logic for the fight button
 function fight() {
-  // Implement the fight logic here using playerPokemon and enemyPokemon
-  console.log("Fight between", playerPokemon, "and", enemyPokemon);
   // Player attacks enemy
   enemyPokemon.hp -= playerPokemon.attack;
   if (enemyPokemon.hp <= 0) {
