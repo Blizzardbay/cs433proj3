@@ -1125,8 +1125,9 @@ function handleDefend() {
 }
 
 function handleRun() {
+	current_scene = "OPENWORLD";
 	console.log("Run selected");
-	// Implement your run logic here
+	
 }
 function handleItem() {
 	console.log("Item selected");
@@ -1181,8 +1182,8 @@ function mainLoop() {
 			break;
 		}
 		case "BATTLE": {
-			owwe_purple.draw();
-			owwe_player.draw();
+			purple.draw();
+			player.draw();
 			document.getElementById('fightMenu').style.display = 'flex';
 			break;
 		}
