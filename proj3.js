@@ -9,6 +9,8 @@ var playerPokemon;
 var enemyPokemon;
 var imageenemyPokemon;
 var allPokemons = [];
+var enemy_event_text = null;
+var player_event_text = null;
 document.getElementById('fightMenu').style.display = 'none';
 document.getElementById('itemMenu').style.display = 'none';
 
@@ -1318,7 +1320,7 @@ function handleAttack() {
 	playersTurn = "ENEMYS"; 
 }
 
-function handleDefend() {
+function handleCapture() {
 	console.log("Defend selected");
 	playersTurn = "ENEMYS"; 
 	defense_tracker = 1;
@@ -1367,13 +1369,14 @@ function enemyAttack(){
 	playersTurn = "YOURS"; 
 }
 document.querySelector('.menu-item-attack').addEventListener('click', handleAttack);
-document.querySelector('.menu-item-defend').addEventListener('click', handleDefend);
+document.querySelector('.menu-item-capture').addEventListener('click', handleCapture);
 document.querySelector('.menu-item-run').addEventListener('click', handleRun);
 document.querySelector('.menu-item-item').addEventListener('click', handleItem);
 document.querySelector('.itemmenu-item-health').addEventListener('click', healthItem);
 document.querySelector('.itemmenu-item-defense').addEventListener('click', defenseItem);
 
 
+var pokemon_options = [];
 // Runs the main game and handles scene switching
 function mainLoop() {
 	// Handle any collisions from the last frame
@@ -1438,13 +1441,20 @@ function mainLoop() {
 		}
 		case "BATTLE_LAND": {
 
-			var pokemonPlayerMaxhp = playerPokemon.hp;
-			var enemyPlayerMaxhp = enemyPokemon.hp;
-		
+				var pokemonPlayerMaxhp = playerPokemon.hp;
+				var enemyPlayerMaxhp = enemyPokemon.hp;
 				imageenemyPokemon = new Rect((1280 * 0.125) + 8.4 + 600, 720 * 0.25 - 120, 300, 300);
 				imageenemyPokemon.setImg("034");
 				battle_background.draw();
 				imageenemyPokemon.draw();
+				enemy_event_text = new Rect((1280 * 0.125) - 100, (720 * 0.25) - 100, ((0.75 * 1280) * (1/3)) + 100, 100);
+				enemy_event_text.setColor("green");
+				enemy_event_text.setText(`Pokemon: ${enemyPokemon.name}\nHp: ${enemyPokemon.hp}`, "64px serif", "white", "center", "center");
+				enemy_event_text.draw();
+				player_event_text = new Rect((1280 * 0.125) + 600, (720 * 0.25) + 400, ((0.75 * 1280) * (1/3)) + 100, 100);
+				player_event_text.setColor("green");
+				player_event_text.setText(`Player Pokemon: ${playerPokemon.name}\nHp: ${playerPokemon.hp}`, "64px serif", "white", "center", "center");
+				player_event_text.draw();
 				switch(playersTurn){
 					case "YOURS":{
 						if(playerPokemon.hp <= 0){
@@ -1456,6 +1466,7 @@ function mainLoop() {
 							playersTurn = "YOURS";
 
 						}else{
+
 						document.getElementById('fightMenu').style.display = 'flex';
 						break;
 						}
@@ -1485,6 +1496,15 @@ function mainLoop() {
 				imageenemyPokemon.setImg("000");
 				water_background.draw();
 				imageenemyPokemon.draw();
+				enemy_event_text = new Rect((1280 * 0.125) - 100, (720 * 0.25) - 100, ((0.75 * 1280) * (1/3)) + 100, 100);
+				enemy_event_text.setColor("green");
+				enemy_event_text.setText(`Pokemon: ${enemyPokemon.name}\nHp: ${enemyPokemon.hp}`, "64px serif", "white", "center", "center");
+				enemy_event_text.draw();
+				player_event_text = new Rect((1280 * 0.125) + 600, (720 * 0.25) + 400, ((0.75 * 1280) * (1/3)) + 100, 100);
+				player_event_text.setColor("green");
+				player_event_text.setText(`Player Pokemon: ${playerPokemon.name}\nHp: ${playerPokemon.hp}`, "64px serif", "white", "center", "center");
+				player_event_text.draw();
+
 				switch(playersTurn){
 					case "YOURS":{
 						if(playerPokemon.hp <= 0){
