@@ -7,6 +7,7 @@ var playerPokemon;
 var enemyPokemon;
 var allPokemons = [];
 document.getElementById('fightMenu').style.display = 'none';
+document.getElementById('itemMenu').style.display = 'none';
 
 async function databaseFinishedLoading() {
 	// Runs upload.js and waits for it to stop running
@@ -1114,12 +1115,24 @@ function clearScreen() {
 	var draw_context = canvas.getContext("2d");
 	draw_context.clearRect(0, 0, canvas.width, canvas.height);
 }
+function addHoverEffect(rect, baseColor, hoverColor) {
+	rect.addEvent("mouseover", function() {
+		rect.setColor(hoverColor);
+		rect.draw();
+	});
+	rect.addEvent("mouseout", function() {
+		rect.setColor(baseColor);
+		rect.draw();
+	});
+}
 var defense_tracker = 0;
 var battle_title = null;
 var item_lst = {HealthPotion: 2, DefensePotion: 2};
+var health_potion_desc= null;
+var defense_potion_desc = null;
 function handleAttack() {
 	console.log("Attack selected");
-	var num = playerPokemon.hp;
+	var num = playerPokemon.attack;
 	enemyPokemon.hp -= num;
 	console.log("Enemy's hp: " + enemyPokemon.hp);
 	playersTurn = "ENEMYS"; 
@@ -1140,7 +1153,28 @@ function handleRun() {
 }
 function handleItem() {
 	console.log("Item selected");
-	
+	document.getElementById('itemMenu').style.display = 'flex';
+}
+function healthItem(){
+	document.getElementById('itemMenu').style.display = 'none';
+	if(item_lst.HealthPotion > 0){
+	item_lst.HealthPotion -= 1;
+	console.log("You have this many health potions left: " + item_lst.HealthPotion);
+	playerPokemon.hp += 5;
+	}else{
+		console.log("GASP, No health potions left");
+	}
+	playersTurn = "ENEMYS"; 
+}
+function defenseItem(){
+	document.getElementById('itemMenu').style.display = 'none';
+	if(item_lst.DefensePotion > 0){
+		item_lst.DefensePotion -= 1;
+		console.log("You have this many defense potions left: " + item_lst.DefensePotion);
+		defense_tracker = 1;
+	}else{
+			console.log("GASP no more defens potions");
+		}
 	playersTurn = "ENEMYS"; 
 }
 function enemyAttack(){
@@ -1156,6 +1190,8 @@ document.querySelector('.menu-item-attack').addEventListener('click', handleAtta
 document.querySelector('.menu-item-defend').addEventListener('click', handleDefend);
 document.querySelector('.menu-item-run').addEventListener('click', handleRun);
 document.querySelector('.menu-item-item').addEventListener('click', handleItem);
+document.querySelector('.itemmenu-item-health').addEventListener('click', healthItem);
+document.querySelector('.itemmenu-item-defense').addEventListener('click', defenseItem);
 var playersTurn = "YOURS";
 // Runs the main game and handles scene switching
 function mainLoop() {
@@ -1207,8 +1243,6 @@ function mainLoop() {
 			break;
 		}
 		case "BATTLE": {
-			owwe_purple.draw();
-			owwe_player.draw();
 			var canvas = document.getElementById("screen");
 			var context = canvas.getContext("2d");
 			console.log(playerPokemon.name);
@@ -1221,7 +1255,9 @@ function mainLoop() {
 						window.location.href = "proj3.html";
 					}
 					else if (enemyPokemon.hp <= 0){
+						enemyPokemon = allPokemons[Math.floor(Math.random() * allPokemons.length)];
 						current_scene = "OPENWORLD";
+
 					}else{
 					document.getElementById('fightMenu').style.display = 'flex';
 					break;

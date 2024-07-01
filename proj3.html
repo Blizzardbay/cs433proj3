@@ -97,6 +97,43 @@
 			.menu-item-item {
 				background-color: rgba(255, 247, 0, 0.7);
 			}
+			#itemMenu {
+				display: none;
+				position: absolute;
+				bottom: 10px;
+				right: 10px;
+				background-color: rgba(0, 0, 255, 0.7);
+				padding: 20px;
+				border-radius: 10px;
+				display: grid;
+				gap: 20px;
+				width: 400px;
+				
+			}
+
+			.itemmenu-item {
+				padding: 15px;
+				border-radius: 10px;
+				cursor: pointer;
+				text-align: center;
+				background-color: rgba(0, 0, 255, 0.7);
+				color: #FFFFFF;
+				border: none; 
+				font-size: 20px; 
+			}
+
+			.itemmenu-item:hover {
+				opacity: 0.8;
+			}
+
+			.itemmenu-item-health {
+				background-color: rgba(255, 0, 0, 0.7);
+			}
+
+			.menu-item-defense {
+				background-color: rgba(0, 34, 255, 0.7);
+			}
+
 		</style>
 	</head>
 	<body>
@@ -134,6 +171,10 @@
 				<button class="menu-item menu-item-defend">Defend</button>
 				<button class="menu-item menu-item-run">Run</button>
 				<button class="menu-item menu-item-item">Item</button>
+			</div>
+			<div id="itemMenu">
+				<button class="itemmenu-item itemmenu-item-health">Health Potion</button>
+				<button class="itemmenu-item itemmenu-item-defense">Defense Potion</button>
 			</div>
 		</div>
 		<script type="module" src="proj3.js"></script>
