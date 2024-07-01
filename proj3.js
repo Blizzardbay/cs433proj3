@@ -189,8 +189,10 @@ function resetGame() {
 }
 
 // Image variables
-var image_load_list_2=["Battle_scene_background.png"];
+var image_load_list_2=["Battle_scene_background.png", "grass2.png", "grassground.png", "mountain1.png", "waterdeep.png", "grass1.png", "sand1.png", "water1.png"];
 var image_load_list_1=["000Bulbasaur.png","004Charmander.png","005Charmeleon.png","006Charizard.png","007Squirtle.png","008Wartortle.png","009Blastoise.png","010Caterpie.png","011Metapod.png","012Butterfree.png","013Weedle.png","014Kakuna.png","015Beedrill.png","016Pidgey.png","017Pidgeotto.png","018Pidgeot.png","019Rattata.png","021Spearow.png","022Fearow.png","023Ekans.png","024Arbok.png","025Pikachu.png","026Raichu.png","027Sandshrew.png","028Sandslash.png","029Nidoran.png","030Nidorina.png","031Nidoqueen.png","032Nidoran.png","033Nidorino.png","034Nidoking.png","035Clefairy.png","036Clefable.png","037Vulpix.png","038Ninetales.png","039Jigglypuff.png","040Wigglytuff.png","041Zubat.png","042Golbat.png","043Oddish.png","044Gloom.png","045Vileplume.png","046Paras.png","047Parasect.png","048Venonat.png","049Venomoth.png","050Diglett.png","051Dugtrio.png","052Meowth.png","053Persian.png","054Psyduck.png","055Golduck.png","056Mankey.png","057Primeape.png","058Growlithe.png","059Arcanine.png","060Poliwag.png","061Poliwhirl.png","062Poliwrath.png","063Abra.png","064Kadabra.png","065Alakazam.png","066Machop.png","067Machoke.png","068Machamp.png","069Bellsprout.png","070Weepinbell.png","071Victreebel.png","072Tentacool.png","073Tentacruel.png","074Geodude.png","075Graveler.png","076Golem.png","077Ponyta.png","078Rapidash.png","079Slowpoke.png","080Slowbro.png","081Magnemite.png","082Magneton.png","083Farfetch'd.png","084Doduo.png","085Dodrio.png","086Seel.png","087Dewgong.png","088Grimer.png","089Muk.png","090Shellder.png","091Cloyster.png","092Gastly.png","093Haunter.png","094Gengar.png","095Onix.png","096Drowzee.png","097Hypno.png","098Krabby.png","099Kingler.png","100Voltorb.png","101Electrode.png","102Exeggcute.png","103Exeggutor.png","104Cubone.png","105Marowak.png","106Hitmonlee.png","107Hitmonchan.png","108Lickitung.png","109Koffing.png","110Weezing.png","111Rhyhorn.png","112Rhydon.png","113Chansey.png","114Tangela.png","115Kangaskhan.png","116Horsea.png","117Seadra.png","118Goldeen.png","119Seaking.png","120Staryu.png","121Starmie.png","122Mr._Mime.png","123Scyther.png","124Jynx.png","125Electabuzz.png","126Magmar.png","127Pinsir.png","128Tauros.png","129Magikarp.png","130Gyarados.png","131Lapras.png","132Ditto.png","133Eevee.png","134Vaporeon.png","135Jolteon.png","136Flareon.png","137Porygon.png","138Omanyte.png","139Omastar.png","140Kabuto.png","141Kabutops.png","142Aerodactyl.png","143Snorlax.png","144Articuno.png","145Zapdos.png","146Moltres.png","147Dratini.png","148Dragonair.png","149Dragonite.png","150Mewtwo-Mega_X.png","150Mewtwo-Mega_Y.png","150Mewtwo.png","151Mew.png"];
+var water_type_pokemon=["007Squirtle.png", "008Wartortle.png", "009Blastoise.png", "054Psyduck.png", "055Golduck.png", "060Poliwag.png", "061Poliwhirl.png", "062Poliwrath.png", "072Tentacool.png", "073Tentacruel.png", "079Slowpoke.png", "080Slowbro.png", "086Seel.png", "087Dewgong.png", "090Shellder.png", "091Cloyster.png", "116Horsea.png", "117Seadra.png", "118Goldeen.png", "119Seaking.png", "120Staryu.png", "121Starmie.png", "129Magikarp.png", "130Gyarados.png", "131Lapras.png", "134Vaporeon.png"];
+var land_pokemon = image_load_list_1.filter((pokemon) => !water_type_pokemon.includes(pokemon));
 var image_list_1 = {};
 var image_list_2 = {};
 // Main engine variables
@@ -245,6 +247,7 @@ var owwe_player = null;
 var owwe_purple = null;
 var owwe_world_objects = null;
 var owwe_grass_objects = null;
+var owwe_water_objects = null;
 
 var owps_background = null;
 
@@ -328,25 +331,26 @@ function startGame() {
 		
 		owwe_world_objects = [];
 		owwe_grass_objects = [];
+		owwe_water_objects = [];
 		var str = "\
 mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\n\
-m    g    g     g              m\n\
-m   g   g    g                 m\n\
-mmm g  mm g   mm               m\n\
-m                              m\n\
-m g ggg g g g gg               m\n\
-mgg gg gg gg gg g              m\n\
-mgg gg gg gg gg g              m\n\
-mgg gg gg gg gg g              m\n\
-mgg gg gg gg gg g              m\n\
-mgg gg gg gg gg g              m\n\
-mgg gg gg gg gg g              m\n\
-mgg gg gg gg gg g              m\n\
-mgg gg gg gg gg g              m\n\
-mgg gg gg gg gg g              m\n\
-mgg gg gg gg gg g              m\n\
-mgg gg gg gg gg g              m\n\
-mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\n\
+m   g   ggggg  g  g m   g   g  m\n\
+m   g g  g    g  m  g m   g gggm\n\
+mmm g gmm g  gmm gm   g g mmmmmm\n\
+m                 g   gm    gmmm\n\
+m g ggg g g gmgg    g   g   gmmm\n\
+mgg gg gg gg gg g g     g mmmmmm\n\
+mmmmmmmmmmmmmmmmmmmm  mmmmmmmmmm\n\
+jgg gg gg gg gg g              j\n\
+js ss s sssss ssssss ssssssssssj\n\
+jsssbbssssbbsssssbbssssbsssbssbj\n\
+jbbssssssssssssssssssssssssssssj\n\
+kwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwd\n\
+kwwdwdwwwdwwwwwwwwwwwwdddwwwdwdd\n\
+kwdwwwwwdddwwwwdwwwdwwdddwwwdwwd\n\
+kwddwwwwwdddwwwwwwwddddddwwdwwwd\n\
+qwddwwwwwwwddwwwdwddsssjdwwwwddd\n\
+dddddddddddddddddddsj mjjddddddd\n\
 		";
 		var temp_x = 0;
 		var temp_y = 0;
@@ -354,25 +358,118 @@ mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\n\
 		for(var i = 0; i < str.length;i++) {
 			if(str.charAt(i) === 'm') {
 				var temp = new Rect(temp_x, temp_y, 40, 40);
-				temp.setColor("grey");
+				temp.setImg("mountain1.png");
 				temp.setCollisions("OPENWORLD", true, "Static");
+				var temp2 = new Rect(temp_x, temp_y, 40, 40);
+				temp2.setImg("grassground.png");
+				temp2.setRotation(Math.floor(Math.random() * 4) * 90);
 				temp_x = temp_x + 40;
+				owwe_world_objects.push(temp2);
 				owwe_world_objects.push(temp);
 			}
 			else {
 				if(str.charAt(i) === 'g') {
 					var temp = new Rect(temp_x, temp_y, 40, 40);
-					temp.setColor("rgba(0,127,0,1)");
+					temp.setImg("grass2.png");
+					temp.setRotation(Math.floor(Math.random() * 4) * 90);
+					var temp2 = new Rect(temp_x, temp_y, 40, 40);
+					temp2.setImg("grassground.png");
+					temp2.setRotation(Math.floor(Math.random() * 4) * 90);
 					temp_x = temp_x + 40;
+					owwe_world_objects.push(temp2);
 					owwe_grass_objects.push(temp);
 				}
 				else {
-					if(str.charAt(i) === '\n') {
-					temp_x = 0;
-					temp_y = temp_y + 40;
+					if(str.charAt(i) === 's') {
+						var temp = new Rect(temp_x, temp_y, 40, 40);
+						temp.setImg("sand1.png");
+						temp.setRotation(Math.floor(Math.random() * 4) * 90);
+						temp_x = temp_x + 40;
+						owwe_grass_objects.push(temp);
 					}
 					else {
-						temp_x = temp_x + 40;
+						if(str.charAt(i) === 'b') {
+							var temp = new Rect(temp_x, temp_y, 40, 40);
+							temp.setImg("sand1.png");
+							temp.setRotation(Math.floor(Math.random() * 4) * 90);
+							var temp2 = new Rect(temp_x, temp_y, 40, 40);
+							temp2.setImg("grass1.png");
+							temp2.setRotation(Math.floor(Math.random() * 4) * 90);
+							temp_x = temp_x + 40;
+							owwe_world_objects.push(temp);
+							owwe_grass_objects.push(temp2);
+						}
+						else {
+							if(str.charAt(i) === 'w') {
+								var temp = new Rect(temp_x, temp_y, 40, 40);
+								temp.setImg("water1.png");
+								temp.setRotation(Math.floor(Math.random() * 4) * 90);
+								temp_x = temp_x + 40;
+								owwe_water_objects.push(temp);
+							}
+							else {
+								if(str.charAt(i) === 'd') {
+									var temp = new Rect(temp_x, temp_y, 40, 40);
+									temp.setImg("waterdeep.png");
+									temp.setRotation(Math.floor(Math.random() * 4) * 90);
+									temp.setCollisions("OPENWORLD", true, "Static");
+									temp_x = temp_x + 40;
+									owwe_world_objects.push(temp);
+								}
+								else {
+									if(str.charAt(i) === 'j') {
+										var temp = new Rect(temp_x, temp_y, 40, 40);
+										temp.setImg("mountain1.png");
+										temp.setCollisions("OPENWORLD", true, "Static");
+										var temp2 = new Rect(temp_x, temp_y, 40, 40);
+										temp2.setImg("sand1.png");
+										temp2.setRotation(Math.floor(Math.random() * 4) * 90);
+										temp_x = temp_x + 40;
+										owwe_world_objects.push(temp2);
+										owwe_world_objects.push(temp);
+									}
+									else {
+										if(str.charAt(i) === 'k') {
+											var temp = new Rect(temp_x, temp_y, 40, 40);
+											temp.setImg("mountain1.png");
+											temp.setCollisions("OPENWORLD", true, "Static");
+											var temp2 = new Rect(temp_x, temp_y, 40, 40);
+											temp2.setImg("water1.png");
+											temp2.setRotation(Math.floor(Math.random() * 4) * 90);
+											temp_x = temp_x + 40;
+											owwe_world_objects.push(temp2);
+											owwe_world_objects.push(temp);
+										}
+										else {
+											if(str.charAt(i) === 'q') {
+											var temp = new Rect(temp_x, temp_y, 40, 40);
+											temp.setImg("mountain1.png");
+											temp.setCollisions("OPENWORLD", true, "Static");
+											var temp2 = new Rect(temp_x, temp_y, 40, 40);
+											temp2.setImg("waterdeep.png");
+											temp2.setRotation(Math.floor(Math.random() * 4) * 90);
+											temp_x = temp_x + 40;
+											owwe_world_objects.push(temp2);
+											owwe_world_objects.push(temp);
+											}
+											else {
+												if(str.charAt(i) === '\n') {
+													temp_x = 0;
+													temp_y = temp_y + 40;
+												}
+												else {
+													var temp = new Rect(temp_x, temp_y, 40, 40);
+													temp.setImg("grassground.png");
+													temp.setRotation(Math.floor(Math.random() * 4) * 90);
+													temp_x = temp_x + 40;
+													owwe_world_objects.push(temp);
+												}
+											}
+										}
+									}
+								}
+							}
+						}
 					}
 				}
 			}
@@ -836,6 +933,7 @@ class Rect {
 		this.#height = height;
 		this.#pos_x = pos_x;	
 		this.#pos_y = pos_y;
+		this.#rotation = 0;
 		this.#offset_x = 0;
 		this.#offset_y = 0;	
 		this.#color = "rgba(0, 0, 0, 0)";
@@ -862,6 +960,9 @@ class Rect {
 	}
 	setYPos(new_pos_y) {
 		this.#pos_y = new_pos_y;
+	}
+	setRotation(new_rotation) {
+		this.#rotation = new_rotation;
 	}
 	setOffsetX(new_offset_x) {
 		this.#offset_x = new_offset_x;
@@ -971,6 +1072,9 @@ class Rect {
 	ypos() {
 		return Object.freeze(this.#pos_y);
 	}
+	rotation() {
+		return Object.freeze(this.#rotation);
+	}
 	offsetx() {
 		return Object.freeze(this.#offset_x);
 	}
@@ -1002,10 +1106,18 @@ class Rect {
 		var draw_context = canvas.getContext("2d");
 		if(this.#img != "") {
 			if(this.#img_list == 1) {
+				draw_context.translate(this.#pos_x + (this.#width / 2), this.#pos_y + (this.#height / 2));
+				draw_context.rotate(-(this.#rotation * Math.PI) / 180);
+				draw_context.translate(-this.#pos_x - (this.#width / 2), -this.#pos_y - (this.#height / 2));
 				draw_context.drawImage(image_list_1[this.#img], 0, 0, image_list_1[this.#img].width, image_list_1[this.#img].height, this.#pos_x + this.#offset_x, this.#pos_y + this.#offset_y, this.#width, this.#height);
+				draw_context.setTransform(1.0, 0, 0, 1.0, 0, 0);
 			}
 			else {
+				draw_context.translate(this.#pos_x + (this.#width / 2), this.#pos_y + (this.#height / 2));
+				draw_context.rotate(-(this.#rotation * Math.PI) / 180);
+				draw_context.translate(-this.#pos_x - (this.#width / 2), -this.#pos_y - (this.#height / 2));
 				draw_context.drawImage(image_list_2[this.#img], 0, 0, image_list_2[this.#img].width, image_list_2[this.#img].height, this.#pos_x + this.#offset_x, this.#pos_y + this.#offset_y, this.#width, this.#height);
+				draw_context.setTransform(1.0, 0, 0, 1.0, 0, 0);
 			}
 			if(this.#text != "") {
 				draw_context.fillStyle = this.#font_color;
@@ -1130,6 +1242,7 @@ class Rect {
 	#height = 0;					// Height of the rect
 	#pos_x = 0;						// Absolute x position of the rect
 	#pos_y = 0;						// Absolute y position of the rect
+	#rotation = 0;					// Rotation in degrees
 	#offset_x = 0;					// An offset to the x position of the rect (should be used for effects)
 	#offset_y = 0;					// An offset to the y position of the rect (should be used for effects)
 	#color = "rgba(0, 0, 0, 0)";	// The color of the rect, note: If there is an image the image will be colored
@@ -1271,7 +1384,18 @@ function mainLoop() {
 						
 						if(CollisionSolver.testInside(owwe_player, owwe_grass_objects[i]) == true) {
 							if(Math.random() > 0.99) {
-								current_scene = "BATTLE";
+								// LAND BATTLES
+								//current_scene = "BATTLE";
+							}
+						}
+					}
+					for(var i = 0; i < owwe_water_objects.length;i++) {
+						owwe_water_objects[i].draw();
+						
+						if(CollisionSolver.testInside(owwe_player, owwe_water_objects[i]) == true) {
+							if(Math.random() > 0.99) {
+								// WATER BATTLES
+								//current_scene = "BATTLE";
 							}
 						}
 					}
