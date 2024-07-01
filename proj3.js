@@ -152,18 +152,19 @@ function fight() {
 }
 
 // !TODO someone implement this function!!!!!!!
+
 function selectStarterPokemon(pokemon) {
 	switch(pokemon) {
 		case "Balbasaur": {
-			
+			playerPokemon = allPokemons[0];
 			break;
 		}
 		case "Charmander": {
-			
+			playerPokemon = allPokemons[3];
 			break;
 		}
 		case "Squirtle" : {
-			
+			playerPokemon = allPokemons[6];
 			break;
 		}
 		default: {
@@ -180,6 +181,8 @@ function resetGame() {
 }
 
 // Image variables
+var battleImage = new Image();
+battleImage.src = 'Battle_scene_background.png'; 
 var image_load_list=["004Charmander.png","005Charmeleon.png","006Charizard.png","007Squirtle.png","008Wartortle.png","009Blastoise.png","010Caterpie.png","011Metapod.png","012Butterfree.png","013Weedle.png","014Kakuna.png","015Beedrill.png","016Pidgey.png","017Pidgeotto.png","018Pidgeot.png","019Rattata.png","021Spearow.png","022Fearow.png","023Ekans.png","024Arbok.png","025Pikachu.png","026Raichu.png","027Sandshrew.png","028Sandslash.png","029Nidoran.png","030Nidorina.png","031Nidoqueen.png","032Nidoran.png","033Nidorino.png","034Nidoking.png","035Clefairy.png","036Clefable.png","037Vulpix.png","038Ninetales.png","039Jigglypuff.png","040Wigglytuff.png","041Zubat.png","042Golbat.png","043Oddish.png","044Gloom.png","045Vileplume.png","046Paras.png","047Parasect.png","048Venonat.png","049Venomoth.png","050Diglett.png","051Dugtrio.png","052Meowth.png","053Persian.png","054Psyduck.png","055Golduck.png","056Mankey.png","057Primeape.png","058Growlithe.png","059Arcanine.png","060Poliwag.png","061Poliwhirl.png","062Poliwrath.png","063Abra.png","064Kadabra.png","065Alakazam.png","066Machop.png","067Machoke.png","068Machamp.png","069Bellsprout.png","070Weepinbell.png","071Victreebel.png","072Tentacool.png","073Tentacruel.png","074Geodude.png","075Graveler.png","076Golem.png","077Ponyta.png","078Rapidash.png","079Slowpoke.png","080Slowbro.png","081Magnemite.png","082Magneton.png","083Farfetch'd.png","084Doduo.png","085Dodrio.png","086Seel.png","087Dewgong.png","088Grimer.png","089Muk.png","090Shellder.png","091Cloyster.png","092Gastly.png","093Haunter.png","094Gengar.png","095Onix.png","096Drowzee.png","097Hypno.png","098Krabby.png","099Kingler.png","100Voltorb.png","101Electrode.png","102Exeggcute.png","103Exeggutor.png","104Cubone.png","105Marowak.png","106Hitmonlee.png","107Hitmonchan.png","108Lickitung.png","109Koffing.png","110Weezing.png","111Rhyhorn.png","112Rhydon.png","113Chansey.png","114Tangela.png","115Kangaskhan.png","116Horsea.png","117Seadra.png","118Goldeen.png","119Seaking.png","120Staryu.png","121Starmie.png","122Mr._Mime.png","123Scyther.png","124Jynx.png","125Electabuzz.png","126Magmar.png","127Pinsir.png","128Tauros.png","129Magikarp.png","130Gyarados.png","131Lapras.png","132Ditto.png","133Eevee.png","134Vaporeon.png","135Jolteon.png","136Flareon.png","137Porygon.png","138Omanyte.png","139Omastar.png","140Kabuto.png","141Kabutops.png","142Aerodactyl.png","143Snorlax.png","144Articuno.png","145Zapdos.png","146Moltres.png","147Dratini.png","148Dragonair.png","149Dragonite.png","150Mewtwo-Mega_X.png","150Mewtwo-Mega_Y.png","150Mewtwo.png","151Mew.png"];
 var image_list = {};
 // Main engine variables
@@ -1111,27 +1114,40 @@ function clearScreen() {
 	var draw_context = canvas.getContext("2d");
 	draw_context.clearRect(0, 0, canvas.width, canvas.height);
 }
+
 function handleAttack() {
 	console.log("Attack selected");
 	var num = playerPokemon.hp;
 	enemyPokemon.hp -= num;
-	console.log(playerPokemon.hp);
-	console.log(enemyPokemon.hp);
+	console.log("Enemy's hp: " + enemyPokemon.hp);
+	playersTurn = "ENEMYS"; 
 }
 
 function handleDefend() {
 	console.log("Defend selected");
+	playersTurn = "ENEMYS"; 
 	// Implement your defend logic here
 }
 
 function handleRun() {
 	current_scene = "OPENWORLD";
 	console.log("Run selected");
+	playersTurn = "ENEMYS"; 
 	
 }
 function handleItem() {
 	console.log("Item selected");
+	playersTurn = "ENEMYS"; 
 }
+function enemyAttack(){
+	playerPokemon.hp -= enemyPokemon.attack;
+	playersTurn = "YOURS"; 
+}
+document.querySelector('.menu-item-attack').addEventListener('click', handleAttack);
+document.querySelector('.menu-item-defend').addEventListener('click', handleDefend);
+document.querySelector('.menu-item-run').addEventListener('click', handleRun);
+document.querySelector('.menu-item-item').addEventListener('click', handleItem);
+var playersTurn = "YOURS";
 // Runs the main game and handles scene switching
 function mainLoop() {
 	// Handle any collisions from the last frame
@@ -1184,7 +1200,37 @@ function mainLoop() {
 		case "BATTLE": {
 			owwe_purple.draw();
 			owwe_player.draw();
-			document.getElementById('fightMenu').style.display = 'flex';
+			var canvas = document.getElementById("screen");
+			var context = canvas.getContext("2d");
+			canvas.style.background = "black";
+			console.log(playerPokemon.name);
+			console.log()
+			context.drawImage(battleImage, 0, 0, 1280, 720);
+			
+			switch(playersTurn){
+				case "YOURS":{
+					if(playerPokemon.hp <= 0){
+						window.location.href = "proj3.html";
+					}
+					else if (enemyPokemon.hp <= 0){
+						current_scene = "WORLD_EXPLORATION";
+					}else{
+					document.getElementById('fightMenu').style.display = 'flex';
+					break;
+					}
+				}
+				case "ENEMYS":{
+					if(playerPokemon.hp <= 0){
+						window.location.href = "proj3.html";
+					}
+					else if (enemyPokemon.hp <= 0){
+						current_scene = "WORLD_EXPLORATION";
+					}else {
+					enemyAttack();
+					console.log("Players hp: " + playerPokemon.hp);
+					}
+				}
+			}
 			break;
 		}
 		default: {

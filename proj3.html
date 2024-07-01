@@ -67,29 +67,35 @@
 			}
 
 			.menu-item {
-				margin-bottom: 5px; 
+				margin-bottom: 5px;
 				padding: 10px;
 				border-radius: 5px;
 				cursor: pointer;
-				width: 100px; 
+				width: 100px;
 				text-align: center;
-				background-color: rgba(0, 0, 255, 0.7); 
-				color: #FFFFFF; 
+				background-color: rgba(0, 0, 255, 0.7);
+				color: #FFFFFF;
+				border: none; /* Remove default button border */
 			}
+
 			.menu-item:hover {
-            opacity: 0.8; 
+				opacity: 0.8;
 			}
+
 			.menu-item-attack {
-				background-color: rgba(255, 0, 0, 0.7); 
+				background-color: rgba(255, 0, 0, 0.7);
 			}
+
 			.menu-item-defend {
-				background-color: rgba(0, 255, 0, 0.7); 
+				background-color: rgba(0, 255, 0, 0.7);
 			}
+
 			.menu-item-run {
-				background-color: rgba(0, 0, 255, 0.7); 
+				background-color: rgba(0, 0, 255, 0.7);
 			}
-			.menu-item-item{
-				background-color: rgba(255, 247, 0, 0.7); 
+
+			.menu-item-item {
+				background-color: rgba(255, 247, 0, 0.7);
 			}
 		</style>
 	</head>
@@ -124,10 +130,10 @@
 			<!-- Battle Log -->
 			<div id="battleLog"></div>
 			<div id="fightMenu">
-				<div class="menu-item menu-item-attack" onclick="handleAttack()">Attack</div>
-				<div class="menu-item menu-item-defend" onclick="handleDefend()">Defend</div>
-				<div class="menu-item menu-item-run" onclick="handleRun()">Run</div>
-				<div class="menu-item menu-item-item" onclick="handleItem()">Item</div>
+				<button class="menu-item menu-item-attack">Attack</button>
+				<button class="menu-item menu-item-defend">Defend</button>
+				<button class="menu-item menu-item-run">Run</button>
+				<button class="menu-item menu-item-item">Item</button>
 			</div>
 		</div>
 		<script type="module" src="proj3.js"></script>
