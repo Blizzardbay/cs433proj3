@@ -1115,6 +1115,8 @@ function clearScreen() {
 	draw_context.clearRect(0, 0, canvas.width, canvas.height);
 }
 var defense_tracker = 0;
+var battle_title = null;
+var item_lst = {HealthPotion: 2, DefensePotion: 2};
 function handleAttack() {
 	console.log("Attack selected");
 	var num = playerPokemon.hp;
@@ -1138,6 +1140,9 @@ function handleRun() {
 }
 function handleItem() {
 	console.log("Item selected");
+	battle_title = new Rect((1280 * 0.125), 720 * (1/16), (0.75 * 1280), 720 * (2/16));
+	battle_title.setColor("white");
+	battle_title.setText("Pick an item!", "32px serif", "black", "center", "center");
 	playersTurn = "ENEMYS"; 
 }
 function enemyAttack(){
@@ -1207,10 +1212,9 @@ function mainLoop() {
 			owwe_purple.draw();
 			owwe_player.draw();
 			var canvas = document.getElementById("screen");
-			var context = canvas.getContext("2d");
+			canvas.style.background = "black";
 			console.log(playerPokemon.name);
-			console.log()
-			context.drawImage(battleImage, 0, 0, 1280, 720);
+			console.log();
 			
 			switch(playersTurn){
 				case "YOURS":{
