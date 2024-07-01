@@ -7,6 +7,7 @@ var playersTurn = "YOURS";
 var landType;
 var playerPokemon;
 var enemyPokemon;
+var imageenemyPokemon;
 var allPokemons = [];
 document.getElementById('fightMenu').style.display = 'none';
 document.getElementById('itemMenu').style.display = 'none';
@@ -162,13 +163,23 @@ function fight() {
 }
 
 function findPokemonImageNumber(pokemonName) {
-    for (var i = 0; i < image_load_list_1.length; i++) {
-        var imageName = image_load_list_1[i];
-        if (imageName.toLowerCase().includes(pokemonName.toLowerCase())) {
-            var imageNumber = imageName.match(/^\d+/)[0];
-            return imageNumber;
-        }
-    }
+	if(current_scene == "BATTLE_LAND"){
+		for (var i = 0; i < image_load_list_1.length; i++) {
+			var imageName = image_load_list_1[i];
+			if (imageName.toLowerCase().includes(pokemonName.toLowerCase())) {
+				var imageNumber = imageName.match(/^\d+/)[0];
+				return imageNumber;
+			}
+		}
+	}else{
+		for (var i = 0; i < water_type_pokemon.length; i++) {
+			var imageName = water_type_pokemon[i];
+			if (imageName.toLowerCase().includes(pokemonName.toLowerCase())) {
+				var imageNumber = imageName.match(/^\d+/)[0];
+				return imageNumber;
+			}
+		}
+	}
     return null; // Return null if no matching image is found
 }
 
@@ -348,7 +359,7 @@ function startGame() {
 		owwe_water_objects = [];
 		var str = "\
 mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\n\
-m   g   ggggg  g  g m   g   g  m\n\
+m   w   ggggg  g  g m   g   g  m\n\
 m   g g  g    g  m  g m   g gggm\n\
 mmm g gmm g  gmm gm   g g mmmmmm\n\
 m                 g   gm    gmmm\n\
@@ -1362,8 +1373,7 @@ document.querySelector('.menu-item-item').addEventListener('click', handleItem);
 document.querySelector('.itemmenu-item-health').addEventListener('click', healthItem);
 document.querySelector('.itemmenu-item-defense').addEventListener('click', defenseItem);
 
-var imageenemyPokemon = new Rect((1280 * 0.125) + 8.4 + 600, 720 * 0.25 - 120, 300, 300);
-imageenemyPokemon.setImg("034");
+
 // Runs the main game and handles scene switching
 function mainLoop() {
 	// Handle any collisions from the last frame
@@ -1401,8 +1411,9 @@ function mainLoop() {
 						
 						if(CollisionSolver.testInside(owwe_player, owwe_grass_objects[i]) == true) {
 							if(Math.random() > 0.99) {
-								landType = "WATER";
-								current_scene = "BATTLE";
+								current_scene = "BATTLE_LAND";
+								
+								
 							}
 						}
 					}
@@ -1411,8 +1422,9 @@ function mainLoop() {
 						
 						if(CollisionSolver.testInside(owwe_player, owwe_water_objects[i]) == true) {
 							if(Math.random() > 0.99) {
-								landType = "LAND"
-								current_scene = "BATTLE";
+								current_scene = "BATTLE_WATER";
+								
+								
 							}
 						}
 					}
@@ -1424,12 +1436,13 @@ function mainLoop() {
 			}
 			break;
 		}
-		case "BATTLE": {
+		case "BATTLE_LAND": {
 
 			var pokemonPlayerMaxhp = playerPokemon.hp;
 			var enemyPlayerMaxhp = enemyPokemon.hp;
-			switch(landType){
-				case "LAND":
+		
+				imageenemyPokemon = new Rect((1280 * 0.125) + 8.4 + 600, 720 * 0.25 - 120, 300, 300);
+				imageenemyPokemon.setImg("034");
 				battle_background.draw();
 				imageenemyPokemon.draw();
 				switch(playersTurn){
@@ -1460,8 +1473,16 @@ function mainLoop() {
 						console.log("Players hp: " + playerPokemon.hp);
 						}
 					}
-				}
-				case WATER:
+					}
+						
+			break;
+		}
+		case "BATTLE_WATER": {
+
+			var pokemonPlayerMaxhp = playerPokemon.hp;
+			var enemyPlayerMaxhp = enemyPokemon.hp;
+				imageenemyPokemon = new Rect((1280 * 0.125) + 8.4 + 650, 720 * 0.25 + 100, 170, 170);
+				imageenemyPokemon.setImg("000");
 				water_background.draw();
 				imageenemyPokemon.draw();
 				switch(playersTurn){
@@ -1492,9 +1513,8 @@ function mainLoop() {
 						console.log("Players hp: " + playerPokemon.hp);
 						}
 					}
-				}
-
-			}
+					}
+						
 			break;
 		}
 		default: {
