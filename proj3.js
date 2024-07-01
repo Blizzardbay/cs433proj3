@@ -160,7 +160,7 @@ function selectStarterPokemon(pokemon) {
 			break;
 		}
 		case "Charmander": {
-			playerPokemon = allPokemons[3];
+			playerPokemon = allPokemons[4];
 			break;
 		}
 		case "Squirtle" : {
@@ -1114,7 +1114,7 @@ function clearScreen() {
 	var draw_context = canvas.getContext("2d");
 	draw_context.clearRect(0, 0, canvas.width, canvas.height);
 }
-
+var defense_tracker = 0;
 function handleAttack() {
 	console.log("Attack selected");
 	var num = playerPokemon.hp;
@@ -1126,6 +1126,7 @@ function handleAttack() {
 function handleDefend() {
 	console.log("Defend selected");
 	playersTurn = "ENEMYS"; 
+	defense_tracker = 1;
 	// Implement your defend logic here
 }
 
@@ -1140,7 +1141,12 @@ function handleItem() {
 	playersTurn = "ENEMYS"; 
 }
 function enemyAttack(){
-	playerPokemon.hp -= enemyPokemon.attack;
+	if (defense_tracker == 0){
+		playerPokemon.hp -= enemyPokemon.attack/4;
+	}else{
+		playerPokemon.hp -= enemyPokemon.attack/3;
+		defense_tracker = 0;
+	}
 	playersTurn = "YOURS"; 
 }
 document.querySelector('.menu-item-attack').addEventListener('click', handleAttack);
@@ -1202,7 +1208,6 @@ function mainLoop() {
 			owwe_player.draw();
 			var canvas = document.getElementById("screen");
 			var context = canvas.getContext("2d");
-			canvas.style.background = "black";
 			console.log(playerPokemon.name);
 			console.log()
 			context.drawImage(battleImage, 0, 0, 1280, 720);
@@ -1213,7 +1218,7 @@ function mainLoop() {
 						window.location.href = "proj3.html";
 					}
 					else if (enemyPokemon.hp <= 0){
-						current_scene = "WORLD_EXPLORATION";
+						current_scene = "OPENWORLD";
 					}else{
 					document.getElementById('fightMenu').style.display = 'flex';
 					break;
@@ -1224,7 +1229,7 @@ function mainLoop() {
 						window.location.href = "proj3.html";
 					}
 					else if (enemyPokemon.hp <= 0){
-						current_scene = "WORLD_EXPLORATION";
+						current_scene = "OPENWORLD";
 					}else {
 					enemyAttack();
 					console.log("Players hp: " + playerPokemon.hp);
