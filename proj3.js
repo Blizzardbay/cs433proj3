@@ -63,6 +63,13 @@ $(document).ready(function() {
 		startGame();
 		alert("Quitting the game.");
 		MenuMusic.pause();
+		var canvas = document.getElementById("screen");
+		var context = canvas.getContext("2d");
+		context.clearRect(0, 0, canvas.width, canvas.height);
+		context.font = "30px Arial";
+		context.fillStyle = "black";
+		context.textAlign = "center";
+		context.fillText("Quitting...", canvas.width / 2, canvas.height / 2);
 		window.location.href = "proj3.html";
 	});
 
