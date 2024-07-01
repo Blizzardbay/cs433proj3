@@ -1140,9 +1140,7 @@ function handleRun() {
 }
 function handleItem() {
 	console.log("Item selected");
-	battle_title = new Rect((1280 * 0.125), 720 * (1/16), (0.75 * 1280), 720 * (2/16));
-	battle_title.setColor("white");
-	battle_title.setText("Pick an item!", "32px serif", "black", "center", "center");
+	
 	playersTurn = "ENEMYS"; 
 }
 function enemyAttack(){
@@ -1212,9 +1210,10 @@ function mainLoop() {
 			owwe_purple.draw();
 			owwe_player.draw();
 			var canvas = document.getElementById("screen");
-			canvas.style.background = "black";
+			var context = canvas.getContext("2d");
 			console.log(playerPokemon.name);
-			console.log();
+			console.log()
+			context.drawImage(battleImage, 0, 0, 1280, 720);
 			
 			switch(playersTurn){
 				case "YOURS":{
