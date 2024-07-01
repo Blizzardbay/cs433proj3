@@ -1234,7 +1234,7 @@ function mainLoop() {
 			break;
 		}
 		default: {
-			// !TODO implement exit
+			/// !TODO implement exit
 			exitLoop();
 			break;
 		}
