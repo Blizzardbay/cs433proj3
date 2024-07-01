@@ -3,6 +3,7 @@ var image_loading_done = false;
 var database_loading_done = false;
 var game_loading_done = false;
 var loading_done = false;
+var playersTurn = "YOURS";
 var playerPokemon;
 var enemyPokemon;
 var allPokemons = [];
@@ -157,6 +158,17 @@ function fight() {
 
 	// Update battle log
 	updateBattleLog();
+}
+
+function findPokemonImageNumber(pokemonName) {
+    for (var i = 0; i < image_load_list_1.length; i++) {
+        var imageName = image_load_list_1[i];
+        if (imageName.toLowerCase().includes(pokemonName.toLowerCase())) {
+            var imageNumber = imageName.match(/^\d+/)[0];
+            return imageNumber;
+        }
+    }
+    return null; // Return null if no matching image is found
 }
 
 // !TODO someone implement this function!!!!!!!
@@ -1233,7 +1245,8 @@ document.querySelector('.menu-item-item').addEventListener('click', handleItem);
 document.querySelector('.itemmenu-item-health').addEventListener('click', healthItem);
 document.querySelector('.itemmenu-item-defense').addEventListener('click', defenseItem);
 
-var playersTurn = "YOURS";
+var imageenemyPokemon = new Rect((1280 * 0.125) + 8.4 + 600, 720 * 0.25 - 120, 300, 300);
+imageenemyPokemon.setImg("034");
 // Runs the main game and handles scene switching
 function mainLoop() {
 	// Handle any collisions from the last frame
@@ -1284,15 +1297,20 @@ function mainLoop() {
 			break;
 		}
 		case "BATTLE": {
+			var pokemonPlayerMaxhp = playerPokemon.hp;
+			var enemyPlayerMaxhp = enemyPokemon.hp;
 			battle_background.draw();
+			imageenemyPokemon.draw();
+			console.log(String(enemyPokemon.name));
 			switch(playersTurn){
 				case "YOURS":{
 					if(playerPokemon.hp <= 0){
-						//window.location.href = "proj3.html";
+						window.location.href = "proj3.html";
 					}
 					else if (enemyPokemon.hp <= 0){
 						enemyPokemon = allPokemons[Math.floor(Math.random() * allPokemons.length)];
 						current_scene = "OPENWORLD";
+						playersTurn = "YOURS";
 
 					}else{
 					document.getElementById('fightMenu').style.display = 'flex';
@@ -1301,10 +1319,12 @@ function mainLoop() {
 				}
 				case "ENEMYS":{
 					if(playerPokemon.hp <= 0){
-						//window.location.href = "proj3.html";
+						window.location.href = "proj3.html";
 					}
 					else if (enemyPokemon.hp <= 0){
+						enemyPokemon = allPokemons[Math.floor(Math.random() * allPokemons.length)];
 						current_scene = "OPENWORLD";
+						playersTurn = "YOURS";
 					}else {
 					enemyAttack();
 					console.log("Players hp: " + playerPokemon.hp);
