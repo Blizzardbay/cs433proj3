@@ -97,6 +97,20 @@ $(document).ready(function() {
 		fight();
 	});
 });
+function generateMenu(menuItems) {
+	const poke = document.getElementById('poke');
+        if (poke) {
+            poke.innerHTML = ''; // Clear existing menu items
+            
+            menuItems.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item;
+                poke.appendChild(li);
+            });
+        } else {
+            console.error('Element with ID "poke" not found');
+        }
+}
 
 function initializeGame() {
 	// Randomly select player and enemy Pokémon from the Loaded data
@@ -132,56 +146,25 @@ function getRandomPokemon(pokemonList) {
 	return Object.assign({}, pokemonList[index]);
 }
 
-// Function to update the battle log
-function updateBattleLog() {
-	var battleLog = document.getElementById("battleLog");
-	battleLog.innerHTML =
-	playerPokemon.name +
-	" HP: " +
-	playerPokemon.hp +
-	"<br>" +
-	enemyPokemon.name +
-	" HP: " +
-	enemyPokemon.hp;
-}
-
-// Basic battle logic for the fight button
-function fight() {
-	// Player attacks enemy
-	enemyPokemon.hp -= playerPokemon.attack;
-	if (enemyPokemon.hp <= 0) {
-		alert(playerPokemon.name + " wins!");
-		resetGame();
-		return;
-	}
-
-	// Enemy attacks player
-	playerPokemon.hp -= enemyPokemon.attack;
-	if (playerPokemon.hp <= 0) {
-		alert(enemyPokemon.name + " wins!");
-		resetGame();
-		return;
-	}
-
-	// Update battle log
-	updateBattleLog();
-}
-
 // !TODO someone implement this function!!!!!!!
 
 function selectStarterPokemon(pokemon) {
 	switch(pokemon) {
 		case "Balbasaur": {
 			playerPokemon = allPokemons[0];
-			console.log(playerPokemon.id);
+			playerPokiList.push(playerPokemon.name);
+			playerPokiList.push("Squirtle");
+			console.log(playerPokiList[0]);
 			break;
 		}
 		case "Charmander": {
 			playerPokemon = allPokemons[4];
+			playerPokiList.push(playerPokemon.name);
 			break;
 		}
 		case "Squirtle" : {
-			playerPokemon = allPokemons[6];
+			playerPokemon = allPokemons[7];
+			playerPokiList.push(playerPokemon.name);
 			break;
 		}
 		default: {
@@ -203,6 +186,15 @@ function findPokemonNumber(name) {
         }
     }
     return "Pokemon not found";
+}
+function findPokemon(title) {
+    for (var i = 0; i < allPokemons.length; i++) {
+        if (allPokemons[i].name === title) {
+            return allPokemons[i];
+        }
+    }
+	console.log("Pokemon not found");
+    return null;
 }
 
 
@@ -1365,8 +1357,8 @@ function handleAttack() {
 }
 
 function handlePokemon() {
-
-	// Implement your defend logic here
+	poke.style.display = 'flex';
+    generateMenu(playerPokiList);
 }
 
 function handleRun() {
@@ -1419,6 +1411,15 @@ document.querySelector('.menu-item-run').addEventListener('click', handleRun);
 document.querySelector('.menu-item-item').addEventListener('click', handleItem);
 document.querySelector('.itemmenu-item-health').addEventListener('click', healthItem);
 document.querySelector('.itemmenu-item-defense').addEventListener('click', defenseItem);
+document.getElementById('poke').addEventListener('click', function(event) {
+	playerPokemon = allPokemons[2];
+	let desc = event.target.textContent;
+	playerPokemon = findPokemon(desc.toString());
+	console.log("Player is now a : " + playerPokemon.name);
+	poke.style.display = 'none';
+
+	playersTurn = "ENEMYS";
+});
 
 // Runs the main game and handles scene switching
 function mainLoop() {
@@ -1637,11 +1638,6 @@ function mainLoop() {
 						
 			break;
 		}
-		case "POKEMON_BAG": {
-			playerPokiList[1] = allPokemons[Math.floor(Math.random() * allPokemons.length)];
-			playerPokiList[2] = allPokemons[Math.floor(Math.random() * allPokemons.length)];
-		}
-
 		default: {
 			/// !TODO implement exit
 			exitLoop();
