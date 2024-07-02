@@ -33,8 +33,6 @@ async function databaseFinishedLoading() {
 }
 
 databaseFinishedLoading();
-
-//menu handling
 $(document).ready(function() {
 	var MenuMusic = document.getElementById("MenuMusic");
 	var SoundSettings = $("#SoundSettings");
@@ -1318,8 +1316,8 @@ function handleAttack() {
     }, 6000);
 }
 
-function handleCapture() {
-	
+function handlePokemon() {
+
 	// Implement your defend logic here
 }
 
@@ -1368,7 +1366,7 @@ function enemyAttack(){
 }
 
 document.querySelector('.menu-item-attack').addEventListener('click', handleAttack);
-document.querySelector('.menu-item-capture').addEventListener('click', handleCapture);
+document.querySelector('.menu-item-pokemon').addEventListener('click', handlePokemon);
 document.querySelector('.menu-item-run').addEventListener('click', handleRun);
 document.querySelector('.menu-item-item').addEventListener('click', handleItem);
 document.querySelector('.itemmenu-item-health').addEventListener('click', healthItem);
