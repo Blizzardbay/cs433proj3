@@ -11,6 +11,7 @@ var imageenemyPokemon;
 var allPokemons = [];
 var enemy_event_text = null;
 var player_event_text = null;
+var event_text = null;
 document.getElementById('fightMenu').style.display = 'none';
 document.getElementById('itemMenu').style.display = 'none';
 
@@ -1317,7 +1318,12 @@ function handleAttack() {
 	var num = playerPokemon.attack;
 	enemyPokemon.hp -= num;
 	console.log("Enemy's hp: " + enemyPokemon.hp);
-	playersTurn = "ENEMYS"; 
+	event_text.setText(`Players attacks ${enemyPokemon.name}, does ${playerPokemon.attack} damage`, "64px serif", "black", "center", "center");
+	event_text.draw();
+	setTimeout(function() {
+        clearScreen(); // Assuming this function clears the canvas
+        playersTurn = "ENEMYS"; // Continue with the game logic
+    }, 2000); // Adjust 3000 milliseconds (3 seconds) as needed
 }
 
 function handleCapture() {
@@ -1455,6 +1461,10 @@ function mainLoop() {
 				player_event_text.setColor("green");
 				player_event_text.setText(`Player Pokemon: ${playerPokemon.name}\nHp: ${playerPokemon.hp}`, "64px serif", "white", "center", "center");
 				player_event_text.draw();
+				event_text = new Rect((1280 * 0.125), (720 * 0.25), ((0.75 * 1280) * (1/3)) + 200, 200);
+				event_text.setColor("white");
+				event_text.setText(`What will you do next?`, "64px serif", "black", "center", "center");
+				event_text.draw();
 				switch(playersTurn){
 					case "YOURS":{
 						if(playerPokemon.hp <= 0){
@@ -1504,6 +1514,10 @@ function mainLoop() {
 				player_event_text.setColor("green");
 				player_event_text.setText(`Player Pokemon: ${playerPokemon.name}\nHp: ${playerPokemon.hp}`, "64px serif", "white", "center", "center");
 				player_event_text.draw();
+				event_text = new Rect((1280 * 0.125) - 100, (720 * 0.25) + 100, ((0.75 * 1280) * (1/3)) + 200, 200);
+				event_text.setColor("white");
+				event_text.setText(`What will you do next?`, "64px serif", "black", "center", "center");
+				event_text.draw();
 
 				switch(playersTurn){
 					case "YOURS":{
