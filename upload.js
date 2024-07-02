@@ -24,9 +24,6 @@ async function fetchExcelFile() {
         }
         catch(error) {
           console.error('Error fetching the Excel file:', error);
-          const errorMessage = document.createElement("p");
-          errorMessage.textContent = "Error fetching the Excel file. Please try again.";
-          document.body.appendChild(errorMessage);
         }
 }
 async function sendDataToServer(data) {
@@ -38,18 +35,12 @@ async function sendDataToServer(data) {
 		success: function (response) {
 		  console.log("Data sent to the server successfully.");
 		  console.log(response);
-		  const successMessage = document.createElement("p");
-		  successMessage.textContent = "Data uploaded to Database successfully!";
 		  loaded = true;
-		  document.body.appendChild(successMessage);
 		  resolve(response);
 		},
 		error: function (error) {
 		  console.error("Error sending data to the server.");
 		  console.error(error);
-		  const errorMessage = document.createElement("p");
-		  errorMessage.textContent = "Error uploading data to Database. Please try again.";
-		  document.body.appendChild(errorMessage);
 		},
 	  });
   });
