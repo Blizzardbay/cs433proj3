@@ -9,9 +9,11 @@ var playerPokemon;
 var enemyPokemon;
 var imageenemyPokemon;
 var allPokemons = [];
+var playerPokiList = [];
 var enemy_event_text = null;
 var player_event_text = null;
 var event_text = null;
+var pokemonPlayerMaxhp;
 document.getElementById('fightMenu').style.display = 'none';
 document.getElementById('itemMenu').style.display = 'none';
 
@@ -165,41 +167,24 @@ function fight() {
 	updateBattleLog();
 }
 
-function findPokemonImageNumber(pokemonName) {
-	if(current_scene == "BATTLE_LAND"){
-		for (var i = 0; i < image_load_list_1.length; i++) {
-			var imageName = image_load_list_1[i];
-			if (imageName.toLowerCase().includes(pokemonName.toLowerCase())) {
-				var imageNumber = imageName.match(/^\d+/)[0];
-				return imageNumber;
-			}
-		}
-	}else{
-		for (var i = 0; i < water_type_pokemon.length; i++) {
-			var imageName = water_type_pokemon[i];
-			if (imageName.toLowerCase().includes(pokemonName.toLowerCase())) {
-				var imageNumber = imageName.match(/^\d+/)[0];
-				return imageNumber;
-			}
-		}
-	}
-    return null; // Return null if no matching image is found
-}
-
 // !TODO someone implement this function!!!!!!!
 
 function selectStarterPokemon(pokemon) {
 	switch(pokemon) {
 		case "Balbasaur": {
 			playerPokemon = allPokemons[0];
+			playerPokiList[0] = playerPokemon;
+			console.log(playerPokemon.id);
 			break;
 		}
 		case "Charmander": {
 			playerPokemon = allPokemons[4];
+			playerPokiList[0] = playerPokemon;
 			break;
 		}
 		case "Squirtle" : {
 			playerPokemon = allPokemons[6];
+			playerPokiList[0] = playerPokemon;
 			break;
 		}
 		default: {
@@ -214,6 +199,15 @@ function resetGame() {
 	enemyPokemon = getRandomPokemon(parsePokemonList());
 	updateBattleLog();
 }
+function findPokemonNumber(name) {
+    for (var i = 0; i < image_load_list_1.length; i++) {
+        if (image_load_list_1[i].includes(name)) {
+            return image_load_list_1[i].slice(0, 3);
+        }
+    }
+    return "Pokemon not found";
+}
+
 
 // Image variables
 var image_load_list_2=["Battle_scene_background.png", "water_battle.png","grass2.png", "grassground.png", "mountain1.png", "waterdeep.png", "grass1.png", "sand1.png", "water1.png"];
@@ -347,7 +341,7 @@ function startGame() {
 		
 		
 		owwe_player = new Rect(40,40,40,40);
-		owwe_player.setColor("blue");
+		owwe_player.setImg(findPokemonNumber("Bulbasaur"));
 		owwe_player.addEventKeyboard("OPENWORLD","WORLD_EXPLORATION", "keydown", 'w', function(event, rect) { rect.setYPos(rect.ypos() - 10); });
 		owwe_player.addEventKeyboard("OPENWORLD","WORLD_EXPLORATION", "keydown", "a", function(event, rect) { rect.setXPos(rect.xpos() - 10); });
 		owwe_player.addEventKeyboard("OPENWORLD","WORLD_EXPLORATION", "keydown", 's', function(event, rect) { rect.setYPos(rect.ypos() + 10); });
@@ -1314,26 +1308,27 @@ var item_lst = {HealthPotion: 2, DefensePotion: 2};
 var health_potion_desc= null;
 var defense_potion_desc = null;
 function handleAttack() {
+	document.getElementById('fightMenu').style.display = 'block';
 	console.log("Attack selected");
 	var num = playerPokemon.attack;
 	enemyPokemon.hp -= num;
 	console.log("Enemy's hp: " + enemyPokemon.hp);
 	event_text.setText(`Players attacks ${enemyPokemon.name}, does ${playerPokemon.attack} damage`, "64px serif", "black", "center", "center");
-	event_text.draw();
+	event_text.draw(); 
+	playersTurn = "ENEMYS"; 
 	setTimeout(function() {
-        clearScreen(); // Assuming this function clears the canvas
-        playersTurn = "ENEMYS"; // Continue with the game logic
-    }, 2000); // Adjust 3000 milliseconds (3 seconds) as needed
+        document.getElementById('fightMenu').style.display = 'block';
+    }, 6000);
 }
 
 function handleCapture() {
-	console.log("Defend selected");
-	playersTurn = "ENEMYS"; 
-	defense_tracker = 1;
+	
 	// Implement your defend logic here
 }
 
 function handleRun() {
+	document.getElementById('fightMenu').style.display = 'none';
+
 	current_scene = "OPENWORLD";
 	console.log("Run selected");
 	playersTurn = "ENEMYS"; 
@@ -1374,6 +1369,7 @@ function enemyAttack(){
 	}
 	playersTurn = "YOURS"; 
 }
+
 document.querySelector('.menu-item-attack').addEventListener('click', handleAttack);
 document.querySelector('.menu-item-capture').addEventListener('click', handleCapture);
 document.querySelector('.menu-item-run').addEventListener('click', handleRun);
@@ -1381,8 +1377,6 @@ document.querySelector('.menu-item-item').addEventListener('click', handleItem);
 document.querySelector('.itemmenu-item-health').addEventListener('click', healthItem);
 document.querySelector('.itemmenu-item-defense').addEventListener('click', defenseItem);
 
-
-var pokemon_options = [];
 // Runs the main game and handles scene switching
 function mainLoop() {
 	// Handle any collisions from the last frame
@@ -1394,6 +1388,7 @@ function mainLoop() {
 		case "OPENWORLD": {
 			switch(scene_state) {
 				case "POKEMON_SELECTION": {
+
 					var canvas = document.getElementById("screen");
 					canvas.style.background = "black";
 					owps_title.draw();
@@ -1446,9 +1441,8 @@ function mainLoop() {
 			break;
 		}
 		case "BATTLE_LAND": {
-
-				var pokemonPlayerMaxhp = playerPokemon.hp;
-				var enemyPlayerMaxhp = enemyPokemon.hp;
+				var exit_background = new Rect(0, 0, 1280, 720);
+				exit_background.setColor("black");
 				imageenemyPokemon = new Rect((1280 * 0.125) + 8.4 + 600, 720 * 0.25 - 120, 300, 300);
 				imageenemyPokemon.setImg("034");
 				battle_background.draw();
@@ -1467,43 +1461,50 @@ function mainLoop() {
 				event_text.draw();
 				switch(playersTurn){
 					case "YOURS":{
-						if(playerPokemon.hp <= 0){
-							window.location.href = "proj3.html";
+						switch(true) {
+							case (playerPokemon.hp <= 0):
+								window.location.href = "proj3.html";
+							case (enemyPokemon.hp <= 0):
+								playerPokemon.hp += 30;
+								enemyPokemon = allPokemons[Math.floor(Math.random() * allPokemons.length)];
+								playersTurn = "YOURS";
+								current_scene = "OPENWORLD";
+								document.getElementById('fightMenu').style.display = 'flex';
+							default:
+								document.getElementById('fightMenu').style.display = 'flex';
+								break;
 						}
-						else if (enemyPokemon.hp <= 0){
-							enemyPokemon = allPokemons[Math.floor(Math.random() * allPokemons.length)];
-							current_scene = "OPENWORLD";
-							playersTurn = "YOURS";
-
-						}else{
-
-						document.getElementById('fightMenu').style.display = 'flex';
 						break;
-						}
 					}
 					case "ENEMYS":{
-						if(playerPokemon.hp <= 0){
-							window.location.href = "proj3.html";
+						switch(true) {
+							case (playerPokemon.hp <= 0):
+								window.location.href = "proj3.html";
+							case (enemyPokemon.hp <= 0):
+								playerPokemon.hp += 30;
+								enemyPokemon = allPokemons[Math.floor(Math.random() * allPokemons.length)];
+								playersTurn = "YOURS";
+								current_scene = "OPENWORLD";
+								document.getElementById('fightMenu').style.display = 'flex';
+							default:
+								document.getElementById('fightMenu').style.display = 'none';
+								enemyAttack();
+								console.log("Players hp: " + playerPokemon.hp);
+								playersTurn = "YOURS";
+						
 						}
-						else if (enemyPokemon.hp <= 0){
-							enemyPokemon = allPokemons[Math.floor(Math.random() * allPokemons.length)];
-							current_scene = "OPENWORLD";
-							playersTurn = "YOURS";
-						}else {
-						enemyAttack();
-						console.log("Players hp: " + playerPokemon.hp);
-						}
+						break;
 					}
 					}
 						
 			break;
+		
 		}
 		case "BATTLE_WATER": {
-
-			var pokemonPlayerMaxhp = playerPokemon.hp;
-			var enemyPlayerMaxhp = enemyPokemon.hp;
+				var exit_background = new Rect(0, 0, 1280, 720);
+				exit_background.setColor("black");
 				imageenemyPokemon = new Rect((1280 * 0.125) + 8.4 + 650, 720 * 0.25 + 100, 170, 170);
-				imageenemyPokemon.setImg("000");
+				imageenemyPokemon.setImg(findPokemonNumber("Metapod"));
 				water_background.draw();
 				imageenemyPokemon.draw();
 				enemy_event_text = new Rect((1280 * 0.125) - 100, (720 * 0.25) - 100, ((0.75 * 1280) * (1/3)) + 100, 100);
@@ -1519,38 +1520,52 @@ function mainLoop() {
 				event_text.setText(`What will you do next?`, "64px serif", "black", "center", "center");
 				event_text.draw();
 
+
 				switch(playersTurn){
 					case "YOURS":{
-						if(playerPokemon.hp <= 0){
-							window.location.href = "proj3.html";
+						switch(true) {
+							case (playerPokemon.hp <= 0):
+								window.location.href = "proj3.html";
+							case (enemyPokemon.hp <= 0):
+								playerPokemon.hp += 30;
+								enemyPokemon = allPokemons[Math.floor(Math.random() * allPokemons.length)];
+								playersTurn = "YOURS";
+								current_scene = "OPENWORLD";
+								document.getElementById('fightMenu').style.display = 'flex';
+							default:
+								document.getElementById('fightMenu').style.display = 'flex';
+								break;
 						}
-						else if (enemyPokemon.hp <= 0){
-							enemyPokemon = allPokemons[Math.floor(Math.random() * allPokemons.length)];
-							current_scene = "OPENWORLD";
-							playersTurn = "YOURS";
-
-						}else{
-						document.getElementById('fightMenu').style.display = 'flex';
 						break;
-						}
 					}
 					case "ENEMYS":{
-						if(playerPokemon.hp <= 0){
-							window.location.href = "proj3.html";
+						switch(true) {
+							case (playerPokemon.hp <= 0):
+								window.location.href = "proj3.html";
+							case (enemyPokemon.hp <= 0):
+								playerPokemon.hp += 30;
+								enemyPokemon = allPokemons[Math.floor(Math.random() * allPokemons.length)];
+								playersTurn = "YOURS";
+								current_scene = "OPENWORLD";
+								document.getElementById('fightMenu').style.display = 'flex';
+							default:
+								document.getElementById('fightMenu').style.display = 'none';
+								enemyAttack();
+								console.log("Players hp: " + playerPokemon.hp);
+								playersTurn = "YOURS";
+						
 						}
-						else if (enemyPokemon.hp <= 0){
-							enemyPokemon = allPokemons[Math.floor(Math.random() * allPokemons.length)];
-							current_scene = "OPENWORLD";
-							playersTurn = "YOURS";
-						}else {
-						enemyAttack();
-						console.log("Players hp: " + playerPokemon.hp);
-						}
+						break;
 					}
 					}
 						
 			break;
 		}
+		case "POKEMON_BAG": {
+			playerPokiList[1] = allPokemons[Math.floor(Math.random() * allPokemons.length)];
+			playerPokiList[2] = allPokemons[Math.floor(Math.random() * allPokemons.length)];
+		}
+
 		default: {
 			/// !TODO implement exit
 			exitLoop();
