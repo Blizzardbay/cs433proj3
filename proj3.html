@@ -21,6 +21,25 @@
 				padding: 10px;
 				margin: 10px 0;
 				font-size: 18px;
+				color: white;
+				border: none;
+				cursor: pointer;
+				position: relative;
+				overflow: hidden;
+				background-color: #007BFF;
+				animation: blink 1.5s infinite;
+
+			}
+			
+			
+			@keyframes blink {
+				0%, 100% {
+					background-color: #007BFF;
+					
+				}
+				50% {
+					background-color: #FFD700;
+				}
 			}
 			#screen {
 				display: none;
