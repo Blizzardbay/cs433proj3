@@ -173,18 +173,15 @@ function selectStarterPokemon(pokemon) {
 	switch(pokemon) {
 		case "Balbasaur": {
 			playerPokemon = allPokemons[0];
-			playerPokiList[0] = playerPokemon;
 			console.log(playerPokemon.id);
 			break;
 		}
 		case "Charmander": {
 			playerPokemon = allPokemons[4];
-			playerPokiList[0] = playerPokemon;
 			break;
 		}
 		case "Squirtle" : {
 			playerPokemon = allPokemons[6];
-			playerPokiList[0] = playerPokemon;
 			break;
 		}
 		default: {
