@@ -25,18 +25,33 @@
 
         #menu {
             width: 350px;
+            margin: 0 auto;
             text-align: center;
+            padding-top: 100px;
 			
         }
         #menu button {
             display: block;
             width: 100%;
             padding: 10px;
-            margin: 5px 0;
+            margin: 10px 0;
             font-size: 18px;
             border-radius: 10px;
-            opacity: 1; 
+            opacity: none; 
             font-weight: bolder;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            background-color: #007BFF;
+            animation: blink 1.5s infinite;
+        }
+        @keyframes blink {
+            0%, 100% {
+                background-color: #007BFF;
+            }
+            50% {
+                background-color: #FFD700;
+            }
         }
 
         #menu button:hover {
