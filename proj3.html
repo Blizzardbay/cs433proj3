@@ -1,87 +1,71 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Project 3</title>
-    <!-- XLSX library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- JavaScript file for handling the file upload and processing -->
-    <style>
-        /* Add some basic styling for the menu */
-        body {
-            background-color: #d2b48c; /* light brown color */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        #menu {
-            width: 300px;
-            text-align: center;
-        }
-        #menu button {
-            display: block;
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            font-size: 18px;
-            border-radius: 10px;
-            opacity: 0.8; /* Initial opacity */
-            transition: opacity 0.3s ease; /* Smooth transition */
-        }
-        #menu button:hover {
-            opacity: 1; /* Fully visible on hover */
-        }
-        #screen-container {
-            display: none;
-            position: relative;
-            width: 1280px;
-            height: 720px;
-        }
-        #screen {
-            border: 1px solid #000000;
-            display: block;
-        }
-        #SoundSettings {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.4);
-            padding-top: 60px;
-        }
-        #SoundSettingsDisplay {
-            background-color: #fefefe;
-            margin: 5% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-        }
-        #MenuOptionButton {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            padding: 10px;
-            font-size: 18px;
-            border-radius: 10px;
-        }
-        #fightMenu {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background-color: black;
-            padding: 5px;
-            border-radius: 10px;
-            display: grid;
-            gap: 20px;
-            width: 400px;
-        }
+	<head>
+		<title>Project 3</title>
+		<!-- XLSX library -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+		<!-- JavaScript file for handling the file upload and processing -->
+		<style>
+			/* Add some basic styling for the menu */
+			#menu {
+				width: 300px;
+				margin: 0 auto;
+				text-align: center;
+				padding-top: 100px;
+			}
+			#menu button {
+				display: block;
+				width: 100%;
+				padding: 10px;
+				margin: 10px 0;
+				font-size: 18px;
+			}
+			#screen {
+				display: none;
+			}
+			#SoundSettings {
+				display: none;
+				position: fixed;
+				z-index: 1;
+				left: 0;
+				top: 0;
+				width: 100%;
+				height: 100%;
+				overflow: auto;
+				background-color: rgb(0, 0, 0);
+				background-color: rgba(0, 0, 0, 0.4);
+				padding-top: 60px;
+			}
+			#SoundSettingsDisplay {
+				background-color: #fefefe;
+				margin: 5% auto;
+				padding: 20px;
+				border: 1px solid #888;
+				width: 80%;
+			}
+			#MenuOptionButton {
+				display: none;
+				position: fixed;
+				top: 10px;
+				left: 10px;
+				padding: 10px;
+				font-size: 18px;
+			}
+			#fightMenu {
+				display: none;
+				position: absolute;
+				bottom: 10px;
+				right: 10px;
+				background-color: rgba(0, 0, 255, 0.7);
+				padding: 20px;
+				border-radius: 10px;
+				display: grid;
+				gap: 20px;
+				width: 400px;
+				
+			}
 
         .menu-item {
             padding: 5px;
@@ -149,80 +133,51 @@
             background-color: rgba(0, 34, 255, 0.7);
         }
 
-    </style>
-</head>
-<body>
-    <div style="display:block;" id="Loading">
-        <h1>Loading...</h1>
-    </div>
-    <div style="display:none;" id="CompletedLoading">
-        
-        <div id="menu">
-            <h1 id="heading">POKEMON</h1>
-            <button id="PlayButton">Play</button>
-            <button id="SoundSettingsButton">Sound Settings</button>
-            <button id="QuitButton">Quit</button>
-        </div>
-        <div id="screen-container">
-            <canvas id="screen" width="1280" height="720"></canvas>
-            <button id="MenuOptionButton">Main Menu</button>
-            <div id="fightMenu">
-                <button class="menu-item menu-item-attack">Attack</button>
-                <button class="menu-item menu-item-capture">Capture</button>
-                <button class="menu-item menu-item-run">Run</button>
-                <button class="menu-item menu-item-item">Item</button>
-            </div>
-            <div id="itemMenu">
-                <button class="itemmenu-item itemmenu-item-health">Health Potion</button>
-                <button class="itemmenu-item itemmenu-item-defense">Defense Potion</button>
-            </div>
-        </div>
-        <audio id="MenuMusic" src="main_menu_sound.mp3" autoplay loop></audio>
-        <!--this is just example audio we can change it later-->
-        <div id="SoundSettings">
-            <div id="SoundSettingsDisplay">
-                <h2>Sound Settings</h2>
-                <label for="volumeControl">Volume: </label>
-                <input type="range" id="volumeControl" min="0" max="100" value="50" />
-                <br /><br />
-                <button id="CloseSound">Close</button>
-            </div>
-        </div>
-        <!-- Battle Log -->
-        <div id="battleLog"></div>
-    </div>
-    <script type="module" src="proj3.js"></script>
-    <script>
-        document.getElementById("PlayButton").addEventListener("click", function() {
-            document.getElementById("menu").style.display = "none";
-            document.getElementById("screen-container").style.display = "block";
-        });
-
-        document.getElementById("MenuOptionButton").addEventListener("click", function() {
-            document.getElementById("screen-container").style.display = "none";
-            document.getElementById("menu").style.display = "flex";
-            document.getElementById("menu").style.flexDirection = "column";
-            document.getElementById("heading").textContent = "Main Menu";
-        });
-
-        // Logic to handle item button click
-        document.querySelector(".menu-item menu-item-item").addEventListener("click", function() {
-            document.getElementById("fightMenu").style.display = "none";
-            document.getElementById("itemMenu").style.display = "block";
-        });
-
-        // Logic to handle health or defense potion click
-        document.querySelector(".itemmenu-item itemmenu-item-health").addEventListener("click", function() {
-            document.getElementById("fightMenu").style.display = "block";
-            document.getElementById("itemMenu").style.display = "none";
-        });
-
-        document.querySelector(".itemmenu-item itemmenu-item-defense").addEventListener("click", function() {
-            document.getElementById("fightMenu").style.display = "block";
-            document.getElementById("itemMenu").style.display = "none";
-        });
-    </script>
-</body>
+		</style>
+	</head>
+	<body>
+		<div style="display:block;"id="Loading">
+			<h1>Loading...</h1>
+		</div>
+		<div style="display:none;" id="CompletedLoading">
+			<h1 id="heading">Project 3</h1>
+			<div id="menu">
+				<button id="PlayButton">Play</button>
+				<button id="SoundSettingsButton">Sound Settings</button>
+				<button id="QuitButton">Quit</button>
+			</div>
+			<canvas id="screen" width="1280" height="720" style="border: 1px solid #000000"></canvas>
+			<button id="MenuOptionButton">Main Menu</button>
+			<audio id="MenuMusic" src="main_menu_sound.mp3" autoplay loop></audio>
+			<!--this is just example audio we can change it later-->
+			<div id="SoundSettings">
+				<div id="SoundSettingsDisplay">
+					<h2>Sound Settings</h2>
+					<label for="volumeControl">Volume: </label>
+					<input type="range" id="volumeControl" min="0" max="100" value="50" />
+					<br /><br />
+					<button id="CloseSound">Close</button>
+				</div>
+			</div>
+			<!-- Battle Menu -->
+			<div id="battleMenu">
+				<button id="FightButton">Fight</button>
+			</div>
+			<!-- Battle Log -->
+			<div id="battleLog"></div>
+			<div id="fightMenu">
+				<button class="menu-item menu-item-attack">Attack</button>
+				<button class="menu-item menu-item-capture">Capture</button>
+				<button class="menu-item menu-item-run">Run</button>
+				<button class="menu-item menu-item-item">Item</button>
+			</div>
+			<div id="itemMenu">
+				<button class="itemmenu-item itemmenu-item-health">Health Potion</button>
+				<button class="itemmenu-item itemmenu-item-defense">Defense Potion</button>
+			</div>
+		</div>
+		<script type="module" src="proj3.js"></script>
+	</body>
 </html>
 
 
