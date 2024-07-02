@@ -14,6 +14,7 @@ var enemy_event_text = null;
 var player_event_text = null;
 var event_text = null;
 var pokemonPlayerMaxhp;
+var timeout_frames = 0;
 document.getElementById('fightMenu').style.display = 'none';
 document.getElementById('itemMenu').style.display = 'none';
 
@@ -445,7 +446,7 @@ dddddddddddddddddddsj mjjddddddd\n\
 						temp.setImg("sand1.png");
 						temp.setRotation(Math.floor(Math.random() * 4) * 90);
 						temp_x = temp_x + 40;
-						owwe_grass_objects.push(temp);
+						owwe_world_objects.push(temp);
 					}
 					else {
 						if(str.charAt(i) === 'b') {
@@ -1354,9 +1355,6 @@ function handleAttack() {
 	event_text.setText(`Players attacks ${enemyPokemon.name}, does ${playerPokemon.attack} damage`, "64px serif", "black", "center", "center");
 	event_text.draw(); 
 	playersTurn = "ENEMYS"; 
-	setTimeout(function() {
-        document.getElementById('fightMenu').style.display = 'block';
-    }, 6000);
 }
 
 function handlePokemon() {
@@ -1448,25 +1446,32 @@ function mainLoop() {
 					for(var i = 0; i < owwe_world_objects.length;i++) {
 						owwe_world_objects[i].draw();
 					}
+					if(timeout_frames > 0) {
+						timeout_frames = timeout_frames - 1;
+					}
 					for(var i = 0; i < owwe_grass_objects.length;i++) {
 						owwe_grass_objects[i].draw();
 						
-						if(CollisionSolver.testInside(owwe_player, owwe_grass_objects[i]) == true) {
-							if(Math.random() > 0.99) {
-								current_scene = "BATTLE_LAND";
-								
-								
+						if(timeout_frames == 0) {
+							if(CollisionSolver.testInside(owwe_player, owwe_grass_objects[i]) == true) {
+								if(Math.random() > 0.99) {
+									current_scene = "BATTLE_LAND";
+									
+									
+								}
 							}
 						}
 					}
 					for(var i = 0; i < owwe_water_objects.length;i++) {
 						owwe_water_objects[i].draw();
 						
-						if(CollisionSolver.testInside(owwe_player, owwe_water_objects[i]) == true) {
-							if(Math.random() > 0.99) {
-								current_scene = "BATTLE_WATER";
-								
-								
+						if(timeout_frames == 0) {
+							if(CollisionSolver.testInside(owwe_player, owwe_water_objects[i]) == true) {
+								if(Math.random() > 0.99) {
+									current_scene = "BATTLE_WATER";
+									
+									
+								}
 							}
 						}
 					}
@@ -1479,6 +1484,7 @@ function mainLoop() {
 			break;
 		}
 		case "BATTLE_LAND": {
+			if(timeout_frames == 0) {
 				var exit_background = new Rect(0, 0, 1280, 720);
 				exit_background.setColor("black");
 				imageenemyPokemon = new Rect((1280 * 0.125) + 8.4 + 600, 720 * 0.25 - 120, 300, 300);
@@ -1501,12 +1507,15 @@ function mainLoop() {
 					case "YOURS":{
 						switch(true) {
 							case (playerPokemon.hp <= 0):
-								window.location.href = "proj3.html";
+								current_scene = "OPENWORLD";
+								playerPokemon.hp += 30;
+								timeout_frames = 4 * 82;
 							case (enemyPokemon.hp <= 0):
 								playerPokemon.hp += 30;
 								enemyPokemon = allPokemons[Math.floor(Math.random() * allPokemons.length)];
 								playersTurn = "YOURS";
 								current_scene = "OPENWORLD";
+								timeout_frames = 4 * 82;
 								document.getElementById('fightMenu').style.display = 'flex';
 							default:
 								document.getElementById('fightMenu').style.display = 'flex';
@@ -1517,12 +1526,15 @@ function mainLoop() {
 					case "ENEMYS":{
 						switch(true) {
 							case (playerPokemon.hp <= 0):
-								window.location.href = "proj3.html";
+								current_scene = "OPENWORLD";
+								playerPokemon.hp += 30;
+								timeout_frames = 4 * 82;
 							case (enemyPokemon.hp <= 0):
 								playerPokemon.hp += 30;
 								enemyPokemon = allPokemons[Math.floor(Math.random() * allPokemons.length)];
 								playersTurn = "YOURS";
 								current_scene = "OPENWORLD";
+								timeout_frames = 4 * 82;
 								document.getElementById('fightMenu').style.display = 'flex';
 							default:
 								document.getElementById('fightMenu').style.display = 'none';
@@ -1534,11 +1546,12 @@ function mainLoop() {
 						break;
 					}
 					}
-						
+			}	
 			break;
 		
 		}
 		case "BATTLE_WATER": {
+			if(timeout_frames == 0) {
 				var exit_background = new Rect(0, 0, 1280, 720);
 				exit_background.setColor("black");
 				imageenemyPokemon = new Rect((1280 * 0.125) + 8.4 + 650, 720 * 0.25 + 100, 170, 170);
@@ -1563,12 +1576,15 @@ function mainLoop() {
 					case "YOURS":{
 						switch(true) {
 							case (playerPokemon.hp <= 0):
-								window.location.href = "proj3.html";
+								current_scene = "OPENWORLD";
+								playerPokemon.hp += 30;
+								timeout_frames = 4 * 82;
 							case (enemyPokemon.hp <= 0):
 								playerPokemon.hp += 30;
 								enemyPokemon = allPokemons[Math.floor(Math.random() * allPokemons.length)];
 								playersTurn = "YOURS";
 								current_scene = "OPENWORLD";
+								timeout_frames = 4 * 82;
 								document.getElementById('fightMenu').style.display = 'flex';
 							default:
 								document.getElementById('fightMenu').style.display = 'flex';
@@ -1579,12 +1595,15 @@ function mainLoop() {
 					case "ENEMYS":{
 						switch(true) {
 							case (playerPokemon.hp <= 0):
-								window.location.href = "proj3.html";
+								current_scene = "OPENWORLD";
+								playerPokemon.hp += 30;
+								timeout_frames = 4 * 82;
 							case (enemyPokemon.hp <= 0):
 								playerPokemon.hp += 30;
 								enemyPokemon = allPokemons[Math.floor(Math.random() * allPokemons.length)];
 								playersTurn = "YOURS";
 								current_scene = "OPENWORLD";
+								timeout_frames = 4 * 82;
 								document.getElementById('fightMenu').style.display = 'flex';
 							default:
 								document.getElementById('fightMenu').style.display = 'none';
@@ -1596,7 +1615,7 @@ function mainLoop() {
 						break;
 					}
 					}
-						
+			}	
 			break;
 		}
 		case "POKEMON_BAG": {
