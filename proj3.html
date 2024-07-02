@@ -179,9 +179,24 @@
 			.itemmenu-item-defense {
 				background-color: rgba(0, 0, 255, 0.7);
 			}
+			#poke {
+				list-style-type: none;
+				padding: 0;
+        	}
+			#poke li {
+				padding: 8px;
+				background: #f0f0f0;
+				margin-bottom: 4px;
+				cursor: pointer;
+			}
+			#poke li:hover {
+				background: #ddd;
+			}
 		</style>
 	</head>
 	<body>
+	<ul id="poke"></ul>
+
 	<div style="display:block;" id="Loading">
 		<h1>Loading...</h1>
 	</div>
@@ -199,7 +214,7 @@
 			<button id="MenuOptionButton">Main Menu</button>
 			<div id="fightMenu">
 				<button class="menu-item menu-item-attack">Attack</button>
-				<button class="menu-item menu-item-capture">Capture</button>
+				<button class="menu-item menu-item-pokemon">Pokemon</button>
 				<button class="menu-item menu-item-run">Run</button>
 				<button class="menu-item menu-item-item">Item</button>
 			</div>
