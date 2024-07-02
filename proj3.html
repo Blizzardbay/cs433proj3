@@ -21,25 +21,6 @@
 				padding: 10px;
 				margin: 10px 0;
 				font-size: 18px;
-				color: white;
-				border: none;
-				cursor: pointer;
-				position: relative;
-				overflow: hidden;
-				background-color: #007BFF;
-				animation: blink 1.5s infinite;
-
-			}
-			
-			
-			@keyframes blink {
-				0%, 100% {
-					background-color: #007BFF;
-					
-				}
-				50% {
-					background-color: #FFD700;
-				}
 			}
 			#screen {
 				display: none;
@@ -86,73 +67,71 @@
 				
 			}
 
-			.menu-item {
-				padding: 15px;
-				border-radius: 10px;
-				cursor: pointer;
-				text-align: center;
-				background-color: rgba(0, 0, 255, 0.7);
-				color: #FFFFFF;
-				border: none; 
-				font-size: 20px; 
-			}
+        .menu-item {
+            padding: 5px;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: center;
+            background-color: rgba(0, 0, 255, 0.7);
+            color: #FFFFFF;
+            border: none; 
+            font-size: 20px; 
+        }
 
-			.menu-item:hover {
-				opacity: 0.8;
-			}
+        .menu-item:hover {
+            opacity: 0.8;
+        }
 
-			.menu-item-attack {
-				background-color: rgba(255, 0, 0, 0.7);
-			}
+        .menu-item-attack {
+            background-color: rgba(255, 0, 0, 0.7);
+        }
 
-			.menu-item-defend {
-				background-color: rgba(0, 255, 0, 0.7);
-			}
+        .menu-item-defend {
+            background-color: rgba(0, 255, 0, 0.7);
+        }
 
-			.menu-item-run {
-				background-color: rgba(0, 0, 255, 0.7);
-			}
+        .menu-item-run {
+            background-color: rgba(0, 0, 255, 0.7);
+        }
 
-			.menu-item-item {
-				background-color: rgba(255, 247, 0, 0.7);
-			}
-			#itemMenu {
-				display: none;
-				position: absolute;
-				bottom: 10px;
-				right: 10px;
-				background-color: rgba(0, 0, 255, 0.7);
-				padding: 20px;
-				border-radius: 10px;
-				display: grid;
-				gap: 20px;
-				width: 400px;
-				
-			}
+        .menu-item-item {
+            background-color: rgba(255, 247, 0, 0.7);
+        }
+        #itemMenu {
+            display: none;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: black;
+            padding: 5px;
+            border-radius: 10px;
+            display: grid;
+            gap: 20px;
+            width: 400px;
+        }
 
-			.itemmenu-item {
-				padding: 15px;
-				border-radius: 10px;
-				cursor: pointer;
-				text-align: center;
-				background-color: rgba(0, 0, 255, 0.7);
-				color: #FFFFFF;
-				border: none; 
-				font-size: 20px; 
-			}
+        .itemmenu-item {
+            padding: 5px;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: center;
+            background-color: rgba(0, 0, 255, 0.7);
+            color: #FFFFFF;
+            border: none; 
+            font-size: 20px; 
+        }
 
-			.itemmenu-item:hover {
-				opacity: 0.8;
-			}
+        .itemmenu-item:hover {
+            opacity: 0.8;
+        }
 
-			.itemmenu-item-health {
-				background-color: rgba(255, 0, 0, 0.7);
-			}
+        .itemmenu-item-health {
+            background-color: rgba(255, 0, 0, 0.7);
+        }
 
-			.menu-item-defense {
-				background-color: rgba(0, 34, 255, 0.7);
-			}
-			
+        .menu-item-defense {
+            background-color: rgba(0, 34, 255, 0.7);
+        }
 
 		</style>
 	</head>
@@ -176,7 +155,7 @@
 					<h2>Sound Settings</h2>
 					<label for="volumeControl">Volume: </label>
 					<input type="range" id="volumeControl" min="0" max="100" value="50" />
-					<br/><br />
+					<br /><br />
 					<button id="CloseSound">Close</button>
 				</div>
 			</div>
@@ -188,7 +167,7 @@
 			<div id="battleLog"></div>
 			<div id="fightMenu">
 				<button class="menu-item menu-item-attack">Attack</button>
-				<button class="menu-item menu-item-pokemon">Pokemon</button>
+				<button class="menu-item menu-item-capture">Capture</button>
 				<button class="menu-item menu-item-run">Run</button>
 				<button class="menu-item menu-item-item">Item</button>
 			</div>
@@ -200,6 +179,10 @@
 		<script type="module" src="proj3.js"></script>
 	</body>
 </html>
+
+
+
+
 
 <!-- PHP and SQL database -->
 <!-- 2. Set up database connection within the website  -->
