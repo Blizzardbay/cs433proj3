@@ -1,4 +1,4 @@
-// Project 3 CMSC 433: Created By: Darrian Corkadel, <List names here>
+// Project 3 CMSC 433: Created By: Darrian Corkadel, Chelsea Okoroji, Bhoj Raj Pandey, Richard M.
 var audio1 = new Audio('main_menu_sound.mp3');
 var audio2 = new Audio('openworld_music.mp3');
 var audio3 = new Audio('battle_audio.mp3');
