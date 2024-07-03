@@ -1,7 +1,7 @@
 // Project 3 CMSC 433: Created By: Darrian Corkadel, <List names here>
-const audio1 = new Audio('main_menu_sound.mp3');
-const audio2 = new Audio('openworld_music.mp3');
-const audio3 = new Audio('battle_audio.mp3');
+var audio1 = new Audio('main_menu_sound.mp3');
+var audio2 = new Audio('openworld_music.mp3');
+var audio3 = new Audio('battle_audio.mp3');
 var image_loading_done = false;
 var database_loading_done = false;
 var game_loading_done = false;
@@ -18,6 +18,8 @@ var player_event_text = null;
 var event_text = null;
 var timeout_frames = 0;
 var started = null;
+var currently_stepping_on="grass";
+var battle_started = false;
 
 document.getElementById('fightMenu').style.display = 'none';
 document.getElementById('itemMenu').style.display = 'none';
@@ -35,8 +37,6 @@ async function databaseFinishedLoading() {
 	database_loading_done = true;
 	// First load the resources
 	waitForLoad();
-	audio1.play();
-	
 }
 
 databaseFinishedLoading();
@@ -99,6 +99,9 @@ $(document).ready(function() {
 	});
 
 	volumeControl.on("input", function () {
+		audio1.volume = this.value / 100;
+		audio2.volume = this.value / 100;
+		audio3.volume = this.value / 100;
 		MenuMusic.volume = this.value / 100;
 	});
 	$("#FightButton").click(function () {
@@ -123,9 +126,8 @@ function generateMenu(menuItems) {
 
 function initializeGame() {
 	// Randomly select player and enemy Pokémon from the Loaded data
-	
-	playerPokemon = allPokemons[Math.floor(Math.random() * allPokemons.length)];
-	enemyPokemon = allPokemons[Math.floor(Math.random() * allPokemons.length)];
+	playerPokemon = getPokemonByStr(land_pokemon[Math.floor(Math.random() * land_pokemon.length)]).data;
+	enemyPokemon = getPokemonByStr(land_pokemon[Math.floor(Math.random() * land_pokemon.length)]).data;
 
 	// Set initial HP for the selected Pokémon
 	playerPokemon.hp = 100; // or use actual data if available
@@ -223,7 +225,7 @@ function stopAudio3() {
 
 // Image variables
 var image_load_list_2=["Battle_scene_background.png", "water_battle.png","title_screen.png","text_box.png","poke_box.png","grass2.png", "grassground.png", "mountain1.png", "waterdeep.png", "grass1.png", "sand1.png", "water1.png"];
-var image_load_list_1=["000Bulbasaur.png","004Charmander.png","005Charmeleon.png","006Charizard.png","007Squirtle.png","008Wartortle.png","009Blastoise.png","010Caterpie.png","011Metapod.png","012Butterfree.png","013Weedle.png","014Kakuna.png","015Beedrill.png","016Pidgey.png","017Pidgeotto.png","018Pidgeot.png","019Rattata.png","021Spearow.png","022Fearow.png","023Ekans.png","024Arbok.png","025Pikachu.png","026Raichu.png","027Sandshrew.png","028Sandslash.png","029Nidoran.png","030Nidorina.png","031Nidoqueen.png","032Nidoran.png","033Nidorino.png","034Nidoking.png","035Clefairy.png","036Clefable.png","037Vulpix.png","038Ninetales.png","039Jigglypuff.png","040Wigglytuff.png","041Zubat.png","042Golbat.png","043Oddish.png","044Gloom.png","045Vileplume.png","046Paras.png","047Parasect.png","048Venonat.png","049Venomoth.png","050Diglett.png","051Dugtrio.png","052Meowth.png","053Persian.png","054Psyduck.png","055Golduck.png","056Mankey.png","057Primeape.png","058Growlithe.png","059Arcanine.png","060Poliwag.png","061Poliwhirl.png","062Poliwrath.png","063Abra.png","064Kadabra.png","065Alakazam.png","066Machop.png","067Machoke.png","068Machamp.png","069Bellsprout.png","070Weepinbell.png","071Victreebel.png","072Tentacool.png","073Tentacruel.png","074Geodude.png","075Graveler.png","076Golem.png","077Ponyta.png","078Rapidash.png","079Slowpoke.png","080Slowbro.png","081Magnemite.png","082Magneton.png","083Farfetch'd.png","084Doduo.png","085Dodrio.png","086Seel.png","087Dewgong.png","088Grimer.png","089Muk.png","090Shellder.png","091Cloyster.png","092Gastly.png","093Haunter.png","094Gengar.png","095Onix.png","096Drowzee.png","097Hypno.png","098Krabby.png","099Kingler.png","100Voltorb.png","101Electrode.png","102Exeggcute.png","103Exeggutor.png","104Cubone.png","105Marowak.png","106Hitmonlee.png","107Hitmonchan.png","108Lickitung.png","109Koffing.png","110Weezing.png","111Rhyhorn.png","112Rhydon.png","113Chansey.png","114Tangela.png","115Kangaskhan.png","116Horsea.png","117Seadra.png","118Goldeen.png","119Seaking.png","120Staryu.png","121Starmie.png","122Mr._Mime.png","123Scyther.png","124Jynx.png","125Electabuzz.png","126Magmar.png","127Pinsir.png","128Tauros.png","129Magikarp.png","130Gyarados.png","131Lapras.png","132Ditto.png","133Eevee.png","134Vaporeon.png","135Jolteon.png","136Flareon.png","137Porygon.png","138Omanyte.png","139Omastar.png","140Kabuto.png","141Kabutops.png","142Aerodactyl.png","143Snorlax.png","144Articuno.png","145Zapdos.png","146Moltres.png","147Dratini.png","148Dragonair.png","149Dragonite.png","150Mewtwo-Mega_X.png","150Mewtwo-Mega_Y.png","150Mewtwo.png","151Mew.png"];
+var image_load_list_1=["000Bulbasaur.png","004Charmander.png","005Charmeleon.png","006Charizard.png","007Squirtle.png","008Wartortle.png","009Blastoise.png","010Caterpie.png","011Metapod.png","012Butterfree.png","013Weedle.png","014Kakuna.png","015Beedrill.png","016Pidgey.png","017Pidgeotto.png","018Pidgeot.png","019Rattata.png","021Spearow.png","022Fearow.png","023Ekans.png","024Arbok.png","025Pikachu.png","026Raichu.png","027Sandshrew.png","028Sandslash.png","029NidoranF.png","030Nidorina.png","031Nidoqueen.png","032NidoranM.png","033Nidorino.png","034Nidoking.png","035Clefairy.png","036Clefable.png","037Vulpix.png","038Ninetales.png","039Jigglypuff.png","040Wigglytuff.png","041Zubat.png","042Golbat.png","043Oddish.png","044Gloom.png","045Vileplume.png","046Paras.png","047Parasect.png","048Venonat.png","049Venomoth.png","050Diglett.png","051Dugtrio.png","052Meowth.png","053Persian.png","054Psyduck.png","055Golduck.png","056Mankey.png","057Primeape.png","058Growlithe.png","059Arcanine.png","060Poliwag.png","061Poliwhirl.png","062Poliwrath.png","063Abra.png","064Kadabra.png","065Alakazam.png","066Machop.png","067Machoke.png","068Machamp.png","069Bellsprout.png","070Weepinbell.png","071Victreebel.png","072Tentacool.png","073Tentacruel.png","074Geodude.png","075Graveler.png","076Golem.png","077Ponyta.png","078Rapidash.png","079Slowpoke.png","080Slowbro.png","081Magnemite.png","082Magneton.png","083Farfetch'd.png","084Doduo.png","085Dodrio.png","086Seel.png","087Dewgong.png","088Grimer.png","089Muk.png","090Shellder.png","091Cloyster.png","092Gastly.png","093Haunter.png","094Gengar.png","095Onix.png","096Drowzee.png","097Hypno.png","098Krabby.png","099Kingler.png","100Voltorb.png","101Electrode.png","102Exeggcute.png","103Exeggutor.png","104Cubone.png","105Marowak.png","106Hitmonlee.png","107Hitmonchan.png","108Lickitung.png","109Koffing.png","110Weezing.png","111Rhyhorn.png","112Rhydon.png","113Chansey.png","114Tangela.png","115Kangaskhan.png","116Horsea.png","117Seadra.png","118Goldeen.png","119Seaking.png","120Staryu.png","121Starmie.png","122Mr._Mime.png","123Scyther.png","124Jynx.png","125Electabuzz.png","126Magmar.png","127Pinsir.png","128Tauros.png","129Magikarp.png","130Gyarados.png","131Lapras.png","132Ditto.png","133Eevee.png","134Vaporeon.png","135Jolteon.png","136Flareon.png","137Porygon.png","138Omanyte.png","139Omastar.png","140Kabuto.png","141Kabutops.png","142Aerodactyl.png","143Snorlax.png","144Articuno.png","145Zapdos.png","146Moltres.png","147Dratini.png","148Dragonair.png","149Dragonite.png","150Mewtwo-Mega_X.png","150Mewtwo-Mega_Y.png","150Mewtwo.png","151Mew.png"];
 var pokemon_data_list=[];
 var water_type_pokemon=["007Squirtle.png", "008Wartortle.png", "009Blastoise.png", "054Psyduck.png", "055Golduck.png", "060Poliwag.png", "061Poliwhirl.png", "062Poliwrath.png", "072Tentacool.png", "073Tentacruel.png", "079Slowpoke.png", "080Slowbro.png", "086Seel.png", "087Dewgong.png", "090Shellder.png", "091Cloyster.png", "116Horsea.png", "117Seadra.png", "118Goldeen.png", "119Seaking.png", "120Staryu.png", "121Starmie.png", "129Magikarp.png", "130Gyarados.png", "131Lapras.png", "134Vaporeon.png"];
 var land_pokemon = image_load_list_1.filter((pokemon) => !water_type_pokemon.includes(pokemon));
@@ -244,6 +246,7 @@ function waitForLoad() {
 			complete_images = complete_images + 1;
 			if (complete_images == image_load_list_1.length + image_load_list_2.length) {
 				image_loading_done = true; // Loading is indicated to be done
+				audio1.play();
 			}
 		};
 	}
@@ -254,6 +257,7 @@ function waitForLoad() {
 			complete_images = complete_images + 1;
 			if (complete_images == image_load_list_1.length + image_load_list_2.length) {
 				image_loading_done = true; // Loading is indicated to be done
+				audio1.play();
 			}
 		};
 	}
@@ -267,6 +271,7 @@ function waitForLoad() {
 		allPokemons = data;
 
 		// Initialize player and enemy Pokémon after data is loaded
+		createPokemonTable();
 		initializeGame();
 		game_loading_done = true;
 	},
@@ -311,6 +316,15 @@ function createPokemonTable() {
 		var name = image_load_list_1[i];
 		name = name.substr(3, name.length - 7);
 		var pokemon = null;
+		if(name === "NidoranM") {
+			name = "Nidoranâ™€";
+		}
+		if(name === "NidoranF") {
+			name = "Nidoranâ™‚";
+		}
+		if(name === "Mr._Mime") {
+			name = "Mr. Mime";
+		}
 		for(var j = 0; j < allPokemons.length;j++) {
 			if(allPokemons[j].name === name) {
 				pokemon = allPokemons[j];
@@ -340,7 +354,7 @@ function getPokemonByStr(str) {
 	var id = getPokemonID(str);
 	if(id !== null) {
 		for(var i = 0; i < pokemon_data_list.length;i++) {
-			if(pokemon_data_list[i] === id) {
+			if(pokemon_data_list[i].id === id && pokemon_data_list[i].data !== null) {
 				return pokemon_data_list[i];
 			}
 		}
@@ -353,7 +367,6 @@ function getPokemonByStr(str) {
 function startGame() {
 	console.log("Game started with the following Pokémon data:", allPokemons); // debug check
 	if(loading_done == true) {
-		createPokemonTable();
 		var canvas = document.getElementById("screen");
 		canvas.oncontextmenu = function(menu) { menu.preventDefault(); menu.stopPropagation(); }
 		
@@ -1030,6 +1043,7 @@ class Rect {
 		this.#text_alignment_x = "";
 		this.#text_alignment_y = "";
 		this.#id = Rect.#counter;
+		this.#reversed = false;
 		Rect.#counter = Rect.#counter + 1;
 	}
 	// Getters / Setters Functions
@@ -1058,6 +1072,7 @@ class Rect {
 		this.#color = new_color;
 	}
 	setImg(new_img) {
+		new_img = new_img.toString();
 		// Also accepts by number
 		var regex = new RegExp("(^[0-9][0-9]*[0-9]$)|(^[0-9]$)|(^[0-9][0-9]$)|(^[0-9][0-9][0-9]$)");
 		if(new_img.search(regex) != -1) {
@@ -1144,6 +1159,9 @@ class Rect {
 		this.#text_alignment_x = align_x;
 		this.#text_alignment_y = align_y;
 	}
+	setReversed(value) {
+		this.#reversed = value;
+	}
 	width() {
 		return Object.freeze(this.#width);
 	}
@@ -1183,6 +1201,9 @@ class Rect {
 	id() {
 		return Object.freeze(this.#id);
 	}
+	reversed() {
+		return Object.freeze(this.#reversed);
+	}
 	// General functions
 	// Draws the rectangle to the screen
 	draw() {
@@ -1192,6 +1213,9 @@ class Rect {
 			if(this.#img_list == 1) {
 				draw_context.translate(this.#pos_x + (this.#width / 2), this.#pos_y + (this.#height / 2));
 				draw_context.rotate(-(this.#rotation * Math.PI) / 180);
+				if(this.#reversed === true) {
+					draw_context.scale(-1, 1);
+				}
 				draw_context.translate(-this.#pos_x - (this.#width / 2), -this.#pos_y - (this.#height / 2));
 				draw_context.drawImage(image_list_1[this.#img], 0, 0, image_list_1[this.#img].width, image_list_1[this.#img].height, this.#pos_x + this.#offset_x, this.#pos_y + this.#offset_y, this.#width, this.#height);
 				draw_context.setTransform(1.0, 0, 0, 1.0, 0, 0);
@@ -1199,6 +1223,9 @@ class Rect {
 			else {
 				draw_context.translate(this.#pos_x + (this.#width / 2), this.#pos_y + (this.#height / 2));
 				draw_context.rotate(-(this.#rotation * Math.PI) / 180);
+				if(this.#reversed === true) {
+					draw_context.scale(-1, 1);
+				}
 				draw_context.translate(-this.#pos_x - (this.#width / 2), -this.#pos_y - (this.#height / 2));
 				draw_context.drawImage(image_list_2[this.#img], 0, 0, image_list_2[this.#img].width, image_list_2[this.#img].height, this.#pos_x + this.#offset_x, this.#pos_y + this.#offset_y, this.#width, this.#height);
 				draw_context.setTransform(1.0, 0, 0, 1.0, 0, 0);
@@ -1337,6 +1364,7 @@ class Rect {
 	#font_color = "";				// Color of the text
 	#text_alignment_x = "";			// Center or Left or Right
 	#text_alignment_y = "";			// Either bottom or center, top is not supported by text standards
+	#reversed = false;
 	// Events
 	
 	// Collisions
@@ -1393,7 +1421,7 @@ function handleRun() {
 	current_scene = "OPENWORLD";
 	console.log("Run selected");
 	timeout_frames = 4 * 82;
-	enemyPokemon = allPokemons[Math.floor(Math.random() * allPokemons.length)];
+	enemyPokemon = getPokemonByStr(land_pokemon[Math.floor(Math.random() * land_pokemon.length)]).data;
 	playersTurn = "PLAYERS"; 
 	
 }
@@ -1413,7 +1441,7 @@ function healthItem(){
 		alert("GASP, No health potions left");
 	}
 	
-}
+}findPokemonNumber
 function PokeballItem(){
 	poke.style.display = 'none';
 	document.getElementById('itemMenu').style.display = 'none';
@@ -1424,7 +1452,7 @@ function PokeballItem(){
 		playerPokiList.push(findPokemon(term.toString()).name);
 		timeout_frames = 4 * 82;
 		current_scene = "OPENWORLD";
-		enemyPokemon = allPokemons[Math.floor(Math.random() * allPokemons.length)];
+		enemyPokemon = getPokemonByStr(land_pokemon[Math.floor(Math.random() * land_pokemon.length)]).data;
 		}
 	else{
 
@@ -1458,6 +1486,15 @@ document.getElementById('poke').addEventListener('click', function(event) {
 	console.log("Player is now a : " + playerPokemon.name);
 	poke.style.display = 'none';
 });
+
+// Store a extra copy in another variable for the enemy pokemon
+
+// Draw player pokemon
+
+// If the enemy pokemon is at 100 max health then we have a 0% of getting it
+// ((max_health - current_health) / max_health) [0, 1]
+
+// Get rid of comments like this (like this) and get rid of console.log(s)
 
 // Runs the main game and handles scene switching
 function mainLoop() {
@@ -1494,6 +1531,22 @@ function mainLoop() {
 					var canvas = document.getElementById("screen");
 					canvas.style.background = "white";
 					for(var i = 0; i < owwe_world_objects.length;i++) {
+						if(CollisionSolver.testInside(owwe_player, owwe_world_objects[i]) == true) {
+							switch(owwe_world_objects[i].img()) {
+								case "sand1.png": {
+									currently_stepping_on="sand";
+									break;
+								}
+								case "water1.png": {
+									currently_stepping_on="water";
+									break;
+								}
+								default: {
+									currently_stepping_on="grass";
+									break;
+								}	
+							}
+						}
 						owwe_world_objects[i].draw();
 					}
 					if(timeout_frames > 0) {
@@ -1537,6 +1590,10 @@ function mainLoop() {
 			break;
 		}
 		case "BATTLE_LAND": {
+			if(battle_started == false) {
+				battle_started = true;
+				enemyPokemon = getPokemonByStr(land_pokemon[Math.floor(Math.random() * land_pokemon.length)]).data;
+			}
 			stopAudio1();
 			stopAudio2();
 			audio3.play();
@@ -1548,6 +1605,7 @@ function mainLoop() {
 				player_text_box = new Rect((1280 * 0.125) + 600, (720 * 0.25) + 400, 450, 100);
 				player_text_box.setImg("poke_box.png");
 				imageenemyPokemon = new Rect((1280 * 0.125) + 8.4 + 600, 720 * 0.25 - 120, 300, 300);
+				console.log(enemyPokemon.name);
 				imageenemyPokemon.setImg(findPokemonNumber(enemyPokemon.name));
 				battle_background.draw();
 				imageenemyPokemon.draw();
@@ -1575,7 +1633,7 @@ function mainLoop() {
 								playersTurn = "YOURS";
 								current_scene = "OPENWORLD";
 								playerPokemon.hp += 30;
-								enemyPokemon = allPokemons[Math.floor(Math.random() * allPokemons.length)];
+								enemyPokemon = getPokemonByStr(land_pokemon[Math.floor(Math.random() * land_pokemon.length)]).data;
 								timeout_frames = 4 * 82;
 								document.getElementById('fightMenu').style.display = 'flex';
 							default:
@@ -1594,7 +1652,7 @@ function mainLoop() {
 								playersTurn = "YOURS";
 								current_scene = "OPENWORLD";
 								playerPokemon.hp += 20;
-								enemyPokemon = allPokemons[Math.floor(Math.random() * allPokemons.length)];
+								enemyPokemon = getPokemonByStr(land_pokemon[Math.floor(Math.random() * land_pokemon.length)]).data;
 								timeout_frames = 4 * 82;
 
 								document.getElementById('fightMenu').style.display = 'flex';
@@ -1615,6 +1673,10 @@ function mainLoop() {
 		
 		}
 		case "BATTLE_WATER": {
+			if(battle_started == false) {
+				battle_started = true;
+				enemyPokemon = getPokemonByStr(water_type_pokemon[Math.floor(Math.random() * water_type_pokemon.length)]).data;
+			}
 			stopAudio1();
 			stopAudio2();
 			audio3.play();
@@ -1653,7 +1715,7 @@ function mainLoop() {
 								playersTurn = "YOURS";
 								current_scene = "OPENWORLD";
 								playerPokemon.hp += 20;
-								enemyPokemon = allPokemons[Math.floor(Math.random() * allPokemons.length)];
+								enemyPokemon = getPokemonByStr(water_type_pokemon[Math.floor(Math.random() * water_type_pokemon.length)]).data;
 								timeout_frames = 4 * 82;
 
 								document.getElementById('fightMenu').style.display = 'flex';
@@ -1673,7 +1735,7 @@ function mainLoop() {
 								playersTurn = "YOURS";
 								current_scene = "OPENWORLD";
 								playerPokemon.hp += 20;
-								enemyPokemon = allPokemons[Math.floor(Math.random() * allPokemons.length)];
+								enemyPokemon = getPokemonByStr(water_type_pokemon[Math.floor(Math.random() * water_type_pokemon.length)]).data;
 								timeout_frames = 4 * 82;
 
 								document.getElementById('fightMenu').style.display = 'flex';
