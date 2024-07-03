@@ -43,6 +43,7 @@ databaseFinishedLoading();
 $(document).ready(function() {
 	var MenuMusic = document.getElementById("MenuMusic");
 	var SoundSettings = $("#SoundSettings");
+	var HelpButton = $("#HelpButton");
 	var volumeControl = $("#volumeControl");
 	var MenuOptionButton = $("#MenuOptionButton");
 
@@ -72,7 +73,7 @@ $(document).ready(function() {
 	$("#CloseSound").click(function () {
 		SoundSettings.hide();
 	});
-
+	
 	$("#QuitButton").click(function () {
 		$("#menu").remove();
 		$("#screen").show(); 

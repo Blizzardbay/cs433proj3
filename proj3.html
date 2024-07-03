@@ -88,7 +88,6 @@
             font-family: sans-serif;
             width: 350px;
         }
-
         #MenuOptionButton {
             position: absolute;
             top: 10px;
@@ -102,6 +101,29 @@
 
         #MenuOptionButton:hover {
             opacity: 1; 
+        }
+        #HelpDisplay {
+            display: none;
+            z-index: 1;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #HelpDisplayContent {
+            background-color: rgb(180, 179, 179);
+            padding: 20px;
+            border: 1px solid #888;
+            text-align: center;
+            border-radius: 20px;
+            font-family: sans-serif;
+            width: 400px;
         }
 
         #fightMenu {
@@ -239,6 +261,13 @@
 		</div>
 		<!-- Battle Log -->
 		<div id="battleLog"></div>
+        <div id="HelpDisplay">
+            <div id="HelpDisplayContent">
+                <h2>Game Instructions</h2>
+                <p>Pokemom DA DA DA </p>
+                <button id="CloseHelp">Close</button>
+            </div>
+        </div>
         
 	</div>
 	<script type="module" src="proj3.js"></script>
@@ -261,6 +290,14 @@
 
     document.getElementById("CloseSound").addEventListener("click", function() {
         document.getElementById("SoundSettings").style.display = "none";
+    });
+
+    document.getElementById("HelpButton").addEventListener("click", function() {
+        document.getElementById("HelpDisplay").style.display = "flex";
+    });
+
+    document.getElementById("CloseHelp").addEventListener("click", function() {
+        document.getElementById("HelpDisplay").style.display = "none";
     });
 
     // Logic to handle item button click
