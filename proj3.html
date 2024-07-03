@@ -43,6 +43,7 @@
             background-color: #2b8bf2;
             animation: blink 1.9s infinite;
         }
+
         @keyframes blink {
             0%, 100% {
                 background-color: #3d93ef;
@@ -62,10 +63,12 @@
             width: 1280px;
             height: 720px;
         }
+
         #screen {
             border: 1px solid #000000;
             display: block;
         }
+
         #SoundSettings {
             display: none;
             z-index: 1;
@@ -79,15 +82,21 @@
             justify-content: center;
             align-items: center;
         }
+
         #SoundSettingsDisplay {
             background-color: rgb(180, 179, 179);
-            padding: 5px;
-            border: 1px solid #888;
+            padding: 10px;
             text-align: center;
             border-radius: 20px;
             font-family: sans-serif;
-            width: 350px;
+            width: 400px;
+            font-size: 15px;
+            position: absolute;
+            top: 57%;
+            left: 50%;
+            transform: translate(-50%, -50%);
         }
+
         #MenuOptionButton {
             position: absolute;
             top: 10px;
@@ -102,29 +111,22 @@
         #MenuOptionButton:hover {
             opacity: 1; 
         }
-        #HelpDisplay {
-            display: none;
-            z-index: 1;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
 
-        #HelpDisplayContent {
+
+        #HelpDisplay {
             background-color: rgb(180, 179, 179);
-            padding: 20px;
-            border: 1px solid #888;
+            padding: 15px;
             text-align: center;
-            border-radius: 20px;
+            border-radius: 10px;
             font-family: sans-serif;
             width: 400px;
+            font-size: 15px;
+            position: absolute;
+            top: 65%;
+            left: 50%;
+            transform: translate(-50%, -50%);
         }
+
 
         #fightMenu {
             position: absolute;
@@ -261,12 +263,27 @@
 		</div>
 		<!-- Battle Log -->
 		<div id="battleLog"></div>
-        <div id="HelpDisplay">
-            <div id="HelpDisplayContent">
-                <h2>Game Instructions</h2>
-                <p>Pokemom DA DA DA </p>
+        <div id="HelpDisplay" style="overflow-y: auto; max-height: 210px; display: none;">
+            <div>
                 <button id="CloseHelp">Close</button>
+                <h4>About the Game</h4>
+                <p style="text-align:left">Select Starter Pokemon: Choose your starting Pokemon from Bulbasaur,
+                     Charmander, or Squirtle. Click the "Select" button below your chosen Pokemon to start your adventure.</p>
+
+                <h4>World Exploration</h4>
+                <p style="text-align:left">Move around the game world to discover new areas and Pokemon. 
+                    Your selected starter Pokemon will accompany you on your journey.</p>
+
+                <h4>Encountering Pokemon</h4>
+                <p style="text-align:left">Encounter various Pokemon based on the terrain you are exploring. 
+                    Engage in battles to capture new Pokemon or train your existing ones.</p>
+
+                <h4>Game Scenes</h4>
+                <p style="text-align:left">Experience different scenes such as the open world, Pokemon selection, and battle scenes. 
+                    The game transitions between scenes based on your actions. 
+                    Enjoy playing the game and aim to become the ultimate Pokemon trainer!</p>   
             </div>
+        </div>
         </div>
         
 	</div>
@@ -293,7 +310,7 @@
     });
 
     document.getElementById("HelpButton").addEventListener("click", function() {
-        document.getElementById("HelpDisplay").style.display = "flex";
+        document.getElementById("HelpDisplay").style.display = "block";
     });
 
     document.getElementById("CloseHelp").addEventListener("click", function() {
