@@ -424,7 +424,7 @@ function startGame() {
 		owwe_water_objects = [];
 		var str = "\
 mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\n\
-m   w   ggggg  g  g m   g   g  m\n\
+m       ggggg  g  g m   g   g  m\n\
 m   g g  g    g  m  g m   g gggm\n\
 mmm g gmm g  gmm gm   g g mmmmmm\n\
 m                 g   gm    gmmm\n\
@@ -1632,7 +1632,7 @@ function mainLoop() {
 							case (enemyPokemon.hp <= 0):
 								playersTurn = "YOURS";
 								current_scene = "OPENWORLD";
-								playerPokemon.hp = Number(playerPokemon.hp + 20);
+								playerPokemon.hp = Number(playerPokemon.hp) + 20;
 								enemyPokemon = getPokemonByStr(land_pokemon[Math.floor(Math.random() * land_pokemon.length)]).data;
 								timeout_frames = 4 * 82;
 								document.getElementById('fightMenu').style.display = 'flex';
@@ -1652,7 +1652,7 @@ function mainLoop() {
 							case (enemyPokemon.hp <= 0):
 								playersTurn = "YOURS";
 								current_scene = "OPENWORLD";
-								playerPokemon.hp = Number(playerPokemon.hp + 20);
+								playerPokemon.hp = Number(playerPokemon.hp) + 20;
 								enemyPokemon = getPokemonByStr(land_pokemon[Math.floor(Math.random() * land_pokemon.length)]).data;
 								timeout_frames = 4 * 82;
 
@@ -1719,7 +1719,7 @@ function mainLoop() {
 							case (enemyPokemon.hp <= 0):
 								playersTurn = "YOURS";
 								current_scene = "OPENWORLD";
-								playerPokemon.hp = Number(playerPokemon.hp + 20);
+								playerPokemon.hp = Number(playerPokemon.hp) + 20;
 								enemyPokemon = getPokemonByStr(water_type_pokemon[Math.floor(Math.random() * water_type_pokemon.length)]).data;
 								timeout_frames = 4 * 82;
 
@@ -1739,7 +1739,7 @@ function mainLoop() {
 							case (enemyPokemon.hp <= 0):
 								playersTurn = "YOURS";
 								current_scene = "OPENWORLD";
-								playerPokemon.hp = Number(playerPokemon.hp + 20);
+								playerPokemon.hp = Number(playerPokemon.hp) + 20;
 								enemyPokemon = getPokemonByStr(water_type_pokemon[Math.floor(Math.random() * water_type_pokemon.length)]).data;
 								timeout_frames = 4 * 82;
 
