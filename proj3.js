@@ -49,7 +49,7 @@ $(document).ready(function() {
 	var MenuOptionButton = $("#MenuOptionButton");
 
 	$("#PlayButton").click(function () {
-		console.log("Play button clicked");
+		
 		if (image_loading_done == true && database_loading_done == true && game_loading_done == true) {
 			loading_done = true;
 			$("#heading").hide();
@@ -100,7 +100,7 @@ $(document).ready(function() {
 		MenuMusic.volume = this.value / 100;
 	});
 	$("#FightButton").click(function () {
-		console.log("Fight button clicked");
+		
 		fight();
 	});
 });
@@ -128,9 +128,6 @@ function initializeGame() {
 	playerPokemon.hp = 100; // or use actual data if available
 	enemyPokemon.hp = 50; // or use actual data if available
 
-	// Display initial Pokémon info
-	console.log("Player Pokémon:", playerPokemon);
-	console.log("Enemy Pokémon:", enemyPokemon);
 }
 
 // Function to parse the image list and create Pokemon stats
@@ -160,19 +157,19 @@ function selectStarterPokemon(pokemon) {
 		case "Balbasaur": {
 			playerPokemon = allPokemons[0];
 			playerPokiList.push(playerPokemon.name);
-			console.log(playerPokemon);
+	
 			break;
 		}
 		case "Charmander": {
 			playerPokemon = allPokemons[4];
 			playerPokiList.push(playerPokemon.name);
-			console.log(playerPokemon);
+	
 			break;
 		}
 		case "Squirtle" : {
 			playerPokemon = allPokemons[9];
 			playerPokiList.push(playerPokemon.name);
-			console.log(playerPokemon);
+
 			break;
 		}
 		default: {
@@ -201,7 +198,7 @@ function findPokemon(title) {
             return allPokemons[i];
         }
     }
-	console.log("Pokemon not found");
+
     return null;
 }
 function stopAudio1() {
@@ -360,7 +357,7 @@ function getPokemonByStr(str) {
 
 
 function startGame() {
-	console.log("Game started with the following Pokémon data:", allPokemons); // debug check
+
 	if(loading_done == true) {
 		var canvas = document.getElementById("screen");
 		canvas.oncontextmenu = function(menu) { menu.preventDefault(); menu.stopPropagation(); }
@@ -1393,10 +1390,8 @@ var defense_potion_desc = null;
 function handleAttack() {
 	poke.style.display = 'none';
 	document.getElementById('fightMenu').style.display = 'none';
-	console.log("Attack selected");
 	var num = Math.floor(Math.random() * playerPokemon.attack) + 5;
 	enemyPokemon.hp -= num;
-	console.log("Enemy's hp: " + enemyPokemon.hp);
 	event_text.draw(); 
 	if(enemyPokemon.hp > 0){
 	playersTurn = "ENEMYS"; 
@@ -1414,7 +1409,6 @@ function handlePokemon() {
 function handleRun() {
 	poke.style.display = 'none';
 	current_scene = "OPENWORLD";
-	console.log("Run selected");
 	timeout_frames = 4 * 82;
 	enemyPokemon = getPokemonByStr(land_pokemon[Math.floor(Math.random() * land_pokemon.length)]).data;
 	playersTurn = "PLAYERS"; 
@@ -1422,7 +1416,6 @@ function handleRun() {
 }
 function handleItem() {
 	poke.style.display = 'none';
-	console.log("Item selected");
 	document.getElementById('itemMenu').style.display = 'flex';
 }
 function healthItem(){
@@ -1444,7 +1437,6 @@ function PokeballItem(){
 	if(Math.random() < 15){
 		let term = enemyPokemon.name;
 		console.log(term);
-
 		playerPokiList.push(findPokemon(term.toString()).name);
 		timeout_frames = 4 * 82;
 		current_scene = "OPENWORLD";
@@ -1479,20 +1471,10 @@ document.getElementById('poke').addEventListener('click', function(event) {
 	poke.style.display = 'flex';
 	let desc = event.target.textContent;
 	playerPokemon = findPokemon(desc.toString());
-	console.log("Player is now a : " + playerPokemon.name);
 	poke.style.display = 'none';
 });
 
-// Store a extra copy in another variable for the enemy pokemon
 
-// Draw player pokemon
-
-// If the enemy pokemon is at 100 max health then we have a 0% of getting it
-// ((max_health - current_health) / max_health) [0, 1]
-
-// Get rid of comments like this (like this) and get rid of console.log(s)
-
-// Runs the main game and handles scene switching
 function mainLoop() {
 	// Handle any collisions from the last frame
 	CollisionSolver.resolveCollisions();
@@ -1660,7 +1642,6 @@ function mainLoop() {
 							default:
 								document.getElementById('fightMenu').style.display = 'none';
 								enemyAttack();
-								console.log("Players hp: " + playerPokemon.hp);
 								playersTurn = "YOURS";
 						
 						}
@@ -1747,7 +1728,6 @@ function mainLoop() {
 							default:
 								document.getElementById('fightMenu').style.display = 'none';
 								enemyAttack();
-								console.log("Players hp: " + playerPokemon.hp);
 								playersTurn = "YOURS";
 						
 						}
