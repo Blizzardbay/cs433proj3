@@ -10,7 +10,6 @@ var playersTurn = "YOURS";
 var landType;
 var playerPokemon;
 var enemyPokemon;
-var enemyCopy;
 var imageenemyPokemon;
 var playerImage;
 var allPokemons = [];
@@ -19,7 +18,7 @@ var enemy_event_text = null;
 var player_event_text = null;
 var event_text = null;
 var timeout_frames = 0;
-var started = null;
+var started = false;
 var currently_stepping_on="grass";
 var battle_started = false;
 
@@ -57,11 +56,14 @@ $(document).ready(function() {
 			$("#menu").hide();
 			$("#screen").show();
 			$("#MenuOptionButton").show();
-
+			started = true;
 			startGame();
 		} 
-		if(started == false){
-			
+		else if(started === true){
+			$("#heading").hide();
+			$("#menu").hide();
+			$("#screen").show();
+			$("#MenuOptionButton").show()
 		}
 		else {
 			console.log("Loading not done yet");
@@ -77,19 +79,10 @@ $(document).ready(function() {
 	});
 	
 	$("#QuitButton").click(function () {
+		alert("Quitting game...");
 		$("#menu").remove();
 		$("#screen").show(); 
-		startGame();
-		alert("Quitting the game.");
-		MenuMusic.pause();
-		var canvas = document.getElementById("screen");
-		var context = canvas.getContext("2d");
-		context.clearRect(0, 0, canvas.width, canvas.height);
-		context.font = "30px Arial";
-		context.fillStyle = "black";
-		context.textAlign = "center";
-		context.fillText("Quitting...", canvas.width / 2, canvas.height / 2);
-		window.location.href = "proj3.html";
+		location.reload();
 	});
 
 	MenuOptionButton.click(function () {
@@ -1443,11 +1436,12 @@ function healthItem(){
 		alert("GASP, No health potions left");
 	}
 	
-}findPokemonNumber
+}
 function PokeballItem(){
 	poke.style.display = 'none';
 	document.getElementById('itemMenu').style.display = 'none';
-	if(enemyPokemon.hp <= 10){
+
+	if(Math.random() < 15){
 		let term = enemyPokemon.name;
 		console.log(term);
 
@@ -1596,6 +1590,7 @@ function mainLoop() {
 				battle_started = true;
 				enemyPokemon = getPokemonByStr(land_pokemon[Math.floor(Math.random() * land_pokemon.length)]).data;
 			}
+			
 			stopAudio1();
 			stopAudio2();
 			audio3.play();
@@ -1637,7 +1632,7 @@ function mainLoop() {
 							case (enemyPokemon.hp <= 0):
 								playersTurn = "YOURS";
 								current_scene = "OPENWORLD";
-								playerPokemon.hp = playerPokemon.hp + 20;;
+								playerPokemon.hp = Number(playerPokemon.hp + 20);
 								enemyPokemon = getPokemonByStr(land_pokemon[Math.floor(Math.random() * land_pokemon.length)]).data;
 								timeout_frames = 4 * 82;
 								document.getElementById('fightMenu').style.display = 'flex';
@@ -1649,6 +1644,7 @@ function mainLoop() {
 					}
 					case "ENEMYS":{
 						switch(true) {
+						
 							case (playerPokemon.hp <= 0):
 								current_scene = "OPENWORLD";
 								playerPokemon.hp = 20;
@@ -1656,7 +1652,7 @@ function mainLoop() {
 							case (enemyPokemon.hp <= 0):
 								playersTurn = "YOURS";
 								current_scene = "OPENWORLD";
-								playerPokemon.hp = playerPokemon.hp + 20;
+								playerPokemon.hp = Number(playerPokemon.hp + 20);
 								enemyPokemon = getPokemonByStr(land_pokemon[Math.floor(Math.random() * land_pokemon.length)]).data;
 								timeout_frames = 4 * 82;
 
@@ -1723,7 +1719,7 @@ function mainLoop() {
 							case (enemyPokemon.hp <= 0):
 								playersTurn = "YOURS";
 								current_scene = "OPENWORLD";
-								playerPokemon.hp = playerPokemon.hp + 20;;
+								playerPokemon.hp = Number(playerPokemon.hp + 20);
 								enemyPokemon = getPokemonByStr(water_type_pokemon[Math.floor(Math.random() * water_type_pokemon.length)]).data;
 								timeout_frames = 4 * 82;
 
@@ -1743,7 +1739,7 @@ function mainLoop() {
 							case (enemyPokemon.hp <= 0):
 								playersTurn = "YOURS";
 								current_scene = "OPENWORLD";
-								playerPokemon.hp = playerPokemon.hp + 20;
+								playerPokemon.hp = Number(playerPokemon.hp + 20);
 								enemyPokemon = getPokemonByStr(water_type_pokemon[Math.floor(Math.random() * water_type_pokemon.length)]).data;
 								timeout_frames = 4 * 82;
 
