@@ -220,10 +220,10 @@
 			</div>
 			<div id="itemMenu">
 				<button class="itemmenu-item itemmenu-item-health">Health Potion</button>
-				<button class="itemmenu-item itemmenu-item-defense">Defense Potion</button>
+				<button class="itemmenu-item itemmenu-item-pokeball">CATCH POKEMON</button>
 			</div>
 		</div>
-		<audio id="MenuMusic" src="main_menu_sound.mp3" autoplay loop></audio>
+		<audio id="MenuMusic" src="main_menu_sound.mp3" loop></audio>
 		<!--this is just example audio we can change it later-->
 		<div id="SoundSettings">
 			<div id="SoundSettingsDisplay">
@@ -263,7 +263,7 @@
 			document.getElementById("itemMenu").style.display = "none";
 		});
 
-		document.querySelector(".itemmenu-item.itemmenu-item-defense").addEventListener("click", function() {
+		document.querySelector(".itemmenu-item.itemmenu-item-pokeball").addEventListener("click", function() {
 			document.getElementById("fightMenu").style.display = "grid"; 
 			document.getElementById("itemMenu").style.display = "none";
 		});
