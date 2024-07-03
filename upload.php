@@ -1,5 +1,5 @@
 <?php
-// Database 
+// Database configuration
 define('DB_USERNAME', 'root');
 define('DB_PASSWORD', '');
 define('DB_NAME', 'pokemon_data');
@@ -43,7 +43,32 @@ if ($conn->query($tableCreationQuery) === FALSE) {
     die("Error creating table: " . $conn->error);
 }
 
-// Get the JSON data 
+// Create a table to track data insertion
+$flagTableCreationQuery = "
+CREATE TABLE IF NOT EXISTS dataInsertionFlag (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    inserted BOOLEAN NOT NULL DEFAULT FALSE
+)";
+
+if ($conn->query($flagTableCreationQuery) === FALSE) {
+    die("Error creating flag table: " . $conn->error);
+}
+
+// Check if the data has already been inserted
+$checkFlagQuery = "SELECT inserted FROM dataInsertionFlag WHERE id = 1";
+$result = $conn->query($checkFlagQuery);
+
+if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    if ($row['inserted']) {
+        die("Data has already been inserted.");
+    }
+} else {
+    // Insert the initial flag if it doesn't exist
+    $conn->query("INSERT INTO dataInsertionFlag (inserted) VALUES (FALSE)");
+}
+
+// Get the JSON data
 $jsonData = json_decode($_POST['data'], true);
 
 // Prepare an SQL statement for inserting data
@@ -67,6 +92,9 @@ foreach ($jsonData as $rowIndex => $rowData) {
     // Execute the prepared statement
     $stmt->execute();
 }
+
+// Update the flag after data insertion
+$conn->query("UPDATE dataInsertionFlag SET inserted = TRUE WHERE id = 1");
 
 // Close the statement and the connection
 $stmt->close();
