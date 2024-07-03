@@ -177,7 +177,7 @@
             width: 150px
         }
 
-        .itemmenu-item-defense {
+        .itemmenu-item-pokeball{
             background-color: rgba(0, 0, 255, 0.7);
             width: 150px
         }
@@ -223,10 +223,9 @@
 			</div>
 			<div id="itemMenu">
 				<button class="itemmenu-item itemmenu-item-health">Health Potion</button>
-				<button class="itemmenu-item itemmenu-item-defense">Defense Potion</button>
+				<button class="itemmenu-item itemmenu-item-pokeball">CAPTURE POKEMON</button>
 			</div>
 		</div>
-		<audio id="MenuMusic" src="main_menu_sound.mp3" autoplay loop></audio>
 		<!--this is just example audio we can change it later-->
 		<div id="SoundSettings">
 			<div id="SoundSettingsDisplay">
@@ -239,6 +238,7 @@
 		</div>
 		<!-- Battle Log -->
 		<div id="battleLog"></div>
+        
 	</div>
 	<script type="module" src="proj3.js"></script>
 	<script>
@@ -255,7 +255,7 @@
     });
 
     document.getElementById("SoundSettingsButton").addEventListener("click", function() {
-        document.getElementById("SoundSettings").style.display = "flex";
+        document.getElementById("SoundSettings").style.display = "none";
     });
 
     document.getElementById("CloseSound").addEventListener("click", function() {
@@ -274,7 +274,7 @@
         document.getElementById("itemMenu").style.display = "none";
     });
 
-		document.querySelector(".itemmenu-item.itemmenu-item-defense").addEventListener("click", function() {
+		document.querySelector(".itemmenu-item.itemmenu-item-pokeball").addEventListener("click", function() {
 			document.getElementById("fightMenu").style.display = "grid"; 
 			document.getElementById("itemMenu").style.display = "none";
 		});

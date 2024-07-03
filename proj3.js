@@ -1,4 +1,7 @@
 // Project 3 CMSC 433: Created By: Darrian Corkadel, <List names here>
+const audio1 = new Audio('main_menu_sound.mp3');
+const audio2 = new Audio('openworld_music.mp3');
+const audio3 = new Audio('battle_audio.mp3');
 var image_loading_done = false;
 var database_loading_done = false;
 var game_loading_done = false;
@@ -33,6 +36,8 @@ async function databaseFinishedLoading() {
 	database_loading_done = true;
 	// First load the resources
 	waitForLoad();
+	audio1.play();
+	
 }
 
 databaseFinishedLoading();
@@ -118,6 +123,7 @@ function generateMenu(menuItems) {
 
 function initializeGame() {
 	// Randomly select player and enemy Pokémon from the Loaded data
+	
 	playerPokemon = allPokemons[Math.floor(Math.random() * allPokemons.length)];
 	enemyPokemon = allPokemons[Math.floor(Math.random() * allPokemons.length)];
 
@@ -199,6 +205,18 @@ function findPokemon(title) {
     }
 	console.log("Pokemon not found");
     return null;
+}
+function stopAudio1() {
+	audio1.pause();
+	audio1.currentTime = 0;  // Reset playback position to the beginning
+}
+function stopAudio2() {
+	audio2.pause();
+	audio2.currentTime = 0;  // Reset playback position to the beginning
+}
+function stopAudio3() {
+	audio3.pause();
+	audio3.currentTime = 0;  // Reset playback position to the beginning
 }
 
 
@@ -282,8 +300,10 @@ var owps_select_squirtle = null;
 
 var battle_background = null;
 var water_background = null;
+var event_text = null;
 var text_box = null;
 var poke_box = null;
+var player_text_box = null;
 
 function createPokemonTable() {
 	for(var i = 0; i < image_load_list_1.length;i++) {
@@ -327,7 +347,6 @@ function getPokemonByStr(str) {
 	console.log("<-- ERROR getPokemonByStr: " + str + " not found. -->");
 	return null;
 }
-
 
 
 function startGame() {
@@ -383,7 +402,7 @@ function startGame() {
 		
 		
 		owwe_player = new Rect(40,40,40,40);
-		owwe_player.setImg(findPokemonNumber("Bulbasaur"));
+		owwe_player.setImg(findPokemonNumber("Squirtle"));
 		owwe_player.addEventKeyboard("OPENWORLD","WORLD_EXPLORATION", "keydown", 'w', function(event, rect) { rect.setYPos(rect.ypos() - 10); });
 		owwe_player.addEventKeyboard("OPENWORLD","WORLD_EXPLORATION", "keydown", "a", function(event, rect) { rect.setXPos(rect.xpos() - 10); });
 		owwe_player.addEventKeyboard("OPENWORLD","WORLD_EXPLORATION", "keydown", 's', function(event, rect) { rect.setYPos(rect.ypos() + 10); });
@@ -1350,17 +1369,14 @@ var item_lst = {HealthPotion: 2, Pokeball: 10000000};
 var health_potion_desc= null;
 var defense_potion_desc = null;
 function handleAttack() {
-	document.getElementById('fightMenu').style.display = 'block';
+	document.getElementById('fightMenu').style.display = 'none';
 	console.log("Attack selected");
 	var num = playerPokemon.attack;
 	enemyPokemon.hp -= num;
 	console.log("Enemy's hp: " + enemyPokemon.hp);
-	event_text.setText(`Players attacks ${enemyPokemon.name}, does ${playerPokemon.attack} damage`, "64px serif", "black", "center", "center");
 	event_text.draw(); 
 	playersTurn = "ENEMYS"; 
-	setTimeout(function() {
-        document.getElementById('fightMenu').style.display = 'block';
-    }, 6000);
+	
 }
 
 function handlePokemon() {
@@ -1386,10 +1402,12 @@ function healthItem(){
 	item_lst.HealthPotion -= 1;
 	console.log("You have this many health potions left: " + item_lst.HealthPotion);
 	playerPokemon.hp += 1;
-	}else{
-		console.log("GASP, No health potions left");
-	}
 	playersTurn = "ENEMYS"; 
+	}else{
+		alert("GASP, No health potions left");
+		playersTurn = 'YOURS';
+	}
+	
 }
 function PokeballItem(){
 	document.getElementById('itemMenu').style.display = 'none';
@@ -1408,7 +1426,6 @@ function enemyAttack(){
 		playerPokemon.hp -= enemyPokemon.attack/4;
 	}else{
 		playerPokemon.hp -= enemyPokemon.attack/3;
-		defense_tracker = 0;
 	}
 	playersTurn = "YOURS"; 
 }
@@ -1440,7 +1457,7 @@ function mainLoop() {
 		case "OPENWORLD": {
 			switch(scene_state) {
 				case "POKEMON_SELECTION": {
-
+		
 					var canvas = document.getElementById("screen");
 					canvas.style.background = "black";
 					owps_title.draw();
@@ -1457,6 +1474,9 @@ function mainLoop() {
 					break;
 				}
 				case "WORLD_EXPLORATION": {
+					stopAudio1();
+					stopAudio3();
+					audio2.play();
 					var canvas = document.getElementById("screen");
 					canvas.style.background = "white";
 					for(var i = 0; i < owwe_world_objects.length;i++) {
@@ -1503,25 +1523,32 @@ function mainLoop() {
 			break;
 		}
 		case "BATTLE_LAND": {
+			stopAudio1();
+			stopAudio2();
+			audio3.play();
 			if(timeout_frames == 0) {
 				text_box = new Rect((1280 * 0.125) - 130, 720 * 0.25 + 350, 700, 200);
 				text_box.setImg("text_box.png");
-				poke_box = new Rect((1280 * 0.125) + 200, 720 * 0.25 + 100, 300, 100);
+				poke_box = new Rect((1280 * 0.125) - 100, 720 * 0.25 - 100, 450, 100);
 				poke_box.setImg("poke_box.png");
+				player_text_box = new Rect((1280 * 0.125) + 600, (720 * 0.25) + 400, 450, 100);
+				player_text_box.setImg("poke_box.png");
 				imageenemyPokemon = new Rect((1280 * 0.125) + 8.4 + 600, 720 * 0.25 - 120, 300, 300);
 				imageenemyPokemon.setImg("034");
 				battle_background.draw();
 				imageenemyPokemon.draw();
-				enemy_event_text = new Rect((1280 * 0.125) - 100, (720 * 0.25) - 100, ((0.75 * 1280) * (1/3)) + 100, 100);
-				enemy_event_text.setColor("green");
-				enemy_event_text.setText(`Pokemon: ${enemyPokemon.name}\nHp: ${enemyPokemon.hp}`, "64px serif", "white", "center", "center");
-				enemy_event_text.draw();
-				player_event_text = new Rect((1280 * 0.125) + 600, (720 * 0.25) + 400, ((0.75 * 1280) * (1/3)) + 100, 100);
-				player_event_text.setColor("green");
-				player_event_text.setText(`Player Pokemon: ${playerPokemon.name}\nHp: ${playerPokemon.hp}`, "64px serif", "white", "center", "center");
-				player_event_text.draw();
+				event_text = new Rect((1280 * 0.125) + 70, 720 * 0.25 + 300, 300, 300);
+				event_text.setText("What will player do next", "64px serif", "black", "center", "center");
+				enemy_event_text = new Rect((1280 * 0.125) - 75, (720 * 0.25) - 75, ((0.75 * 1280) * (1/3)) + 50, 50);
+				enemy_event_text.setText(`Pokemon: ${enemyPokemon.name}\nHp: ${enemyPokemon.hp}`, "32px serif", "black", "center", "center");
+				player_event_text = new Rect((1280 * 0.125) + 630, (720 * 0.25) + 430, ((0.75 * 1280) * (1/3)) + 50, 50);
+				player_event_text.setText(`Player Pokemon: ${playerPokemon.name}\nHp: ${playerPokemon.hp}`, "32px serif", "black", "center", "center");
 				poke_box.draw();
+				player_text_box.draw();
 				text_box.draw();
+				player_event_text.draw();
+				enemy_event_text.draw();
+				event_text.draw();
 				switch(playersTurn){
 					case "YOURS":{
 						switch(true) {
@@ -1575,23 +1602,27 @@ function mainLoop() {
 		case "BATTLE_WATER": {
 			if(timeout_frames == 0) {
 
-				var exit_background = new Rect(0, 0, 1280, 720);
-				exit_background.setColor("black");
-				imageenemyPokemon = new Rect((1280 * 0.125) + 8.4 + 650, 720 * 0.25 + 100, 170, 170);
+				text_box = new Rect((1280 * 0.125) - 130, 720 * 0.25 + 350, 700, 200);
+				text_box.setImg("text_box.png");
+				poke_box = new Rect((1280 * 0.125) - 100, 720 * 0.25 - 100, 450, 100);
+				poke_box.setImg("poke_box.png");
+				player_text_box = new Rect((1280 * 0.125) + 600, (720 * 0.25) + 400, 450, 100);
+				player_text_box.setImg("poke_box.png");
+				imageenemyPokemon = new Rect((1280 * 0.125) + 8.4 + 650, 720 * 0.25 + 100, 170, 170);				
 				imageenemyPokemon.setImg(findPokemonNumber("Metapod"));
 				water_background.draw();
 				imageenemyPokemon.draw();
-				enemy_event_text = new Rect((1280 * 0.125) - 100, (720 * 0.25) - 100, ((0.75 * 1280) * (1/3)) + 100, 100);
-				enemy_event_text.setColor("green");
-				enemy_event_text.setText(`Pokemon: ${enemyPokemon.name}\nHp: ${enemyPokemon.hp}`, "64px serif", "white", "center", "center");
-				enemy_event_text.draw();
-				player_event_text = new Rect((1280 * 0.125) + 600, (720 * 0.25) + 400, ((0.75 * 1280) * (1/3)) + 100, 100);
-				player_event_text.setColor("green");
-				player_event_text.setText(`Player Pokemon: ${playerPokemon.name}\nHp: ${playerPokemon.hp}`, "64px serif", "white", "center", "center");
+				event_text = new Rect((1280 * 0.125) + 70, 720 * 0.25 + 300, 300, 300);
+				event_text.setText("What will player do next", "64px serif", "black", "center", "center");
+				enemy_event_text = new Rect((1280 * 0.125) - 75, (720 * 0.25) - 75, ((0.75 * 1280) * (1/3)) + 50, 50);
+				enemy_event_text.setText(`Pokemon: ${enemyPokemon.name}\nHp: ${enemyPokemon.hp}`, "32px serif", "black", "center", "center");
+				player_event_text = new Rect((1280 * 0.125) + 630, (720 * 0.25) + 430, ((0.75 * 1280) * (1/3)) + 50, 50);
+				player_event_text.setText(`Player Pokemon: ${playerPokemon.name}\nHp: ${playerPokemon.hp}`, "32px serif", "black", "center", "center");
+				poke_box.draw();
+				player_text_box.draw();
+				text_box.draw();
 				player_event_text.draw();
-				event_text = new Rect((1280 * 0.125) - 100, (720 * 0.25) + 100, ((0.75 * 1280) * (1/3)) + 200, 200);
-				event_text.setColor("white");
-				event_text.setText(`What will you do next?`, "64px serif", "black", "center", "center");
+				enemy_event_text.draw();
 				event_text.draw();
 
 
