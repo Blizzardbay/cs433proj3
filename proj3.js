@@ -402,7 +402,6 @@ function startGame() {
 		
 		
 		owwe_player = new Rect(40,40,40,40);
-		owwe_player.setImg(findPokemonNumber("Squirtle"));
 		owwe_player.addEventKeyboard("OPENWORLD","WORLD_EXPLORATION", "keydown", 'w', function(event, rect) { rect.setYPos(rect.ypos() - 10); });
 		owwe_player.addEventKeyboard("OPENWORLD","WORLD_EXPLORATION", "keydown", "a", function(event, rect) { rect.setXPos(rect.xpos() - 10); });
 		owwe_player.addEventKeyboard("OPENWORLD","WORLD_EXPLORATION", "keydown", 's', function(event, rect) { rect.setYPos(rect.ypos() + 10); });
@@ -1455,6 +1454,7 @@ function mainLoop() {
 	// Render the current scene
 	switch(current_scene) {
 		case "OPENWORLD": {
+			owwe_player.setImg(findPokemonNumber(playerPokemon.name));
 			switch(scene_state) {
 				case "POKEMON_SELECTION": {
 		
@@ -1534,7 +1534,7 @@ function mainLoop() {
 				player_text_box = new Rect((1280 * 0.125) + 600, (720 * 0.25) + 400, 450, 100);
 				player_text_box.setImg("poke_box.png");
 				imageenemyPokemon = new Rect((1280 * 0.125) + 8.4 + 600, 720 * 0.25 - 120, 300, 300);
-				imageenemyPokemon.setImg("034");
+				imageenemyPokemon.setImg(findPokemonNumber(enemyPokemon.name));
 				battle_background.draw();
 				imageenemyPokemon.draw();
 				event_text = new Rect((1280 * 0.125) + 70, 720 * 0.25 + 300, 300, 300);
@@ -1600,8 +1600,10 @@ function mainLoop() {
 		
 		}
 		case "BATTLE_WATER": {
+			stopAudio1();
+			stopAudio2();
+			audio3.play();
 			if(timeout_frames == 0) {
-
 				text_box = new Rect((1280 * 0.125) - 130, 720 * 0.25 + 350, 700, 200);
 				text_box.setImg("text_box.png");
 				poke_box = new Rect((1280 * 0.125) - 100, 720 * 0.25 - 100, 450, 100);
