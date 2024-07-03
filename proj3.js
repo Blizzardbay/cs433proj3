@@ -10,7 +10,9 @@ var playersTurn = "YOURS";
 var landType;
 var playerPokemon;
 var enemyPokemon;
+var enemyCopy;
 var imageenemyPokemon;
+var playerImage;
 var allPokemons = [];
 var playerPokiList = [];
 var enemy_event_text = null;
@@ -1445,7 +1447,7 @@ function healthItem(){
 function PokeballItem(){
 	poke.style.display = 'none';
 	document.getElementById('itemMenu').style.display = 'none';
-	if(enemyPokemon.hp <= 5){
+	if(enemyPokemon.hp <= 10){
 		let term = enemyPokemon.name;
 		console.log(term);
 
@@ -1456,9 +1458,9 @@ function PokeballItem(){
 		}
 	else{
 
-		console.log("Unable to capture pokeball");
+		alert("Unable to capture pokeball");
 	}
-	document.getElementById('itemMenu').style.display = 'none'
+	document.getElementById('itemMenu').style.display = 'none';
 	
 }
 
@@ -1605,10 +1607,13 @@ function mainLoop() {
 				player_text_box = new Rect((1280 * 0.125) + 600, (720 * 0.25) + 400, 450, 100);
 				player_text_box.setImg("poke_box.png");
 				imageenemyPokemon = new Rect((1280 * 0.125) + 8.4 + 600, 720 * 0.25 - 120, 300, 300);
-				console.log(enemyPokemon.name);
 				imageenemyPokemon.setImg(findPokemonNumber(enemyPokemon.name));
+				playerImage = new Rect((1280 * 0.125) + 8.4 + 100, 720 * 0.25 + 200, 170, 170);
+				playerImage.setReversed(true);		
+				playerImage.setImg(findPokemonNumber(playerPokemon.name));
 				battle_background.draw();
 				imageenemyPokemon.draw();
+				playerImage.draw();
 				event_text = new Rect((1280 * 0.125) + 70, 720 * 0.25 + 300, 300, 300);
 				event_text.setText("What will player do next", "64px serif", "black", "center", "center");
 				enemy_event_text = new Rect((1280 * 0.125) - 75, (720 * 0.25) - 75, ((0.75 * 1280) * (1/3)) + 50, 50);
@@ -1632,7 +1637,7 @@ function mainLoop() {
 							case (enemyPokemon.hp <= 0):
 								playersTurn = "YOURS";
 								current_scene = "OPENWORLD";
-								playerPokemon.hp += 30;
+								playerPokemon.hp = playerPokemon.hp + 20;;
 								enemyPokemon = getPokemonByStr(land_pokemon[Math.floor(Math.random() * land_pokemon.length)]).data;
 								timeout_frames = 4 * 82;
 								document.getElementById('fightMenu').style.display = 'flex';
@@ -1651,7 +1656,7 @@ function mainLoop() {
 							case (enemyPokemon.hp <= 0):
 								playersTurn = "YOURS";
 								current_scene = "OPENWORLD";
-								playerPokemon.hp += 20;
+								playerPokemon.hp = playerPokemon.hp + 20;
 								enemyPokemon = getPokemonByStr(land_pokemon[Math.floor(Math.random() * land_pokemon.length)]).data;
 								timeout_frames = 4 * 82;
 
@@ -1689,8 +1694,12 @@ function mainLoop() {
 				player_text_box.setImg("poke_box.png");
 				imageenemyPokemon = new Rect((1280 * 0.125) + 8.4 + 650, 720 * 0.25 + 100, 170, 170);				
 				imageenemyPokemon.setImg(findPokemonNumber(enemyPokemon.name));
+				playerImage = new Rect((1280 * 0.125) + 8.4 + 100, 720 * 0.25 + 200, 170, 170);
+				playerImage.setReversed(true);		
+				playerImage.setImg(findPokemonNumber(playerPokemon.name));
 				water_background.draw();
 				imageenemyPokemon.draw();
+				playerImage.draw();
 				event_text = new Rect((1280 * 0.125) + 70, 720 * 0.25 + 300, 300, 300);
 				event_text.setText("What will player do next", "64px serif", "black", "center", "center");
 				enemy_event_text = new Rect((1280 * 0.125) - 75, (720 * 0.25) - 75, ((0.75 * 1280) * (1/3)) + 50, 50);
@@ -1714,7 +1723,7 @@ function mainLoop() {
 							case (enemyPokemon.hp <= 0):
 								playersTurn = "YOURS";
 								current_scene = "OPENWORLD";
-								playerPokemon.hp += 20;
+								playerPokemon.hp = playerPokemon.hp + 20;;
 								enemyPokemon = getPokemonByStr(water_type_pokemon[Math.floor(Math.random() * water_type_pokemon.length)]).data;
 								timeout_frames = 4 * 82;
 
@@ -1734,7 +1743,7 @@ function mainLoop() {
 							case (enemyPokemon.hp <= 0):
 								playersTurn = "YOURS";
 								current_scene = "OPENWORLD";
-								playerPokemon.hp += 20;
+								playerPokemon.hp = playerPokemon.hp + 20;
 								enemyPokemon = getPokemonByStr(water_type_pokemon[Math.floor(Math.random() * water_type_pokemon.length)]).data;
 								timeout_frames = 4 * 82;
 
