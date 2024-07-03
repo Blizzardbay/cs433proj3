@@ -16,7 +16,6 @@ var playerPokiList = [];
 var enemy_event_text = null;
 var player_event_text = null;
 var event_text = null;
-var pokemonPlayerMaxhp;
 var timeout_frames = 0;
 var started = null;
 
@@ -163,18 +162,19 @@ function selectStarterPokemon(pokemon) {
 		case "Balbasaur": {
 			playerPokemon = allPokemons[0];
 			playerPokiList.push(playerPokemon.name);
-			playerPokiList.push("Squirtle");
-			console.log(playerPokiList[0]);
+			console.log(playerPokemon);
 			break;
 		}
 		case "Charmander": {
 			playerPokemon = allPokemons[4];
 			playerPokiList.push(playerPokemon.name);
+			console.log(playerPokemon);
 			break;
 		}
 		case "Squirtle" : {
-			playerPokemon = allPokemons[7];
+			playerPokemon = allPokemons[9];
 			playerPokiList.push(playerPokemon.name);
+			console.log(playerPokemon);
 			break;
 		}
 		default: {
@@ -266,7 +266,7 @@ function waitForLoad() {
 		allPokemons = data;
 
 		// Initialize player and enemy Pokémon after data is loaded
-		//initializeGame();
+		initializeGame();
 		game_loading_done = true;
 	},
 	error: function (jqXHR, textStatus, errorThrown) {
@@ -353,7 +353,6 @@ function startGame() {
 	console.log("Game started with the following Pokémon data:", allPokemons); // debug check
 	if(loading_done == true) {
 		createPokemonTable();
-		initializeGame();
 		var canvas = document.getElementById("screen");
 		canvas.oncontextmenu = function(menu) { menu.preventDefault(); menu.stopPropagation(); }
 		
@@ -1364,17 +1363,22 @@ function addHoverEffect(rect, baseColor, hoverColor) {
 }
 var defense_tracker = 0;
 var battle_title = null;
-var item_lst = {HealthPotion: 2, Pokeball: 10000000};
+var item_lst = {HealthPotion: 30, Pokeball: 10000000};
 var health_potion_desc= null;
 var defense_potion_desc = null;
 function handleAttack() {
+	poke.style.display = 'none';
 	document.getElementById('fightMenu').style.display = 'none';
 	console.log("Attack selected");
-	var num = playerPokemon.attack;
+	var num = Math.floor(Math.random() * playerPokemon.attack) + 5;
 	enemyPokemon.hp -= num;
 	console.log("Enemy's hp: " + enemyPokemon.hp);
 	event_text.draw(); 
+	if(enemyPokemon.hp > 0){
 	playersTurn = "ENEMYS"; 
+	}else{
+		playersTurn = "YOURS";
+	}
 	
 }
 
@@ -1384,49 +1388,59 @@ function handlePokemon() {
 }
 
 function handleRun() {
-	document.getElementById('fightMenu').style.display = 'none';
-
+	poke.style.display = 'none';
 	current_scene = "OPENWORLD";
 	console.log("Run selected");
-	playersTurn = "ENEMYS"; 
+	timeout_frames = 4 * 82;
+	enemyPokemon = allPokemons[Math.floor(Math.random() * allPokemons.length)];
+	playersTurn = "PLAYERS"; 
 	
 }
 function handleItem() {
+	poke.style.display = 'none';
 	console.log("Item selected");
 	document.getElementById('itemMenu').style.display = 'flex';
 }
 function healthItem(){
+	poke.style.display = 'none';
 	document.getElementById('itemMenu').style.display = 'none';
 	if(item_lst.HealthPotion > 0){
 	item_lst.HealthPotion -= 1;
 	console.log("You have this many health potions left: " + item_lst.HealthPotion);
-	playerPokemon.hp += 1;
-	playersTurn = "ENEMYS"; 
+	playerPokemon.hp += 20;
 	}else{
 		alert("GASP, No health potions left");
-		playersTurn = 'YOURS';
 	}
 	
 }
 function PokeballItem(){
+	poke.style.display = 'none';
 	document.getElementById('itemMenu').style.display = 'none';
 	if(enemyPokemon.hp <= 5){
 		let term = enemyPokemon.name;
 		console.log(term);
+
 		playerPokiList.push(findPokemon(term.toString()).name);
+		timeout_frames = 4 * 82;
 		current_scene = "OPENWORLD";
-	}
+		enemyPokemon = allPokemons[Math.floor(Math.random() * allPokemons.length)];
+		}
 	else{
+
 		console.log("Unable to capture pokeball");
 	}
+	document.getElementById('itemMenu').style.display = 'none'
+	
 }
+
 function enemyAttack(){
-	if (defense_tracker == 0){
-		playerPokemon.hp -= enemyPokemon.attack/4;
-	}else{
-		playerPokemon.hp -= enemyPokemon.attack/3;
-	}
-	playersTurn = "YOURS"; 
+		poke.style.display = 'none';
+		playerPokemon.hp -= Math.floor(Math.random() * enemyPokemon.attack) + 5;		
+		playersTurn = "YOURS"; 
+}
+function Close(){
+	poke.style.display = 'none';
+	document.getElementById('itemMenu').style.display = 'none';
 }
 
 document.querySelector('.menu-item-attack').addEventListener('click', handleAttack);
@@ -1434,15 +1448,14 @@ document.querySelector('.menu-item-pokemon').addEventListener('click', handlePok
 document.querySelector('.menu-item-run').addEventListener('click', handleRun);
 document.querySelector('.menu-item-item').addEventListener('click', handleItem);
 document.querySelector('.itemmenu-item-health').addEventListener('click', healthItem);
+document.querySelector('.itemmenu-item-close').addEventListener('click', Close);
 document.querySelector('.itemmenu-item-pokeball').addEventListener('click', PokeballItem);
 document.getElementById('poke').addEventListener('click', function(event) {
-	playerPokemon = allPokemons[2];
+	poke.style.display = 'flex';
 	let desc = event.target.textContent;
 	playerPokemon = findPokemon(desc.toString());
 	console.log("Player is now a : " + playerPokemon.name);
 	poke.style.display = 'none';
-
-	playersTurn = "ENEMYS";
 });
 
 // Runs the main game and handles scene switching
@@ -1549,18 +1562,19 @@ function mainLoop() {
 				player_event_text.draw();
 				enemy_event_text.draw();
 				event_text.draw();
+				document.getElementById('fightMenu').style.display = 'flex';
 				switch(playersTurn){
 					case "YOURS":{
 						switch(true) {
 							case (playerPokemon.hp <= 0):
 								current_scene = "OPENWORLD";
-								playerPokemon.hp += 30;
+								playerPokemon.hp = 20;
 								timeout_frames = 4 * 82;
 							case (enemyPokemon.hp <= 0):
-								playerPokemon.hp += 30;
-								enemyPokemon = allPokemons[Math.floor(Math.random() * allPokemons.length)];
 								playersTurn = "YOURS";
 								current_scene = "OPENWORLD";
+								playerPokemon.hp += 30;
+								enemyPokemon = allPokemons[Math.floor(Math.random() * allPokemons.length)];
 								timeout_frames = 4 * 82;
 								document.getElementById('fightMenu').style.display = 'flex';
 							default:
@@ -1573,13 +1587,13 @@ function mainLoop() {
 						switch(true) {
 							case (playerPokemon.hp <= 0):
 								current_scene = "OPENWORLD";
-								playerPokemon.hp += 30;
+								playerPokemon.hp = 20;
 								timeout_frames = 4 * 82;
 							case (enemyPokemon.hp <= 0):
-								playerPokemon.hp += 30;
-								enemyPokemon = allPokemons[Math.floor(Math.random() * allPokemons.length)];
 								playersTurn = "YOURS";
 								current_scene = "OPENWORLD";
+								playerPokemon.hp += 20;
+								enemyPokemon = allPokemons[Math.floor(Math.random() * allPokemons.length)];
 								timeout_frames = 4 * 82;
 
 								document.getElementById('fightMenu').style.display = 'flex';
@@ -1611,7 +1625,7 @@ function mainLoop() {
 				player_text_box = new Rect((1280 * 0.125) + 600, (720 * 0.25) + 400, 450, 100);
 				player_text_box.setImg("poke_box.png");
 				imageenemyPokemon = new Rect((1280 * 0.125) + 8.4 + 650, 720 * 0.25 + 100, 170, 170);				
-				imageenemyPokemon.setImg(findPokemonNumber("Metapod"));
+				imageenemyPokemon.setImg(findPokemonNumber(enemyPokemon.name));
 				water_background.draw();
 				imageenemyPokemon.draw();
 				event_text = new Rect((1280 * 0.125) + 70, 720 * 0.25 + 300, 300, 300);
@@ -1626,20 +1640,19 @@ function mainLoop() {
 				player_event_text.draw();
 				enemy_event_text.draw();
 				event_text.draw();
-
-
+				document.getElementById('fightMenu').style.display = 'flex';
 				switch(playersTurn){
 					case "YOURS":{
 						switch(true) {
 							case (playerPokemon.hp <= 0):
 								current_scene = "OPENWORLD";
-								playerPokemon.hp += 30;
+								playerPokemon.hp = 20;
 								timeout_frames = 4 * 82;
 							case (enemyPokemon.hp <= 0):
-								playerPokemon.hp += 30;
-								enemyPokemon = allPokemons[Math.floor(Math.random() * allPokemons.length)];
 								playersTurn = "YOURS";
 								current_scene = "OPENWORLD";
+								playerPokemon.hp += 20;
+								enemyPokemon = allPokemons[Math.floor(Math.random() * allPokemons.length)];
 								timeout_frames = 4 * 82;
 
 								document.getElementById('fightMenu').style.display = 'flex';
@@ -1653,13 +1666,13 @@ function mainLoop() {
 						switch(true) {
 							case (playerPokemon.hp <= 0):
 								current_scene = "OPENWORLD";
-								playerPokemon.hp += 30;
+								playerPokemon.hp = 20;
 								timeout_frames = 4 * 82;
 							case (enemyPokemon.hp <= 0):
-								playerPokemon.hp += 30;
-								enemyPokemon = allPokemons[Math.floor(Math.random() * allPokemons.length)];
 								playersTurn = "YOURS";
 								current_scene = "OPENWORLD";
+								playerPokemon.hp += 20;
+								enemyPokemon = allPokemons[Math.floor(Math.random() * allPokemons.length)];
 								timeout_frames = 4 * 82;
 
 								document.getElementById('fightMenu').style.display = 'flex';

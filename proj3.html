@@ -224,6 +224,7 @@
 			<div id="itemMenu">
 				<button class="itemmenu-item itemmenu-item-health">Health Potion</button>
 				<button class="itemmenu-item itemmenu-item-pokeball">CAPTURE POKEMON</button>
+                <button class="itemmenu-item itemmenu-item-close">Close</button>
 			</div>
 		</div>
 		<!--this is just example audio we can change it later-->
@@ -278,6 +279,10 @@
 			document.getElementById("fightMenu").style.display = "grid"; 
 			document.getElementById("itemMenu").style.display = "none";
 		});
+    document.querySelector(".itemmenu-item.itemmenu-item-close").addEventListener("click", function() {
+        document.getElementById("fightMenu").style.display = "grid"; 
+        document.getElementById("itemMenu").style.display = "none";
+    });
 	</script>
 	</body>
 </html>
