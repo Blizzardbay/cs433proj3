@@ -33,8 +33,6 @@ async function sendDataToServer(data) {
 		method: "POST",
 		data: { data: JSON.stringify(data) },
 		success: function (response) {
-		  console.log("Data sent to the server successfully.");
-		  console.log(response);
 		  loaded = true;
 		  resolve(response);
 		},
