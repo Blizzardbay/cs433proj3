@@ -1654,6 +1654,7 @@ function mainLoop() {
 								current_scene = "OPENWORLD";
 								playerPokemon.hp = 20;
 								timeout_frames = 4 * 82;
+								break;
 							case (enemyPokemon.hp <= 0):
 								alert("You win!");
 								playersTurn = "YOURS";
@@ -1661,6 +1662,7 @@ function mainLoop() {
 								playerPokemon.hp = Number(playerPokemon.hp) + 20;
 								timeout_frames = 4 * 82;
 								document.getElementById('fightMenu').style.display = 'flex';
+								break;
 							default:
 								document.getElementById('fightMenu').style.display = 'flex';
 								break;
@@ -1674,6 +1676,7 @@ function mainLoop() {
 								current_scene = "OPENWORLD";
 								playerPokemon.hp = 20;
 								timeout_frames = 4 * 82;
+								break;
 							case (enemyPokemon.hp <= 0):
 								alert("You win!");
 								playersTurn = "YOURS";
@@ -1682,11 +1685,12 @@ function mainLoop() {
 								timeout_frames = 4 * 82;
 
 								document.getElementById('fightMenu').style.display = 'flex';
+								break;
 							default:
 								document.getElementById('fightMenu').style.display = 'none';
 								enemyAttack();
 								playersTurn = "YOURS";
-						
+								break;
 						}
 						break;
 					}
