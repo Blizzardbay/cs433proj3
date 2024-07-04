@@ -1650,10 +1650,12 @@ function mainLoop() {
 					case "YOURS":{
 						switch(true) {
 							case (playerPokemon.hp <= 0):
+								alert("You lost...");
 								current_scene = "OPENWORLD";
 								playerPokemon.hp = 20;
 								timeout_frames = 4 * 82;
 							case (enemyPokemon.hp <= 0):
+								alert("You win!");
 								playersTurn = "YOURS";
 								current_scene = "OPENWORLD";
 								playerPokemon.hp = Number(playerPokemon.hp) + 20;
@@ -1667,12 +1669,13 @@ function mainLoop() {
 					}
 					case "ENEMYS":{
 						switch(true) {
-						
 							case (playerPokemon.hp <= 0):
+								alert("You lost...");
 								current_scene = "OPENWORLD";
 								playerPokemon.hp = 20;
 								timeout_frames = 4 * 82;
 							case (enemyPokemon.hp <= 0):
+								alert("You win!");
 								playersTurn = "YOURS";
 								current_scene = "OPENWORLD";
 								playerPokemon.hp = Number(playerPokemon.hp) + 20;
@@ -1735,10 +1738,12 @@ function mainLoop() {
 					case "YOURS":{
 						switch(true) {
 							case (playerPokemon.hp <= 0):
+								alert("You lost...");
 								current_scene = "OPENWORLD";
 								playerPokemon.hp = 20;
 								timeout_frames = 4 * 82;
 							case (enemyPokemon.hp <= 0):
+								alert("You win!");
 								playersTurn = "YOURS";
 								current_scene = "OPENWORLD";
 								playerPokemon.hp = Number(playerPokemon.hp) + 20;
@@ -1754,11 +1759,13 @@ function mainLoop() {
 					case "ENEMYS":{
 						switch(true) {
 							case (playerPokemon.hp <= 0):
+								alert("You lost...");
 								current_scene = "OPENWORLD";
 								playerPokemon.hp = 20;
 								timeout_frames = 4 * 82;
 							case (enemyPokemon.hp <= 0):
 								playersTurn = "YOURS";
+								alert("You win!");
 								current_scene = "OPENWORLD";
 								playerPokemon.hp = Number(playerPokemon.hp) + 20;
 								timeout_frames = 4 * 82;
