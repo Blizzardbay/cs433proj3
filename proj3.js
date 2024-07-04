@@ -1,7 +1,8 @@
 // Project 3 CMSC 433: Created By: Darrian Corkadel, Chelsea Okoroji, Bhoj Raj Pandey, Richard M.
-var audio1 = new Audio('main_menu_sound.mp3');
-var audio2 = new Audio('openworld_music.mp3');
-var audio3 = new Audio('battle_audio.mp3');
+var audio1 = null;
+var audio2 = null;
+var audio3 = null;
+
 var image_loading_done = false;
 var database_loading_done = false;
 var game_loading_done = false;
@@ -21,6 +22,8 @@ var timeout_frames = 0;
 var started = false;
 var currently_stepping_on="grass";
 var battle_started = false;
+var has_interacted = false;
+var maxhp_enemy = 0;
 
 document.getElementById('fightMenu').style.display = 'none';
 document.getElementById('itemMenu').style.display = 'none';
@@ -41,13 +44,26 @@ async function databaseFinishedLoading() {
 }
 
 databaseFinishedLoading();
+
+function stopAudio1() {
+	audio1.pause();
+	audio1.currentTime = 0;  // Reset playback position to the beginning
+}
+function stopAudio2() {
+	audio2.pause();
+	audio2.currentTime = 0;  // Reset playback position to the beginning
+}
+function stopAudio3() {
+	audio3.pause();
+	audio3.currentTime = 0;  // Reset playback position to the beginning
+}
+
 $(document).ready(function() {
-	var MenuMusic = document.getElementById("MenuMusic");
 	var SoundSettings = $("#SoundSettings");
 	var HelpButton = $("#HelpButton");
 	var volumeControl = $("#volumeControl");
 	var MenuOptionButton = $("#MenuOptionButton");
-
+	
 	$("#PlayButton").click(function () {
 		
 		if (image_loading_done == true && database_loading_done == true && game_loading_done == true) {
@@ -88,6 +104,8 @@ $(document).ready(function() {
 	MenuOptionButton.click(function () {
 		document.getElementById('fightMenu').style.display = 'none';
 		$("#screen").hide();
+		stopAudio2();
+		stopAudio3();
 		$("#menu").show();
 		MenuOptionButton.hide();
 		exitLoop();
@@ -97,7 +115,6 @@ $(document).ready(function() {
 		audio1.volume = this.value / 100;
 		audio2.volume = this.value / 100;
 		audio3.volume = this.value / 100;
-		MenuMusic.volume = this.value / 100;
 	});
 	$("#FightButton").click(function () {
 		
@@ -123,7 +140,8 @@ function initializeGame() {
 	// Randomly select player and enemy Pokémon from the Loaded data
 	playerPokemon = getPokemonByStr(land_pokemon[Math.floor(Math.random() * land_pokemon.length)]).data;
 	enemyPokemon = getPokemonByStr(land_pokemon[Math.floor(Math.random() * land_pokemon.length)]).data;
-
+	maxhp_enemy = enemyPokemon.hp;
+	
 	// Set initial HP for the selected Pokémon
 	playerPokemon.hp = 100; // or use actual data if available
 	enemyPokemon.hp = 50; // or use actual data if available
@@ -201,20 +219,6 @@ function findPokemon(title) {
 
     return null;
 }
-function stopAudio1() {
-	audio1.pause();
-	audio1.currentTime = 0;  // Reset playback position to the beginning
-}
-function stopAudio2() {
-	audio2.pause();
-	audio2.currentTime = 0;  // Reset playback position to the beginning
-}
-function stopAudio3() {
-	audio3.pause();
-	audio3.currentTime = 0;  // Reset playback position to the beginning
-}
-
-
 // Image variables
 var image_load_list_2=["Battle_scene_background.png", "water_battle.png","title_screen.png","text_box.png","poke_box.png","grass2.png", "grassground.png", "mountain1.png", "waterdeep.png", "grass1.png", "sand1.png", "water1.png"];
 var image_load_list_1=["000Bulbasaur.png","004Charmander.png","005Charmeleon.png","006Charizard.png","007Squirtle.png","008Wartortle.png","009Blastoise.png","010Caterpie.png","011Metapod.png","012Butterfree.png","013Weedle.png","014Kakuna.png","015Beedrill.png","016Pidgey.png","017Pidgeotto.png","018Pidgeot.png","019Rattata.png","021Spearow.png","022Fearow.png","023Ekans.png","024Arbok.png","025Pikachu.png","026Raichu.png","027Sandshrew.png","028Sandslash.png","029NidoranF.png","030Nidorina.png","031Nidoqueen.png","032NidoranM.png","033Nidorino.png","034Nidoking.png","035Clefairy.png","036Clefable.png","037Vulpix.png","038Ninetales.png","039Jigglypuff.png","040Wigglytuff.png","041Zubat.png","042Golbat.png","043Oddish.png","044Gloom.png","045Vileplume.png","046Paras.png","047Parasect.png","048Venonat.png","049Venomoth.png","050Diglett.png","051Dugtrio.png","052Meowth.png","053Persian.png","054Psyduck.png","055Golduck.png","056Mankey.png","057Primeape.png","058Growlithe.png","059Arcanine.png","060Poliwag.png","061Poliwhirl.png","062Poliwrath.png","063Abra.png","064Kadabra.png","065Alakazam.png","066Machop.png","067Machoke.png","068Machamp.png","069Bellsprout.png","070Weepinbell.png","071Victreebel.png","072Tentacool.png","073Tentacruel.png","074Geodude.png","075Graveler.png","076Golem.png","077Ponyta.png","078Rapidash.png","079Slowpoke.png","080Slowbro.png","081Magnemite.png","082Magneton.png","083Farfetch'd.png","084Doduo.png","085Dodrio.png","086Seel.png","087Dewgong.png","088Grimer.png","089Muk.png","090Shellder.png","091Cloyster.png","092Gastly.png","093Haunter.png","094Gengar.png","095Onix.png","096Drowzee.png","097Hypno.png","098Krabby.png","099Kingler.png","100Voltorb.png","101Electrode.png","102Exeggcute.png","103Exeggutor.png","104Cubone.png","105Marowak.png","106Hitmonlee.png","107Hitmonchan.png","108Lickitung.png","109Koffing.png","110Weezing.png","111Rhyhorn.png","112Rhydon.png","113Chansey.png","114Tangela.png","115Kangaskhan.png","116Horsea.png","117Seadra.png","118Goldeen.png","119Seaking.png","120Staryu.png","121Starmie.png","122Mr._Mime.png","123Scyther.png","124Jynx.png","125Electabuzz.png","126Magmar.png","127Pinsir.png","128Tauros.png","129Magikarp.png","130Gyarados.png","131Lapras.png","132Ditto.png","133Eevee.png","134Vaporeon.png","135Jolteon.png","136Flareon.png","137Porygon.png","138Omanyte.png","139Omastar.png","140Kabuto.png","141Kabutops.png","142Aerodactyl.png","143Snorlax.png","144Articuno.png","145Zapdos.png","146Moltres.png","147Dratini.png","148Dragonair.png","149Dragonite.png","150Mewtwo-Mega_X.png","150Mewtwo-Mega_Y.png","150Mewtwo.png","151Mew.png"];
@@ -227,18 +231,42 @@ var image_list_2 = {};
 var current_scene = "OPENWORLD"; // Mainly used for switching the entire content of the screen
 var scene_state = "POKEMON_SELECTION"; // Used for updating sub-menus or overlays when a scene is running
 var running_interval = null; // The interval running the mainLoop function
+var audio_to_load = 3;
+var complete_images = 0;
+
+audio1 = new Audio('main_menu_sound.mp3');
+audio2 = new Audio('openworld_music.mp3');
+audio3 = new Audio('battle_audio.mp3');
+audio1.onloadeddata = function () {
+	audio_to_load = audio_to_load - 1;
+	if (complete_images == image_load_list_1.length + image_load_list_2.length && audio_to_load == 0) {
+		image_loading_done = true; // Loading is indicated to be done
+	}
+};
+audio2.onloadeddata = function () {
+	audio_to_load = audio_to_load - 1;
+	if (complete_images == image_load_list_1.length + image_load_list_2.length && audio_to_load == 0) {
+		image_loading_done = true; // Loading is indicated to be done
+	}
+};
+audio3.onloadeddata = function () {
+	audio_to_load = audio_to_load - 1;
+	if (complete_images == image_load_list_1.length + image_load_list_2.length && audio_to_load == 0) {
+		image_loading_done = true; // Loading is indicated to be done
+	}
+};
+
 // Loading checks / database loading checks
 function waitForLoad() {
 	// Load all of the images
-	var complete_images = 0;
+	complete_images = 0;
 	for (var i = 0; i < image_load_list_1.length; i++) {
 		image_list_1[image_load_list_1[i]] = new Image();
 		image_list_1[image_load_list_1[i]].src = "1st Generation\\" + image_load_list_1[i];
 		image_list_1[image_load_list_1[i]].onload = function () {
 			complete_images = complete_images + 1;
-			if (complete_images == image_load_list_1.length + image_load_list_2.length) {
+			if (complete_images == image_load_list_1.length + image_load_list_2.length && audio_to_load == 0) {
 				image_loading_done = true; // Loading is indicated to be done
-				audio1.play();
 			}
 		};
 	}
@@ -247,9 +275,8 @@ function waitForLoad() {
 		image_list_2[image_load_list_2[i]].src = "assets\\" + image_load_list_2[i];
 		image_list_2[image_load_list_2[i]].onload = function () {
 			complete_images = complete_images + 1;
-			if (complete_images == image_load_list_1.length + image_load_list_2.length) {
+			if (complete_images == image_load_list_1.length + image_load_list_2.length && audio_to_load == 0) {
 				image_loading_done = true; // Loading is indicated to be done
-				audio1.play();
 			}
 		};
 	}
@@ -411,6 +438,11 @@ function startGame() {
 		owwe_player.addEventKeyboard("OPENWORLD","WORLD_EXPLORATION", "keydown", "a", function(event, rect) { rect.setXPos(rect.xpos() - 10); });
 		owwe_player.addEventKeyboard("OPENWORLD","WORLD_EXPLORATION", "keydown", 's', function(event, rect) { rect.setYPos(rect.ypos() + 10); });
 		owwe_player.addEventKeyboard("OPENWORLD","WORLD_EXPLORATION", "keydown", 'd', function(event, rect) { rect.setXPos(rect.xpos() + 10); });
+		
+		owwe_player.addEventKeyboard("OPENWORLD","WORLD_EXPLORATION", "keydown", "38", function(event, rect) { rect.setYPos(rect.ypos() - 10); });
+		owwe_player.addEventKeyboard("OPENWORLD","WORLD_EXPLORATION", "keydown", "37", function(event, rect) { rect.setXPos(rect.xpos() - 10); });
+		owwe_player.addEventKeyboard("OPENWORLD","WORLD_EXPLORATION", "keydown", "40", function(event, rect) { rect.setYPos(rect.ypos() + 10); });
+		owwe_player.addEventKeyboard("OPENWORLD","WORLD_EXPLORATION", "keydown", "39", function(event, rect) { rect.setXPos(rect.xpos() + 10); });
 		owwe_player.setCollisions("OPENWORLD", true, "Dynamic");
 
 		owwe_purple = new Rect(256,128,100,64);
@@ -421,7 +453,7 @@ function startGame() {
 		owwe_water_objects = [];
 		var str = "\
 mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\n\
-m   w   ggggg  g  g m   g   g  m\n\
+m       ggggg  g  g m   g   g  m\n\
 m   g g  g    g  m  g m   g gggm\n\
 mmm g gmm g  gmm gm   g g mmmmmm\n\
 m                 g   gm    gmmm\n\
@@ -975,9 +1007,11 @@ $(document).on("keyup", function(event) {
 	EventHandler.handleKeyUp(event);
 });
 $(document).on("keypress", function(event) {
+	has_interacted = true;
 	EventHandler.handleKeyPress(event);
 });
 $(document).on("mousedown", function(event) {
+	has_interacted = true;
 	switch(event.which) {
 		case 1: {
 			EventHandler.handleMLeftDown(event);
@@ -1010,6 +1044,13 @@ $(document).on("mouseup", function(event) {
 	}
 });
 $(document).on("mousemove", function(event) {
+	if($("menu").is(":hidden") === false) {
+		if(audio_to_load == 0) {
+			if(has_interacted == true) {
+				audio1.play();
+			}
+		}
+	}
 	if(loading_done == true) {
 		var $canvas = $("#screen");
 		EventHandler.handleMHover(event, (event.pageX - $canvas.offset().left), (event.pageY - $canvas.offset().top));
@@ -1433,8 +1474,8 @@ function healthItem(){
 function PokeballItem(){
 	poke.style.display = 'none';
 	document.getElementById('itemMenu').style.display = 'none';
-
-	if(Math.random() < enemyPokemon.hp){
+	
+	if(Math.random() < ((maxhp_enemy - enemyPokemon.hp) / (maxhp_enemy))){
 		let term = enemyPokemon.name;
 		console.log(term);
 		playerPokiList.push(findPokemon(term.toString()).name);
@@ -1483,6 +1524,7 @@ function mainLoop() {
 	// Render the current scene
 	switch(current_scene) {
 		case "OPENWORLD": {
+			battle_started = false;
 			owwe_player.setImg(findPokemonNumber(playerPokemon.name));
 			switch(scene_state) {
 				case "POKEMON_SELECTION": {
@@ -1571,8 +1613,8 @@ function mainLoop() {
 			if(battle_started == false) {
 				battle_started = true;
 				enemyPokemon = getPokemonByStr(land_pokemon[Math.floor(Math.random() * land_pokemon.length)]).data;
+				maxhp_enemy = enemyPokemon.hp;
 			}
-			
 			stopAudio1();
 			stopAudio2();
 			audio3.play();
@@ -1614,8 +1656,7 @@ function mainLoop() {
 							case (enemyPokemon.hp <= 0):
 								playersTurn = "YOURS";
 								current_scene = "OPENWORLD";
-								playerPokemon.hp = Number(playerPokemon.hp + 20);
-								enemyPokemon = getPokemonByStr(land_pokemon[Math.floor(Math.random() * land_pokemon.length)]).data;
+								playerPokemon.hp = Number(playerPokemon.hp) + 20;
 								timeout_frames = 4 * 82;
 								document.getElementById('fightMenu').style.display = 'flex';
 							default:
@@ -1634,8 +1675,7 @@ function mainLoop() {
 							case (enemyPokemon.hp <= 0):
 								playersTurn = "YOURS";
 								current_scene = "OPENWORLD";
-								playerPokemon.hp = Number(playerPokemon.hp + 20);
-								enemyPokemon = getPokemonByStr(land_pokemon[Math.floor(Math.random() * land_pokemon.length)]).data;
+								playerPokemon.hp = Number(playerPokemon.hp) + 20;
 								timeout_frames = 4 * 82;
 
 								document.getElementById('fightMenu').style.display = 'flex';
@@ -1658,6 +1698,7 @@ function mainLoop() {
 			if(battle_started == false) {
 				battle_started = true;
 				enemyPokemon = getPokemonByStr(water_type_pokemon[Math.floor(Math.random() * water_type_pokemon.length)]).data;
+				maxhp_enemy = enemyPokemon.hp;
 			}
 			stopAudio1();
 			stopAudio2();
@@ -1700,8 +1741,7 @@ function mainLoop() {
 							case (enemyPokemon.hp <= 0):
 								playersTurn = "YOURS";
 								current_scene = "OPENWORLD";
-								playerPokemon.hp = Number(playerPokemon.hp + 20);
-								enemyPokemon = getPokemonByStr(water_type_pokemon[Math.floor(Math.random() * water_type_pokemon.length)]).data;
+								playerPokemon.hp = Number(playerPokemon.hp) + 20;
 								timeout_frames = 4 * 82;
 
 								document.getElementById('fightMenu').style.display = 'flex';
@@ -1720,8 +1760,7 @@ function mainLoop() {
 							case (enemyPokemon.hp <= 0):
 								playersTurn = "YOURS";
 								current_scene = "OPENWORLD";
-								playerPokemon.hp = Number(playerPokemon.hp + 20);
-								enemyPokemon = getPokemonByStr(water_type_pokemon[Math.floor(Math.random() * water_type_pokemon.length)]).data;
+								playerPokemon.hp = Number(playerPokemon.hp) + 20;
 								timeout_frames = 4 * 82;
 
 								document.getElementById('fightMenu').style.display = 'flex';
