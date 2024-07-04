@@ -1434,7 +1434,7 @@ function PokeballItem(){
 	poke.style.display = 'none';
 	document.getElementById('itemMenu').style.display = 'none';
 
-	if(Math.random() < 15){
+	if(Math.random() < enemyPokemon.hp){
 		let term = enemyPokemon.name;
 		console.log(term);
 		playerPokiList.push(findPokemon(term.toString()).name);

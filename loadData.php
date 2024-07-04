@@ -14,7 +14,7 @@ if ($conn->connect_error) {
 }
 
 // Fetch Pokémon data
-$sql = "SELECT * FROM pokemonData LIMIT 2000";
+$sql = "SELECT * FROM pokemonData";
 $result = $conn->query($sql);
 
 $pokemons = array();
